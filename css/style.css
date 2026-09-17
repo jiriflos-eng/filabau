@@ -276,6 +276,18 @@ section { padding: 92px 0; }
 .price-table .lo { color: var(--aqua); font-weight: 700; }
 .price-table td:last-child { font-variant-numeric: tabular-nums; font-weight: 650; }
 .route { background: var(--white); border-radius: 24px; padding: 24px; box-shadow: var(--shadow); margin: 16px 0; }
+.h-ico {
+  width: 1.15em; height: 1.15em;
+  display: inline-block;
+  vertical-align: -0.18em;
+  margin-right: .45rem;
+  color: var(--aqua);
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 .nums { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
 .nums div { background: var(--white); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); }
 .nums b { display: block; font-size: 1.2rem; color: var(--sea); }
