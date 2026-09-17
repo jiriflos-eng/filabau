@@ -68,6 +68,7 @@ function updateInquiry() {
   const ok = both.filter((s) => s.status === "ok");
   const bad = both.find((s) => s.status === "partial" || s.status === "short" || s.status === "busy");
 
+  box.classList.remove("has-picks");
   if (bad) {
     if (bad.status === "partial") {
       box.textContent = `${bad.label}: příjezd ${fmtDate(bad.pick[0])} - teď klikněte na den odjezdu ve stejném řádku.`;
@@ -84,9 +85,19 @@ function updateInquiry() {
     btn.disabled = true;
     return;
   }
-  box.innerHTML = ok
-    .map((s) => `<div><b>${s.label}</b> · příjezd ${fmtDate(s.start)} · odjezd ${fmtDate(s.end)} · <b>${s.nights} nocí</b></div>`)
-    .join("");
+  box.classList.add("has-picks");
+  box.innerHTML =
+    `<div class="pick-head">Vybrané termíny</div>` +
+    ok
+      .map(
+        (s) => `<div class="pick-row">
+          <b>${s.label}</b>
+          <span><small>příjezd</small>${fmtDate(s.start)}</span>
+          <span><small>odjezd</small>${fmtDate(s.end)}</span>
+          <span class="pick-nights">${s.nights} nocí</span>
+        </div>`
+      )
+      .join("");
   btn.disabled = false;
 }
 

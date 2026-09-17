@@ -37,13 +37,16 @@
       <div id="cal" class="months"></div>
 
       <form class="inquiry" id="form">
-        <div id="summary" class="muted">Klikněte v řádku Baucis a/nebo Filemon na příjezd a odjezd.</div>
+        <div id="summary" class="pick-box muted">Klikněte v řádku Baucis a/nebo Filemon na příjezd a odjezd.</div>
         <label>Jméno <input id="name" required /></label>
         <label>Telefon <input id="phone" required /></label>
         <label>E-mail <input id="email" type="email" required /></label>
         <label>Zpráva <textarea id="msg" rows="3" placeholder="Počet osob, transfer z letiště…"></textarea></label>
-        <label style="font-weight:500"><input type="radio" name="via" value="wa" checked /> WhatsApp</label>
-        <label style="font-weight:500"><input type="radio" name="via" value="mail" /> E-mail</label>
+        <div class="via-row">
+          <span class="via-label">Odeslat přes</span>
+          <label class="via"><input type="radio" name="via" value="wa" checked /> WhatsApp</label>
+          <label class="via"><input type="radio" name="via" value="mail" /> E-mail</label>
+        </div>
         <button class="btn btn-terra" id="send" disabled>Odeslat poptávku</button>
       </form>
     </div>
