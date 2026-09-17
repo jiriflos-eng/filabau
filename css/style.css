@@ -232,6 +232,30 @@ section { padding: 92px 0; }
   .ggrid img { height: 150px; }
 }
 
+.page-mast {
+  height: 240px;
+  overflow: hidden;
+  border-radius: 12px;
+  margin: 16px 0 32px;
+}
+.page-mast img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.with-photo {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) 240px;
+  gap: 28px;
+  align-items: start;
+}
+.with-photo img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+@media (max-width: 800px) {
+  .with-photo { grid-template-columns: 1fr; }
+  .with-photo img { height: 180px; }
+}
 .prose { max-width: 46rem; }
 .prose p { font-size: 1.05rem; }
 .prose h2 { margin-top: 2.2rem; }
