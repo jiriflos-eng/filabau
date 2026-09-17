@@ -201,15 +201,25 @@ section { padding: 92px 0; position: relative; z-index: 1; background: var(--foa
 
 .split { display: grid; grid-template-columns: 1.05fr .95fr; gap: 48px; align-items: center; }
 .split img, .card img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius); }
-.story-frame { min-height: 460px; overflow: hidden; border-radius: var(--radius); box-shadow: var(--shadow); }
+.story-frame {
+  position: relative;
+  min-height: 460px;
+  overflow: hidden;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
 .story-frame img.parallax-img,
 .card .media img.parallax-img {
+  position: absolute;
+  left: 0;
+  top: -42%;
   width: 100%;
-  height: 128%;
+  max-width: none;
+  height: 184%;
   object-fit: cover;
   will-change: transform;
 }
-.card .media { overflow: hidden; }
+.card .media { position: relative; overflow: hidden; }
 
 .studios { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .card {

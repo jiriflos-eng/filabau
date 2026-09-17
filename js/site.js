@@ -80,7 +80,7 @@ function initScrollStory() {
     shots.forEach((img) => {
       const box = img.parentElement.getBoundingClientRect();
       const p = (box.top + box.height / 2 - vh / 2) / vh;
-      img.style.transform = `translate3d(0, ${p * 48}px, 0)`;
+      img.style.transform = `translate3d(0, ${p * 110}px, 0)`;
     });
   };
   const onScroll = () => {
