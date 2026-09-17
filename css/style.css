@@ -285,7 +285,8 @@ section { padding: 92px 0; }
   fill: currentColor;
   opacity: .78;
 }
-.route h2, .split h2 {
+.h-ico use { fill: currentColor; }
+.with-ico, .route h2, .split h2 {
   display: flex;
   align-items: center;
   gap: 10px;
