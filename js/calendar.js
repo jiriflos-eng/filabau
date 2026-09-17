@@ -169,14 +169,14 @@ function guestTrackHtml(data, year, st, week, dates, selected) {
     );
     col = end + 1;
   }
-  return `<div class="guest-week"><div class="guest-lab">${st.label}</div><div class="guest-track">${items.join("")}</div></div>`;
+  return `<div class="guest-week ${st.rowClass || ""}"><div class="guest-lab">${st.label}</div><div class="guest-track">${items.join("")}</div></div>`;
 }
 
 function renderGuestCalendar(el, opts) {
   const { data, year, selected, onDay } = opts;
   const order = [
-    { id: "baucis", label: "Baucis" },
-    { id: "filemon", label: "Filemon" },
+    { id: "baucis", label: "Baucis", rowClass: "is-top" },
+    { id: "filemon", label: "Filemon", rowClass: "is-bot" },
   ];
   const monthNames = [
     "Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
