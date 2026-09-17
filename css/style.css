@@ -103,18 +103,25 @@ h1, h2, h3, .serif {
 /* HERO */
 .hero {
   min-height: 100svh;
-  background: var(--sea-deep) center/cover no-repeat;
+  background: var(--sea-deep) 28% 42% / cover no-repeat;
   color: #fff;
   display: grid;
-  align-items: end;
+  align-items: center;
   position: relative;
 }
 .hero::after {
   content: "";
   position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(11,39,47,.15) 0%, rgba(11,39,47,.25) 40%, rgba(11,39,47,.78) 100%);
+  background:
+    linear-gradient(90deg, rgba(11,39,47,.7) 0%, rgba(11,39,47,.38) 42%, rgba(11,39,47,.12) 100%),
+    linear-gradient(180deg, rgba(11,39,47,.28) 0%, transparent 28%, rgba(11,39,47,.2) 100%);
 }
-.hero-inner { position: relative; z-index: 1; padding: 0 0 72px; width: min(var(--max), calc(100% - 40px)); margin-inline: auto; }
+.hero-inner {
+  position: relative; z-index: 1;
+  padding: calc(var(--nav) + 36px) 0 56px;
+  width: min(var(--max), calc(100% - 40px));
+  margin-inline: auto;
+}
 .hero h1 { font-size: clamp(2.6rem, 7vw, 5.4rem); max-width: 14ch; margin: 12px 0 18px; }
 .hero p.lead { max-width: 42ch; font-size: 1.15rem; color: rgba(255,255,255,.9); }
 .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
