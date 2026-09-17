@@ -192,14 +192,14 @@ function renderGuestCalendar(el, opts) {
       const weeks = [];
       for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
       const weekHtml = weeks
-        .map((week) => {
+        .map((week, wi) => {
           const dates = week.map((d) =>
             d ? `${year}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}` : null
           );
           const rows = order
             .map((st) => guestTrackHtml(data, year, st, week, dates, selected))
             .join("");
-          return `<div class="guest-pair">${rows}</div>`;
+          return `<div class="guest-pair ${wi % 2 ? "is-alt" : ""}">${rows}</div>`;
         })
         .join("");
       return `<section class="guest-month">
