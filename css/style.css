@@ -524,6 +524,7 @@ select, input, textarea {
   margin-top: 0;
   color: #5c241c;
 }
+.gtag-out { left: auto; right: 6px; text-align: right; }
 .gname {
   position: absolute;
   left: 8px; right: 8px;

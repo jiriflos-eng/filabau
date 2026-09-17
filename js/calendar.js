@@ -154,9 +154,9 @@ function guestTrackHtml(data, year, st, week, dates, selected) {
       days.push(
         `<button type="button" class="gday ${sel ? "sel" : ""}" data-date="${dates[k]}" data-studio="${st.id}" data-busy="1">
           <span class="gnum">${week[k]}</span>
-          ${isA ? `<span class="gtag">Příjezd</span>` : ""}
-          ${isD && !isA ? `<span class="gtag">Odjezd</span>` : ""}
-          ${isA && isD ? `<span class="gtag">Příj. / odj.</span>` : ""}
+          ${isA ? `<span class="gtag gtag-in">Příjezd</span>` : ""}
+          ${isD && !isA ? `<span class="gtag gtag-out">Odjezd</span>` : ""}
+          ${isA && isD ? `<span class="gtag gtag-out">Příj. / odj.</span>` : ""}
         </button>`
       );
     }
