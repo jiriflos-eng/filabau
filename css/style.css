@@ -423,7 +423,7 @@ select, input, textarea {
   border-radius: 10px;
   background: #fff;
 }
-.guest-pair.is-alt { background: #e8e6e1; }
+.guest-pair.is-alt { background: #f6f4f0; }
 .guest-dow, .guest-week {
   display: grid;
   grid-template-columns: 88px 1fr;
