@@ -61,10 +61,34 @@ function initScrollStory() {
           if (e.isIntersecting) e.target.classList.add("is-on");
         });
       },
-      { threshold: 0.28, rootMargin: "-8% 0px -8% 0px" }
+      { threshold: 0.35, rootMargin: "-10% 0px -12% 0px" }
     );
     reveals.forEach((el) => io.observe(el));
   }
+
+  const hero = document.querySelector(".hero");
+  const bg = document.querySelector(".hero-bg");
+  const shots = document.querySelectorAll(".parallax-img");
+  let raf = 0;
+  const tick = () => {
+    raf = 0;
+    if (bg && hero) {
+      const y = Math.max(0, -hero.getBoundingClientRect().top);
+      bg.style.transform = `translate3d(0, ${y * 0.42}px, 0)`;
+    }
+    const vh = window.innerHeight || 1;
+    shots.forEach((img) => {
+      const box = img.parentElement.getBoundingClientRect();
+      const p = (box.top + box.height / 2 - vh / 2) / vh;
+      img.style.transform = `translate3d(0, ${p * 48}px, 0)`;
+    });
+  };
+  const onScroll = () => {
+    if (!raf) raf = requestAnimationFrame(tick);
+  };
+  tick();
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll, { passive: true });
 }
 
 function seasonYear(d) {
