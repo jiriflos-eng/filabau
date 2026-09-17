@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kalendář · administrace</title>
+  <link rel="icon" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,480;9..144,600&family=Outfit:wght@360;500;650&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="nav solid">
+    <a class="brand" href="index.html">
+      <img src="favicon.svg" width="34" height="34" alt="" />
+      <span>Filemon a Baucis<small>administrace</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html">Web</a>
+      <a href="rezervace.html">Náhled kalendáře</a>
+    </nav>
+  </header>
+
+  <main class="cal-page">
+    <div class="wrap pin-gate" id="gate">
+      <form class="pin-card" id="pin-form">
+        <p class="eyebrow">Jen pro hostitele</p>
+        <h2 id="gate-title">PIN</h2>
+        <p class="muted" id="gate-help"></p>
+        <label>PIN <input id="pin" type="password" inputmode="numeric" autocomplete="current-password" required /></label>
+        <p id="gate-err" style="color:var(--terra)"></p>
+        <button class="btn btn-sea" style="margin-top:12px">Vstoupit</button>
+      </form>
+    </div>
+
+    <div class="wrap hidden" id="app">
+      <p class="eyebrow">Kalendář ubytování</p>
+      <h1 class="serif" style="font-size:clamp(2rem,4vw,3rem);margin:8px 0">Klikněte na dny. Ukládá se samo.</h1>
+      <p class="muted">Červená tužka obsadí, zelená uvolní. První klik je začátek, druhý konec. Roky zůstávají v historii.</p>
+      <p id="flash" class="flash hidden"></p>
+      <div class="admin-bar">
+        <label>Rok <select id="year"></select></label>
+        <button class="btn btn-gold" id="new-year" type="button">+ Nový rok</button>
+        <div class="tools">
+          <button class="tool active-busy" data-tool="busy" type="button">Obsadit</button>
+          <button class="tool" data-tool="free" type="button">Uvolnit</button>
+        </div>
+        <button class="btn btn-ghost" id="download" type="button">Stáhnout zálohu</button>
+        <label class="btn btn-ghost">Nahrát zálohu<input id="upload" type="file" accept="application/json" hidden /></label>
+        <button class="btn btn-ghost" id="reset" type="button">Obnovit z webu</button>
+      </div>
+      <p id="updated" class="muted"></p>
+
+      <div class="admin-shell">
+        <div id="cal" class="months"></div>
+        <aside class="side">
+          <h3>Pobyty v roce</h3>
+          <div id="stays"></div>
+          <h3 style="margin-top:22px">Historie úprav</h3>
+          <ul class="log" id="log"></ul>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal hidden" id="modal">
+    <div class="box">
+      <h3>Jméno hosta</h3>
+      <p id="modal-range" class="muted"></p>
+      <label>Volitelné <input id="guest" placeholder="např. Šárka" /></label>
+      <div style="display:flex;gap:8px;margin-top:16px">
+        <button class="btn btn-terra" id="save-guest" type="button">Uložit</button>
+        <button class="btn btn-ghost" id="cancel-modal" type="button">Zrušit</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/site.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

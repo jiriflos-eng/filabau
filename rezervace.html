@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vybrat termín · Filemon a Baucis</title>
+  <link rel="icon" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,480;9..144,600&family=Outfit:wght@360;500;650&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="nav solid">
+    <a class="brand" href="index.html">
+      <img src="favicon.svg" width="34" height="34" alt="" />
+      <span>Filemon a Baucis<small>Korfu · Řecko</small></span>
+    </a>
+    <button class="menu-btn" aria-label="Menu">☰</button>
+    <nav class="nav-links">
+      <a href="index.html#studia">Studia</a>
+      <a href="galerie.html">Galerie</a>
+      <a class="btn btn-gold" href="rezervace.html">Vybrat termín</a>
+    </nav>
+  </header>
+
+  <main class="cal-page">
+    <div class="wrap">
+      <p class="eyebrow">Rezervace 2026</p>
+      <h1 class="serif" style="font-size:clamp(2rem,4vw,3.2rem);margin:8px 0 10px">Vyberte studio a volné dny.</h1>
+      <p class="muted">Zelená je volno, cihlová obsazeno. Minimum je 5 nocí. Po výběru termínu nám napište — do kalendáře ho vložíme my.</p>
+      <div class="cal-toolbar">
+        <label>Rok
+          <select id="year"></select>
+        </label>
+        <label>Studio
+          <select id="studio">
+            <option value="filemon">Filemon</option>
+            <option value="baucis">Baucis</option>
+          </select>
+        </label>
+      </div>
+      <div class="legend">
+        <span><i class="swatch" style="background:var(--free)"></i>volno</span>
+        <span><i class="swatch" style="background:var(--busy)"></i>obsazeno</span>
+        <span><i class="swatch" style="background:#cfe6e8"></i>váš výběr</span>
+      </div>
+      <div id="cal" class="months"></div>
+
+      <form class="inquiry" id="form">
+        <div id="summary" class="muted">Klikněte na den příjezdu a pak na den odjezdu.</div>
+        <label>Jméno <input id="name" required /></label>
+        <label>Telefon <input id="phone" required /></label>
+        <label>E-mail <input id="email" type="email" required /></label>
+        <label>Zpráva <textarea id="msg" rows="3" placeholder="Počet osob, transfer z letiště…"></textarea></label>
+        <label style="font-weight:500"><input type="radio" name="via" value="wa" checked /> WhatsApp</label>
+        <label style="font-weight:500"><input type="radio" name="via" value="mail" /> E-mail</label>
+        <button class="btn btn-terra" id="send" disabled>Odeslat poptávku</button>
+      </form>
+    </div>
+  </main>
+  <script src="js/site.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/rezervace.js"></script>
+</body>
+</html>
