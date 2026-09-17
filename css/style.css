@@ -415,14 +415,15 @@ select, input, textarea {
   font-size: 1.55rem;
   color: var(--sea);
 }
+.guest-pair { margin-bottom: 12px; }
 .guest-dow, .guest-week {
   display: grid;
   grid-template-columns: 88px 1fr;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
-.guest-dow { margin-bottom: 10px; }
+.guest-dow { margin-bottom: 8px; }
 .guest-dow span {
   text-align: center;
   font-size: .78rem;
@@ -435,14 +436,14 @@ select, input, textarea {
 .guest-track {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 7px;
-  min-height: 58px;
+  gap: 5px;
+  min-height: 40px;
 }
 .gpill, .gday {
   border: 0;
   font: inherit;
   cursor: pointer;
-  min-height: 58px;
+  min-height: 40px;
 }
 .gpill {
   border-radius: 16px;
@@ -455,12 +456,12 @@ select, input, textarea {
 .gband {
   position: relative;
   background: linear-gradient(180deg, #f3c5b6, #e8a090);
-  border-radius: 10px;
-  min-height: 58px;
+  border-radius: 8px;
+  min-height: 40px;
   box-shadow: inset 0 0 0 1px rgba(139, 58, 40, .18);
 }
-.gband.starts { border-top-left-radius: 18px; border-bottom-left-radius: 18px; }
-.gband.ends { border-top-right-radius: 18px; border-bottom-right-radius: 18px; }
+.gband.starts { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+.gband.ends { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
 .gband-days {
   display: grid;
   height: 100%;
@@ -474,7 +475,7 @@ select, input, textarea {
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  padding: 6px 8px;
+  padding: 3px 6px 16px;
   min-width: 0;
 }
 .gnum { font-weight: 650; font-size: .85rem; opacity: .85; }
@@ -488,30 +489,31 @@ select, input, textarea {
 }
 .gname {
   position: absolute;
-  left: 10px; right: 10px;
-  top: 50%;
-  transform: translateY(-42%);
+  left: 8px; right: 8px;
+  top: auto;
+  bottom: 2px;
+  transform: none;
   text-align: center;
   font-family: "Outfit", system-ui, sans-serif;
-  font-size: clamp(1.05rem, 2.2vw, 1.55rem);
+  font-size: clamp(.92rem, 1.8vw, 1.2rem);
   font-weight: 700;
   color: #fff;
   letter-spacing: 0.02em;
   pointer-events: none;
   z-index: 2;
-  line-height: 1.1;
-  -webkit-text-stroke: 1.35px #5a2218;
+  line-height: 1;
+  -webkit-text-stroke: 1.2px #5a2218;
   paint-order: stroke fill;
 }
-.gband.starts .gname { left: 52px; }
-.gband.ends .gname { right: 52px; }
-.gband.starts.ends .gname { left: 44px; right: 44px; }
-.gband.short .gname { left: 6px; right: 6px; font-size: 1rem; transform: translateY(6px); }
+.gband.starts .gname { left: 8px; }
+.gband.ends .gname { right: 8px; }
+.gband.starts.ends .gname { left: 6px; right: 6px; }
+.gband.short .gname { left: 4px; right: 4px; font-size: .9rem; }
 @media (max-width: 800px) {
   .guest-dow, .guest-week { grid-template-columns: 1fr; }
   .guest-dow { display: none; }
   .guest-lab { padding: 4px 0 0; }
-  .gname { font-size: 1rem; left: 6px !important; right: 6px !important; }
+  .gname { font-size: .85rem; left: 4px !important; right: 4px !important; }
 }
 
 .inquiry {

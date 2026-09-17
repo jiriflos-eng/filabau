@@ -22,6 +22,12 @@ function paint() {
     studio: STUDIO,
     selected: { studio: STUDIO, dates: selectedDates() },
     onDay: (date, studio, busy) => {
+      if (studio !== STUDIO) {
+        STUDIO = studio;
+        const box = document.getElementById("studio");
+        if (box) box.value = studio;
+        pick = [];
+      }
       if (busy || !inSeason(DATA, date)) return;
       if (pick.length === 0 || pick.length === 2) pick = [date];
       else pick = [pick[0], date];
