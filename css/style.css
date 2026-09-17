@@ -121,10 +121,20 @@ h1, h2, h3, .serif {
   background: var(--sea-deep);
 }
 .hero-bg {
-  position: absolute; inset: -18% 0 -8%;
-  background-size: cover;
-  background-position: center 40%;
+  position: absolute;
+  left: -18%;
+  top: -28%;
+  width: 140%;
+  height: 165%;
+  object-fit: cover;
+  object-position: 35% 55%;
+  transform-origin: 70% 25%;
   will-change: transform;
+  pointer-events: none;
+}
+.hero-credit {
+  position: absolute; right: 12px; bottom: 10px; z-index: 2;
+  font-size: .65rem; letter-spacing: .04em; opacity: .55; color: #fff;
 }
 .hero::after {
   content: "";
