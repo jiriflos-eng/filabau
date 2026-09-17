@@ -58,14 +58,17 @@ function initScrollStory() {
   if (reveals.length) {
     const io = new IntersectionObserver(
       (entries) => {
-        entries.forEach((e) => e.target.classList.toggle("is-on", e.isIntersecting));
+        entries.forEach((e) => {
+          if (e.isIntersecting) e.target.classList.add("is-on");
+        });
       },
-      { threshold: 0.45, rootMargin: "-12% 0px -12% 0px" }
+      { threshold: 0.2 }
     );
     reveals.forEach((el) => io.observe(el));
   }
   const hero = document.querySelector(".hero");
-  if (!bg || !hero) return;
+  const coarse = window.matchMedia("(pointer: coarse)").matches;
+  if (!bg || !hero || coarse) return;
   let raf = 0;
   const update = () => {
     raf = 0;
