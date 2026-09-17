@@ -67,7 +67,7 @@ function initScrollStory() {
   if (!bg) return;
   const onScroll = () => {
     const y = window.scrollY;
-    bg.style.transform = `translate3d(0, ${y * 0.22}px, 0)`;
+    bg.style.transform = `translate3d(0, ${y * 0.78}px, 0)`;
   };
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });

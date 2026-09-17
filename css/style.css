@@ -122,12 +122,12 @@ h1, h2, h3, .serif {
 }
 .hero-bg {
   position: absolute;
-  top: -10%;
+  top: -55%;
   left: 0;
   width: 100%;
   min-width: 100%;
   max-width: none;
-  height: 120%;
+  height: 210%;
   object-fit: cover;
   object-position: center 60%;
   will-change: transform;
