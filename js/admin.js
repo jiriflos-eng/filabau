@@ -19,9 +19,6 @@ function paint() {
   renderCalendar(document.getElementById("cal"), {
     data: DATA,
     year: YEAR,
-    studios: STUDIOS,
-    interactive: true,
-    showAll: false,
     selected: pending
       ? { studio: pending.studio, dates: [pending.start] }
       : null,

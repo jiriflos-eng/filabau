@@ -242,8 +242,9 @@ footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wr
   section { padding: 64px 0; }
 }
 
-/* CALENDAR */
+/* CALENDAR — spreadsheet layout like the original */
 .cal-page { padding: calc(var(--nav) + 36px) 0 80px; }
+.cal-page .wrap { width: min(1240px, calc(100% - 24px)); }
 .cal-toolbar, .admin-bar {
   display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 18px 0 22px;
 }
@@ -251,44 +252,87 @@ select, input, textarea {
   font: inherit; border: 1px solid rgba(18,58,70,.18); background: var(--white);
   border-radius: 12px; padding: 10px 12px; color: var(--ink);
 }
-.months { display: grid; gap: 22px; }
-.month {
-  background: var(--white); border-radius: 24px; padding: 18px; box-shadow: var(--shadow);
+.cal-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(260px, 1fr));
+  gap: 28px 18px;
+  background: #d4ecd0;
+  padding: 22px 18px;
+  border-radius: 8px;
+  overflow-x: auto;
 }
-.month h3 { margin: 0 0 12px; font-size: 1.35rem; }
-.dow, .days { display: grid; grid-template-columns: 92px 1fr; gap: 6px; align-items: stretch; }
-.dow { grid-template-columns: 92px repeat(7, 1fr); }
-.week-track {
-  display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; position: relative;
+.month-card h3 {
+  margin: 0 0 8px;
+  color: #1b5e4a;
+  font-family: "Outfit", sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0;
 }
-.dow span, .day, .lab {
-  min-height: 52px; display: grid; place-items: center; font-size: .82rem;
+.cal-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 12px;
+  background: #fff;
 }
-.dow span { color: var(--muted); font-weight: 650; min-height: auto; }
-.lab { justify-content: start; font-weight: 650; color: var(--sea); }
-.day {
-  border-radius: 10px; background: #f3eee4; color: var(--muted); border: 0; cursor: default;
-  position: relative; z-index: 1; padding: 4px 2px 16px; align-content: start;
+.cal-table th, .cal-table td {
+  border: 1px solid #245c24;
+  text-align: center;
+  padding: 0;
+  height: 22px;
+  position: relative;
+  overflow: hidden;
 }
-.day .num { font-weight: 650; }
-.day .mark {
-  font-size: .55rem; letter-spacing: .02em; text-transform: uppercase; font-weight: 700; line-height: 1.1;
+.cal-table thead th {
+  background: #38761d;
+  color: #fff;
+  font-weight: 700;
+  height: 24px;
 }
-.day.in { background: var(--free); color: var(--free-ink); cursor: pointer; }
-.day.busy { background: var(--busy); color: var(--busy-ink); border-radius: 3px; }
-.day.busy.arrive { border-radius: 12px 3px 3px 12px; box-shadow: inset 3px 0 0 var(--sea); }
-.day.busy.depart { border-radius: 3px 12px 12px 3px; box-shadow: inset -3px 0 0 var(--sea); }
-.day.busy.both, .day.busy.arrive.depart { border-radius: 12px; box-shadow: inset 3px 0 0 var(--sea), inset -3px 0 0 var(--sea); }
-.day.off { opacity: .35; cursor: not-allowed; }
-.day.sel { outline: 2px solid var(--sea); background: #cfe6e8; }
-.stay-label {
-  grid-row: 1; align-self: end; justify-self: stretch;
-  text-align: center; font-size: .72rem; font-weight: 700; color: var(--busy-ink);
-  pointer-events: none; z-index: 2; padding: 0 4px 3px;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+.cal-table .lab {
+  width: 54px;
+  background: #38761d;
+  color: #fff;
+  font-weight: 700;
+}
+.cal-table .nums td {
+  background: #fff;
+  font-weight: 650;
+  height: 20px;
+  color: var(--ink);
+}
+.cal-table .cell { background: #6aa84f; cursor: pointer; }
+.cal-table .cell.empty, .cal-table .cell.off { background: #c7d9b8; cursor: default; }
+.cal-table .cell.busy {
+  background: #e06666;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: .04em;
+  font-size: 11px;
+}
+.cal-table .cell.sel { box-shadow: inset 0 0 0 2px #1a3; }
+.cal-table .cell.arrive::before,
+.cal-table .cell.depart::after {
+  content: "";
+  position: absolute;
+  width: 0; height: 0;
+  pointer-events: none;
+}
+.cal-table .cell.arrive::before {
+  top: 1px; left: 50%;
+  transform: translateX(-50%);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 10px solid #93c47d;
+}
+.cal-table .cell.depart::after {
+  right: 0; bottom: 0;
+  border-bottom: 12px solid #cc0000;
+  border-left: 12px solid transparent;
 }
 .legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 8px 0 18px; font-size: .9rem; }
-.swatch { width: 14px; height: 14px; border-radius: 4px; display: inline-block; margin-right: 6px; vertical-align: -2px; }
+.swatch { width: 14px; height: 14px; border-radius: 3px; display: inline-block; margin-right: 6px; vertical-align: -2px; }
 
 .inquiry {
   margin-top: 28px; background: var(--white); border-radius: 28px; padding: 28px; box-shadow: var(--shadow);
@@ -298,7 +342,7 @@ select, input, textarea {
 .inquiry button { margin-top: 8px; }
 
 /* ADMIN */
-.admin-shell { display: grid; grid-template-columns: 1fr 320px; gap: 22px; align-items: start; }
+.admin-shell { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 18px; align-items: start; }
 .side {
   background: var(--white); border-radius: 24px; padding: 18px; box-shadow: var(--shadow);
   position: sticky; top: calc(var(--nav) + 16px);
@@ -325,10 +369,8 @@ select, input, textarea {
 .hidden { display: none !important; }
 .flash { background: #e7f4ea; color: #215c32; padding: 10px 12px; border-radius: 12px; font-size: .9rem; }
 
-@media (max-width: 980px) {
+@media (max-width: 1100px) {
+  .cal-board { grid-template-columns: 1fr; }
   .admin-shell { grid-template-columns: 1fr; }
-  .dow { display: none; }
-  .days { grid-template-columns: 1fr; }
-  .lab { justify-content: center; min-height: auto; padding: 4px 0; }
   .side { position: static; }
 }
