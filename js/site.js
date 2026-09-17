@@ -1,4 +1,15 @@
 function initNav() {
+  const links = document.querySelector("[data-nav]");
+  if (links) {
+    links.innerHTML = `
+      <a href="index.html">Úvod</a>
+      <a href="studia.html">Studia</a>
+      <a href="cenik.html">Ceník</a>
+      <a href="jak-k-nam.html">Jak k nám</a>
+      <a href="info.html">Info</a>
+      <a href="galerie.html">Galerie</a>
+      <a class="btn btn-gold" href="rezervace.html">Vybrat termín</a>`;
+  }
   const nav = document.querySelector(".nav");
   const btn = document.querySelector(".menu-btn");
   if (!nav) return;

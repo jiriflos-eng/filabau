@@ -17,25 +17,62 @@
       <span>Filemon a Baucis<small>Korfu · Řecko</small></span>
     </a>
     <button class="menu-btn" aria-label="Menu">☰</button>
-    <nav class="nav-links">
-      <a href="studia.html">Studia</a>
-      <a href="galerie.html">Galerie</a>
-      <a class="btn btn-gold" href="rezervace.html">Vybrat termín</a>
-    </nav>
+    <nav class="nav-links" data-nav></nav>
   </header>
   <main class="cal-page">
     <div class="wrap">
       <p class="eyebrow">Ubytování</p>
       <h1 class="serif" style="font-size:clamp(2rem,4vw,3.2rem)">Dvě stejná studia, dvě nálady.</h1>
-      <p class="muted">Každé má 23 m²: pokoj pro dvě osoby, kuchyňku, WC s bidetkou a sprchu. Terasa, Starlink, parkování na pozemku. Nekuřácká — na terase bez omezení.</p>
-      <p><a class="btn btn-sea" href="rezervace.html">Vybrat termín</a></p>
+      <div class="prose">
+        <p>Studia jsou rozměrově identická — <b>23 m²</b>. Tvoří je jeden pokoj pro dvě osoby, kuchyňka, WC s bidetkou a sprcha. U každého je venkovní posezení na terase.</p>
+        <p><b>Filemon</b> je na východní straně domu. Má větší terasu a velmi příjemný odpolední stín.</p>
+        <p><b>Baucis</b> je na západní straně. Terasa je menší, s výhledem na olivové háje a zapadající slunce.</p>
+        <p>V celém objektu je bezplatný vysokorychlostní internet Starlink. Parkování na pozemku zdarma, venkovní sprcha.</p>
+        <p><b>Studia jsou nekuřácká.</b> Na terasách si lze zapálit bez omezení.</p>
+      </div>
+
+      <h2 class="serif">Vybavení</h2>
+      <ul class="equip">
+        <li>klimatizace (4 € / den)</li>
+        <li>dvě oddělené postele (na požádání manželská)</li>
+        <li>ložní prádlo, ručníky (ne plážové), osuška</li>
+        <li>noční stolky s lampičkou na čtení</li>
+        <li>šatní skříň s ramínky</li>
+        <li>toaletní stolek se židličkou a zrcadlem</li>
+        <li>mikrovlnná trouba</li>
+        <li>velká lednice se samostatným mrazákem</li>
+        <li>rychlovarná konvice</li>
+        <li>fén</li>
+        <li>překapávač na kávu</li>
+        <li>dvouplotýnkový vařič</li>
+        <li>hluboké i mělké talíře po 4 ks, misky, mísy, pánev, hrnce, cedník</li>
+        <li>příbory, nože, otvírák na víno, lis na česnek, struhadlo</li>
+        <li>skleničky na víno, hrnky na kávu a čaj</li>
+        <li>sůl, pepř, ocet, olivový olej na salát</li>
+        <li>toaletní papír, prostředky na nádobí, houbička, drátěnka, utěrka</li>
+        <li>tekuté mýdlo v koupelně</li>
+        <li>noční orientační světlo</li>
+        <li>hodiny, zásuvky s USB A i C</li>
+        <li>sušák na prádlo</li>
+        <li>2 lehátka na terase</li>
+        <li>markýza, uzamykatelný box na klíče</li>
+        <li>sítě proti hmyzu (dveře i okno), plácačka</li>
+        <li>koště, lopatka, smetáček, vědro, hadr</li>
+        <li>deskové i karetní hry, knížky</li>
+        <li>čelovka</li>
+        <li>váha na zavazadla na vyžádání</li>
+      </ul>
+
+      <div class="prose" style="margin-top:28px">
+        <p>Jako skoro všude v Řecku jsou večer komáři. Studia mají sítě ve dveřích a oknech, takže by vás neměli trápit. Přesto se hodí „komárobijec“ do zásuvky a repelent na cestu do taverny a večer venku.</p>
+        <p><a class="btn btn-sea" href="rezervace.html">Vybrat termín</a> <a class="btn btn-ghost" href="cenik.html">Ceník</a></p>
+      </div>
+
       <div id="studios" style="margin-top:36px"></div>
     </div>
   </main>
   <script src="js/site.js"></script>
   <script src="js/photos.js"></script>
-  <script>
-    mountGalleries("studios", ["filemon", "baucis"]);
-  </script>
+  <script>mountGalleries("studios", ["filemon", "baucis"]);</script>
 </body>
 </html>

@@ -1,10 +1,28 @@
 const ALBUM_META = {
-  unas: { title: "U nás", lead: "Taverny cestou na pláž, Santa Barbara / Marathias, dům a okolí." },
-  pobliz: { title: "Poblíž", lead: "Cesta na pláž přes útes, Agios Georgios, Issos, Petriti, Lefkimmi." },
-  opodal: { title: "Opodál", lead: "Kerkyra, Achillion, Paleokastritsa, Pantokrator, Paxos a další výlety." },
-  ruzne: { title: "Různé", lead: "Velikonoce, masopust v Lefkimmi, jaro a podzim na Korfu." },
-  filemon: { title: "Studio Filemon", lead: "Východní strana, větší terasa, odpolední stín." },
-  baucis: { title: "Studio Baucis", lead: "Západní strana, menší terasa, olivové háje a západ slunce." },
+  unas: {
+    title: "U nás",
+    lead: "Cestou k pláži Santa Barbara minete tavernu Maltas, Elia a Barbados. Na Marathias je organizovaná část s lehátky, sprchou a bary — i dlouhá liduprázdná pláž pod útesem. Písek, pozvolný vstup, průzračná voda. Moře bývá klidné, ale umí se i zlobit.",
+  },
+  pobliz: {
+    title: "Poblíž",
+    lead: "Cesta na pláž přes útes, jižní Agios Georgios (krámky, bary, taverny, půjčovny), pláž Issos na okraji pouště, Megas Choros, pláž Notos a rybářská vesnice Petriti, Argirades, rezervace Alikes, Kanoula, Lefkimi, Gardenos, Chlomos.",
+  },
+  opodal: {
+    title: "Opodál",
+    lead: "Kerkyra — hlavní město ostrova. Achillion, letní sídlo císařovny Sisi. Restaurace Archontiko, Moraitika, Paleokastritsa, pláž Timoni, mys Drastis, Canal d’Amour, Pantokrator, Angelokastro, Kaiser Throne, Agios Simeon, Agios Gordis, ostrov Paxos, Peroulades.",
+  },
+  ruzne: {
+    title: "Různé",
+    lead: "Velikonoce: Květná neděle s procesím sv. Spyridona a dechovkami. Na Bílou sobotu v 11 hodin lidé vyhazují z oken keramické nádoby s vodou — ulice jsou plné střepů, úlomky si někteří schovávají pro štěstí. Masopust v Lefkimmi, jaro a podzim na Korfu.",
+  },
+  filemon: {
+    title: "Studio Filemon",
+    lead: "Východní strana domu, větší terasa, velmi příjemný odpolední stín.",
+  },
+  baucis: {
+    title: "Studio Baucis",
+    lead: "Západní strana domu, menší terasa s výhledem na olivové háje a zapadající slunce.",
+  },
 };
 
 function lightbox(urls, start) {
@@ -38,7 +56,7 @@ function renderAlbum(el, key, files, folder) {
   const block = document.createElement("section");
   block.className = "album-block";
   block.dataset.album = key;
-  block.innerHTML = `<h2>${meta.title}</h2><p class="muted">${meta.lead}</p><div class="ggrid"></div>`;
+  block.innerHTML = `<h2>${meta.title}</h2><p class="muted" style="max-width:46rem">${meta.lead}</p><div class="ggrid"></div>`;
   const grid = block.querySelector(".ggrid");
   urls.forEach((src, idx) => {
     const im = document.createElement("img");

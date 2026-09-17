@@ -203,6 +203,32 @@ section { padding: 92px 0; }
   .ggrid img { height: 150px; }
 }
 
+.prose { max-width: 46rem; }
+.prose p { font-size: 1.05rem; }
+.prose h2 { margin-top: 2.2rem; }
+.equip {
+  columns: 2; gap: 8px 36px; padding: 0; list-style: none; color: var(--muted);
+}
+.equip li { break-inside: avoid; padding: 6px 0 6px 1.1rem; position: relative; }
+.equip li::before { content: "·"; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+.price-table {
+  width: min(420px, 100%); border-collapse: collapse; background: var(--white);
+  border-radius: 18px; overflow: hidden; box-shadow: var(--shadow); font-size: 1.05rem;
+}
+.price-table th, .price-table td { padding: 12px 18px; text-align: left; }
+.price-table thead { background: var(--sea); color: #fff; }
+.price-table tbody tr:nth-child(odd) { background: #f7f1e7; }
+.price-table .hi { color: var(--terra); font-weight: 700; }
+.price-table .mid { color: #c49a2a; font-weight: 700; }
+.price-table .lo { color: var(--aqua); font-weight: 700; }
+.price-table td:last-child { font-variant-numeric: tabular-nums; font-weight: 650; }
+.route { background: var(--white); border-radius: 24px; padding: 24px; box-shadow: var(--shadow); margin: 16px 0; }
+.nums { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.nums div { background: var(--white); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); }
+.nums b { display: block; font-size: 1.2rem; color: var(--sea); }
+.yt { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 18px; }
+@media (max-width: 700px) { .equip { columns: 1; } }
+
 .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .contact-card { background: var(--white); border-radius: 28px; padding: 28px; box-shadow: var(--shadow); }
 .contact-card a { color: var(--sea); font-weight: 650; text-decoration: none; }
