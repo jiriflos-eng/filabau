@@ -1,5 +1,5 @@
 let DATA = null;
-let YEAR = 2026;
+let YEAR = typeof seasonYear === "function" ? seasonYear() : new Date().getFullYear();
 let STUDIO = "filemon";
 let pick = [];
 
@@ -13,7 +13,7 @@ function selectedDates() {
 }
 
 function paint() {
-  const years = yearsOf(DATA);
+  const years = [...new Set([...yearsOf(DATA), seasonYear()])].sort((a, b) => a - b);
   const sel = document.getElementById("year");
   sel.innerHTML = years.map((y) => `<option ${y === YEAR ? "selected" : ""}>${y}</option>`).join("");
   renderGuestCalendar(document.getElementById("cal"), {
@@ -66,9 +66,7 @@ function updateInquiry() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   DATA = await loadBookings();
-  YEAR = yearsOf(DATA).includes(new Date().getFullYear())
-    ? new Date().getFullYear()
-    : yearsOf(DATA)[0];
+  YEAR = seasonYear();
   document.getElementById("year").addEventListener("change", (e) => {
     YEAR = Number(e.target.value);
     pick = [];

@@ -70,7 +70,23 @@ function initScrollStory() {
   window.addEventListener("scroll", onScroll, { passive: true });
 }
 
+function seasonYear(d) {
+  d = d || new Date();
+  return d.getMonth() >= 10 ? d.getFullYear() + 1 : d.getFullYear();
+}
+
+function fillSeasonYears() {
+  const y = String(seasonYear());
+  document.querySelectorAll(".season-year").forEach((el) => {
+    el.textContent = y;
+  });
+  document.title = document.title.replace(/20\d{2}/g, y);
+  const meta = document.querySelector('meta[name="description"]');
+  if (meta && meta.content) meta.content = meta.content.replace(/20\d{2}/g, y);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  fillSeasonYears();
   initIcons();
   initNav();
   initScrollStory();

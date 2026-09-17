@@ -1,5 +1,5 @@
 let DATA = null;
-let YEAR = 2026;
+let YEAR = typeof seasonYear === "function" ? seasonYear() : new Date().getFullYear();
 
 function toast(msg, isError) {
   const el = document.getElementById(isError ? "err" : "flash");
@@ -18,8 +18,8 @@ function rowsForYear() {
 }
 
 function paint() {
-  const years = yearsOf(DATA);
-  if (!years.includes(YEAR)) YEAR = years[years.length - 1];
+  const years = [...new Set([...yearsOf(DATA), seasonYear()])].sort((a, b) => a - b);
+  if (!years.includes(YEAR)) YEAR = seasonYear();
   document.getElementById("year").innerHTML = years
     .map((y) => `<option ${y === YEAR ? "selected" : ""}>${y}</option>`)
     .join("");
@@ -98,7 +98,7 @@ function enter() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   DATA = await loadBookings();
-  YEAR = yearsOf(DATA).at(-1);
+  YEAR = seasonYear();
   await gate();
 
   document.getElementById("pin-form").addEventListener("submit", (e) => {
