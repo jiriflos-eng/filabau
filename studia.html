@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Studia Filemon a Baucis · Korfu</title>
+  <link rel="icon" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,480;9..144,600&family=Outfit:wght@360;500;650&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="nav solid">
+    <a class="brand" href="index.html">
+      <img src="favicon.svg" width="34" height="34" alt="" />
+      <span>Filemon a Baucis<small>Korfu · Řecko</small></span>
+    </a>
+    <button class="menu-btn" aria-label="Menu">☰</button>
+    <nav class="nav-links">
+      <a href="studia.html">Studia</a>
+      <a href="galerie.html">Galerie</a>
+      <a class="btn btn-gold" href="rezervace.html">Vybrat termín</a>
+    </nav>
+  </header>
+  <main class="cal-page">
+    <div class="wrap">
+      <p class="eyebrow">Ubytování</p>
+      <h1 class="serif" style="font-size:clamp(2rem,4vw,3.2rem)">Dvě stejná studia, dvě nálady.</h1>
+      <p class="muted">Každé má 23 m²: pokoj pro dvě osoby, kuchyňku, WC s bidetkou a sprchu. Terasa, Starlink, parkování na pozemku. Nekuřácká — na terase bez omezení.</p>
+      <p><a class="btn btn-sea" href="rezervace.html">Vybrat termín</a></p>
+      <div id="studios" style="margin-top:36px"></div>
+    </div>
+  </main>
+  <script src="js/site.js"></script>
+  <script src="js/photos.js"></script>
+  <script>
+    mountGalleries("studios", ["filemon", "baucis"]);
+  </script>
+</body>
+</html>
