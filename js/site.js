@@ -64,13 +64,22 @@ function initScrollStory() {
     );
     reveals.forEach((el) => io.observe(el));
   }
-  if (!bg) return;
-  const onScroll = () => {
-    const y = window.scrollY;
-    bg.style.transform = `translate3d(0, ${y * 0.78}px, 0)`;
+  const hero = document.querySelector(".hero");
+  if (!bg || !hero) return;
+  let raf = 0;
+  const update = () => {
+    raf = 0;
+    const r = hero.getBoundingClientRect();
+    const top = Math.max(0, -r.top);
+    const bottom = Math.max(0, window.innerHeight - r.bottom);
+    bg.style.clipPath = `inset(${top}px 0 ${bottom}px 0)`;
   };
-  onScroll();
+  const onScroll = () => {
+    if (!raf) raf = requestAnimationFrame(update);
+  };
+  update();
   window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll, { passive: true });
 }
 
 function seasonYear(d) {

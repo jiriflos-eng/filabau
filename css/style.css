@@ -122,18 +122,17 @@ h1, h2, h3, .serif {
   background: var(--sea-deep);
 }
 .hero-bg {
-  position: absolute;
-  top: -55%;
+  position: fixed;
+  top: 0;
   left: 0;
   width: 100%;
+  height: 100svh;
   min-width: 100%;
   max-width: none;
-  height: 210%;
   object-fit: cover;
-  object-position: center 60%;
-  will-change: transform;
+  object-position: center top;
   pointer-events: none;
-  backface-visibility: hidden;
+  z-index: 0;
   filter: saturate(1.28) contrast(1.06);
 }
 .hero-credit {
@@ -142,13 +141,13 @@ h1, h2, h3, .serif {
 }
 .hero::after {
   content: "";
-  position: absolute; inset: 0;
+  position: absolute; inset: 0; z-index: 1;
   background:
     linear-gradient(90deg, rgba(11,39,47,.62) 0%, rgba(11,39,47,.28) 48%, rgba(11,39,47,.1) 100%),
     linear-gradient(180deg, rgba(11,39,47,.22) 0%, transparent 30%, rgba(11,39,47,.28) 100%);
 }
 .hero-inner {
-  position: relative; z-index: 1;
+  position: relative; z-index: 2;
   padding: calc(var(--nav) + 28px) 0 48px;
   width: min(var(--max), calc(100% - 40px));
   margin-inline: auto;
