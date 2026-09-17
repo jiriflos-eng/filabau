@@ -453,15 +453,16 @@ select, input, textarea {
   top: 50%;
   transform: translateY(-42%);
   text-align: center;
-  font-family: "Fraunces", Georgia, serif;
+  font-family: "Outfit", system-ui, sans-serif;
   font-size: clamp(1.05rem, 2.2vw, 1.55rem);
-  font-weight: 600;
-  color: #5a2218;
-  letter-spacing: -0.02em;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.02em;
   pointer-events: none;
   z-index: 2;
   line-height: 1.1;
-  text-shadow: 0 1px 0 rgba(255,252,247,.4);
+  -webkit-text-stroke: 1.35px #5a2218;
+  paint-order: stroke fill;
 }
 .gband.starts .gname { left: 52px; }
 .gband.ends .gname { right: 52px; }
