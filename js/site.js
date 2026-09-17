@@ -75,6 +75,11 @@ function seasonYear(d) {
   return d.getMonth() >= 10 ? d.getFullYear() + 1 : d.getFullYear();
 }
 
+function seasonYears() {
+  const y = seasonYear();
+  return [y, y + 1];
+}
+
 function fillSeasonYears() {
   const y = String(seasonYear());
   document.querySelectorAll(".season-year").forEach((el) => {

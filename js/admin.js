@@ -18,7 +18,7 @@ function rowsForYear() {
 }
 
 function paint() {
-  const years = [...new Set([...yearsOf(DATA), seasonYear()])].sort((a, b) => a - b);
+  const years = [...new Set([...yearsOf(DATA), ...seasonYears()])].sort((a, b) => a - b);
   if (!years.includes(YEAR)) YEAR = seasonYear();
   document.getElementById("year").innerHTML = years
     .map((y) => `<option ${y === YEAR ? "selected" : ""}>${y}</option>`)

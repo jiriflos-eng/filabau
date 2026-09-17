@@ -13,7 +13,7 @@ function selectedDates() {
 }
 
 function paint() {
-  const years = [...new Set([...yearsOf(DATA), seasonYear()])].sort((a, b) => a - b);
+  const years = [...new Set([...yearsOf(DATA), ...seasonYears()])].sort((a, b) => a - b);
   const sel = document.getElementById("year");
   sel.innerHTML = years.map((y) => `<option ${y === YEAR ? "selected" : ""}>${y}</option>`).join("");
   renderGuestCalendar(document.getElementById("cal"), {
