@@ -184,8 +184,26 @@ section { padding: 92px 0; position: relative; z-index: 1; background: var(--foa
   background: var(--white); border-radius: var(--radius); padding: 18px 16px;
   border: 1px solid rgba(18,58,70,.08);
 }
-.reveal { opacity: 1; transform: none; }
-.reveal .more { max-height: none; opacity: 1; overflow: visible; }
+.reveal {
+  opacity: .4;
+  transform: translateY(28px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.reveal.is-on {
+  opacity: 1;
+  transform: none;
+}
+.reveal .more {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height .9s ease, opacity .6s ease, margin .6s ease;
+}
+.reveal.is-on .more {
+  max-height: 24rem;
+  opacity: 1;
+  margin-top: 12px;
+}
 .fact b { display: block; font-size: 1.35rem; font-family: Fraunces, serif; color: var(--sea); }
 
 .split { display: grid; grid-template-columns: 1.05fr .95fr; gap: 48px; align-items: center; }

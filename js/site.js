@@ -61,7 +61,7 @@ function initScrollStory() {
           if (e.isIntersecting) e.target.classList.add("is-on");
         });
       },
-      { threshold: 0.2 }
+      { threshold: 0.28, rootMargin: "-8% 0px -8% 0px" }
     );
     reveals.forEach((el) => io.observe(el));
   }
