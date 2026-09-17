@@ -1,7 +1,7 @@
 const ALBUM_META = {
   unas: {
     title: "U nás",
-    lead: "Cestou k pláži Santa Barbara minete tavernu Maltas, Elia a Barbados. Na Marathias je organizovaná část s lehátky, sprchou a bary — i dlouhá liduprázdná pláž pod útesem. Písek, pozvolný vstup, průzračná voda. Moře bývá klidné, ale umí se i zlobit.",
+    lead: "Cestou k pláži Santa Barbara minete tavernu Maltas, Elia a Barbados. Na Marathias je organizovaná část s lehátky, sprchou a bary - i dlouhá liduprázdná pláž pod útesem. Písek, pozvolný vstup, průzračná voda. Moře bývá klidné, ale umí se i zlobit.",
   },
   pobliz: {
     title: "Poblíž",
@@ -9,11 +9,11 @@ const ALBUM_META = {
   },
   opodal: {
     title: "Opodál",
-    lead: "Kerkyra — hlavní město ostrova. Achillion, letní sídlo císařovny Sisi. Restaurace Archontiko, Moraitika, Paleokastritsa, pláž Timoni, mys Drastis, Canal d’Amour, Pantokrator, Angelokastro, Kaiser Throne, Agios Simeon, Agios Gordis, ostrov Paxos, Peroulades.",
+    lead: "Kerkyra - hlavní město ostrova. Achillion, letní sídlo císařovny Sisi. Restaurace Archontiko, Moraitika, Paleokastritsa, pláž Timoni, mys Drastis, Canal d’Amour, Pantokrator, Angelokastro, Kaiser Throne, Agios Simeon, Agios Gordis, ostrov Paxos, Peroulades.",
   },
   ruzne: {
     title: "Různé",
-    lead: "Velikonoce: Květná neděle s procesím sv. Spyridona a dechovkami. Na Bílou sobotu v 11 hodin lidé vyhazují z oken keramické nádoby s vodou — ulice jsou plné střepů, úlomky si někteří schovávají pro štěstí. Masopust v Lefkimmi, jaro a podzim na Korfu.",
+    lead: "Velikonoce: Květná neděle s procesím sv. Spyridona a dechovkami. Na Bílou sobotu v 11 hodin lidé vyhazují z oken keramické nádoby s vodou - ulice jsou plné střepů, úlomky si někteří schovávají pro štěstí. Masopust v Lefkimmi, jaro a podzim na Korfu.",
   },
   filemon: {
     title: "Studio Filemon",

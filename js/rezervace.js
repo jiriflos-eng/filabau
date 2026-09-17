@@ -36,7 +36,7 @@ function updateInquiry() {
   const box = document.getElementById("summary");
   const btn = document.getElementById("send");
   if (pick.length === 1) {
-    box.textContent = `Příjezd ${fmtDate(pick[0])} — teď klikněte na den odjezdu.`;
+    box.textContent = `Příjezd ${fmtDate(pick[0])} - teď klikněte na den odjezdu.`;
     btn.disabled = true;
     return;
   }

@@ -271,7 +271,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wr
   section { padding: 64px 0; }
 }
 
-/* CALENDAR — spreadsheet layout like the original */
+/* CALENDAR - spreadsheet layout like the original */
 .cal-page { padding: calc(var(--nav) + 36px) 0 80px; }
 .cal-page .wrap { width: min(1240px, calc(100% - 24px)); }
 .cal-toolbar, .admin-bar {
