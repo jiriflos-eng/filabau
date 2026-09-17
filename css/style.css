@@ -486,6 +486,30 @@ select, input, textarea {
 .modal .box { background: var(--white); padding: 24px; border-radius: 20px; width: min(420px, calc(100% - 32px)); }
 .hidden { display: none !important; }
 .flash { background: #e7f4ea; color: #215c32; padding: 10px 12px; border-radius: 12px; font-size: .9rem; }
+.err { background: #fde8e4; color: #8a2d1a; padding: 10px 12px; border-radius: 12px; font-size: .95rem; font-weight: 650; }
+.new-stay {
+  display: grid;
+  grid-template-columns: 140px 1fr 160px 160px auto;
+  gap: 10px;
+  align-items: end;
+  background: var(--white);
+  padding: 16px;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  margin: 18px 0;
+}
+.new-stay label { display: grid; gap: 6px; font-size: .85rem; font-weight: 650; }
+.table-wrap { overflow-x: auto; background: var(--white); border-radius: 20px; box-shadow: var(--shadow); }
+.stay-table { width: 100%; border-collapse: collapse; }
+.stay-table th, .stay-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid rgba(18,58,70,.08); vertical-align: middle; }
+.stay-table th { font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.stay-table input, .stay-table select { width: 100%; }
+.stay-table .nights { font-variant-numeric: tabular-nums; color: var(--muted); width: 4rem; }
+.stay-table .acts { white-space: nowrap; display: flex; gap: 6px; }
+.stay-table tr.row-error { background: #fde8e4; }
+@media (max-width: 900px) {
+  .new-stay { grid-template-columns: 1fr 1fr; }
+}
 
 @media (max-width: 1100px) {
   .cal-board { grid-template-columns: 1fr; }

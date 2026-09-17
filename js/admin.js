@@ -1,13 +1,20 @@
 let DATA = null;
 let YEAR = 2026;
-let TOOL = "busy"; // busy | free
-let pending = null;
 
-function toast(msg) {
-  const el = document.getElementById("flash");
+function toast(msg, isError) {
+  const el = document.getElementById(isError ? "err" : "flash");
+  const other = document.getElementById(isError ? "flash" : "err");
+  other.classList.add("hidden");
   el.textContent = msg;
   el.classList.remove("hidden");
-  setTimeout(() => el.classList.add("hidden"), 3500);
+  if (!isError) setTimeout(() => el.classList.add("hidden"), 4000);
+}
+
+function rowsForYear() {
+  const y = String(YEAR);
+  return (DATA.stays || [])
+    .filter((s) => s.arrival.slice(0, 4) === y || s.departure.slice(0, 4) === y)
+    .sort((a, b) => a.arrival.localeCompare(b.arrival) || a.studio.localeCompare(b.studio));
 }
 
 function paint() {
@@ -16,88 +23,43 @@ function paint() {
   document.getElementById("year").innerHTML = years
     .map((y) => `<option ${y === YEAR ? "selected" : ""}>${y}</option>`)
     .join("");
-  renderCalendar(document.getElementById("cal"), {
-    data: DATA,
-    year: YEAR,
-    selected: pending
-      ? { studio: pending.studio, dates: [pending.start] }
-      : null,
-    onDay: onDay,
-  });
-  renderHistory();
+  const body = document.getElementById("rows");
+  const rows = rowsForYear();
+  body.innerHTML = rows.length
+    ? rows
+        .map(
+          (s) => `<tr data-id="${s.id}">
+      <td>
+        <select data-f="studio">
+          <option value="filemon" ${s.studio === "filemon" ? "selected" : ""}>Filemon</option>
+          <option value="baucis" ${s.studio === "baucis" ? "selected" : ""}>Baucis</option>
+        </select>
+      </td>
+      <td><input data-f="name" value="${(s.name || "").replace(/"/g, "&quot;")}" /></td>
+      <td><input data-f="arrival" type="date" value="${s.arrival}" /></td>
+      <td><input data-f="departure" type="date" value="${s.departure}" /></td>
+      <td class="nights">${nightsBetween(s.arrival, s.departure)}</td>
+      <td class="acts">
+        <button type="button" class="btn btn-sea save" data-id="${s.id}">Uložit</button>
+        <button type="button" class="btn btn-ghost del" data-id="${s.id}">Smazat</button>
+      </td>
+    </tr>`
+        )
+        .join("")
+    : `<tr><td colspan="6" class="muted">V roce ${YEAR} zatím žádné rezervace.</td></tr>`;
   document.getElementById("updated").textContent = DATA.updatedAt
-    ? `Uloženo ${DATA.updatedAt.replace("T", " ").slice(0, 16)}`
+    ? `Uloženo ${DATA.updatedAt.replace("T", " ").slice(0, 16)} · ${rows.length} rezervací`
     : "";
 }
 
-function onDay(date, studio, busy) {
-  if (TOOL === "free") {
-    const stay = findStay(DATA, YEAR, studio, date);
-    if (!stay) return toast("Tady nic obsazené není.");
-    const n = setRange(DATA, YEAR, studio, stay.start, stay.end, false, "");
-    toast(`Smazán pobyt ${stay.note || ""} · ${fmtDate(stay.start)} – ${fmtDate(stay.end)} (${n} dní)`);
-    pending = null;
-    paint();
-    return;
-  }
-  if (busy && !pending) {
-    toast("Klikněte na volný den příjezdu.");
-    return;
-  }
-  if (pending && pending.studio === studio) {
-    finishRange(pending.start, date, studio);
-    pending = null;
-    return;
-  }
-  pending = { start: date, studio };
-  toast("Teď klikněte na den odjezdu (celý den).");
-  paint();
-}
-
-function finishRange(a, b, studio) {
-  if (parseIso(a) > parseIso(b)) [a, b] = [b, a];
-  if (!rangeFree(DATA, YEAR, studio, a, b)) {
-    toast("Termín se překrývá s jiným pobytem, nebo je mimo sezónu.");
-    return;
-  }
-  openModal(a, b, studio);
-}
-
-function openModal(a, b, studio) {
-  const nights = nightsBetween(a, b);
-  const days = stayDays(a, b).length;
-  const m = document.getElementById("modal");
-  document.getElementById("modal-range").textContent =
-    `${studio === "filemon" ? "Filemon" : "Baucis"} · příjezd ${fmtDate(a)} · odjezd ${fmtDate(b)} · ${nights} nocí (${days} dní včetně odjezdu)`;
-  document.getElementById("guest").value = "";
-  m.dataset.start = a;
-  m.dataset.end = b;
-  m.dataset.studio = studio;
-  m.classList.remove("hidden");
-  document.getElementById("guest").focus();
-}
-
-function closeModal() {
-  document.getElementById("modal").classList.add("hidden");
-}
-
-function renderHistory() {
-  const stays = [
-    ...staysInYear(DATA, YEAR, "filemon").map((s) => ({ ...s, studio: "Filemon" })),
-    ...staysInYear(DATA, YEAR, "baucis").map((s) => ({ ...s, studio: "Baucis" })),
-  ].sort((a, b) => a.start.localeCompare(b.start));
-  document.getElementById("stays").innerHTML = stays.length
-    ? stays
-        .map(
-          (s) =>
-            `<div class="stay"><b>${s.note || "bez jména"}</b> · ${s.studio}<br>příjezd ${fmtDate(s.start)}<br>odjezd ${fmtDate(s.end)}</div>`
-        )
-        .join("")
-    : `<p class="muted">V roce ${YEAR} zatím žádné pobyty.</p>`;
-  const log = (DATA.history || []).slice(0, 12);
-  document.getElementById("log").innerHTML = log
-    .map((h) => `<li>${(h.detail || h.action)}<br><small>${(h.at || "").replace("T", " ").slice(0, 16)}</small></li>`)
-    .join("") || "<li>Zatím bez záznamů.</li>";
+function readRow(tr) {
+  return {
+    id: tr.dataset.id,
+    studio: tr.querySelector('[data-f="studio"]').value,
+    name: tr.querySelector('[data-f="name"]').value,
+    arrival: tr.querySelector('[data-f="arrival"]').value,
+    departure: tr.querySelector('[data-f="departure"]').value,
+  };
 }
 
 async function gate() {
@@ -118,7 +80,7 @@ async function unlock(pin) {
   if (!saved) {
     localStorage.setItem(PIN_KEY, h);
     enter();
-    toast("PIN je nastavený. Kalendář se ukládá sám.");
+    toast("PIN je nastavený.");
     return;
   }
   if (h !== saved) {
@@ -147,53 +109,61 @@ document.addEventListener("DOMContentLoaded", async () => {
     YEAR = Number(e.target.value);
     paint();
   });
-  document.getElementById("new-year").addEventListener("click", () => {
-    const next = Math.max(...yearsOf(DATA)) + 1;
-    const y = Number(prompt("Založit rok:", String(next)));
-    if (!y) return;
-    const r = createYear(DATA, y);
-    if (!r.ok) return toast(r.error);
-    YEAR = y;
-    toast(`Rok ${y} je založený. Je prázdný — klikáním doplníte obsazení.`);
+  document.getElementById("new-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const stay = {
+      studio: document.getElementById("new-studio").value,
+      name: document.getElementById("new-name").value,
+      arrival: document.getElementById("new-from").value,
+      departure: document.getElementById("new-to").value,
+    };
+    const r = saveStay(DATA, stay);
+    if (!r.ok) return toast(r.error, true);
+    YEAR = Number(r.stay.arrival.slice(0, 4));
+    document.getElementById("new-name").value = "";
+    document.getElementById("new-from").value = "";
+    document.getElementById("new-to").value = "";
+    toast(`Přidáno: ${r.stay.name} · ${fmtDate(r.stay.arrival)} – ${fmtDate(r.stay.departure)}`);
     paint();
   });
-  document.querySelectorAll(".tool").forEach((t) => {
-    t.addEventListener("click", () => {
-      TOOL = t.dataset.tool;
-      document.querySelectorAll(".tool").forEach((x) => x.classList.remove("active-free", "active-busy"));
-      t.classList.add(TOOL === "busy" ? "active-busy" : "active-free");
-    });
+  document.getElementById("rows").addEventListener("click", (e) => {
+    const save = e.target.closest(".save");
+    const del = e.target.closest(".del");
+    if (save) {
+      const tr = save.closest("tr");
+      const r = saveStay(DATA, readRow(tr));
+      if (!r.ok) {
+        tr.classList.add("row-error");
+        return toast(r.error, true);
+      }
+      tr.classList.remove("row-error");
+      toast(`Uloženo: ${r.stay.name}`);
+      paint();
+    }
+    if (del) {
+      const tr = del.closest("tr");
+      const s = readRow(tr);
+      if (!confirm(`Smazat rezervaci ${s.name || ""} (${s.arrival} – ${s.departure})?`)) return;
+      deleteStay(DATA, s.id);
+      toast("Rezervace smazána.");
+      paint();
+    }
   });
-  document.getElementById("save-guest").addEventListener("click", () => {
-    const m = document.getElementById("modal");
-    const n = setRange(
-      DATA,
-      YEAR,
-      m.dataset.studio,
-      m.dataset.start,
-      m.dataset.end,
-      true,
-      document.getElementById("guest").value.trim()
-    );
-    closeModal();
-    toast(`Uloženo: příjezd ${fmtDate(m.dataset.start)} · odjezd ${fmtDate(m.dataset.end)}`);
-    paint();
-  });
-  document.getElementById("cancel-modal").addEventListener("click", closeModal);
   document.getElementById("download").addEventListener("click", () => exportData(DATA));
   document.getElementById("upload").addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    DATA = JSON.parse(await file.text());
+    DATA = ensureStays(JSON.parse(await file.text()));
     saveBookings(DATA);
     YEAR = yearsOf(DATA).at(-1);
     toast("Záloha nahraná.");
     paint();
   });
   document.getElementById("reset").addEventListener("click", async () => {
-    if (!confirm("Vrátit kalendář k verzi z webu? Místní úpravy na tomto počítači se smažou.")) return;
+    if (!confirm("Vrátit rezervace k verzi z webu? Místní úpravy na tomto počítači se smažou.")) return;
     localStorage.removeItem(STORE_KEY);
     DATA = await loadBookings();
+    YEAR = yearsOf(DATA).at(-1);
     paint();
     toast("Obnoveno z webu.");
   });

@@ -1049,5 +1049,224 @@
   ],
   "prices": {
     "2026": []
-  }
+  },
+  "stays": [
+    {
+      "id": "s2026-015",
+      "studio": "baucis",
+      "name": "Libor",
+      "arrival": "2026-04-06",
+      "departure": "2026-04-11"
+    },
+    {
+      "id": "s2026-016",
+      "studio": "baucis",
+      "name": "Jarda",
+      "arrival": "2026-05-06",
+      "departure": "2026-05-08"
+    },
+    {
+      "id": "s2026-017",
+      "studio": "baucis",
+      "name": "Dana",
+      "arrival": "2026-05-13",
+      "departure": "2026-05-15"
+    },
+    {
+      "id": "s2026-001",
+      "studio": "filemon",
+      "name": "Dana",
+      "arrival": "2026-05-13",
+      "departure": "2026-05-15"
+    },
+    {
+      "id": "s2026-018",
+      "studio": "baucis",
+      "name": "Zuzana",
+      "arrival": "2026-05-20",
+      "departure": "2026-06-01"
+    },
+    {
+      "id": "s2026-002",
+      "studio": "filemon",
+      "name": "Zuzana",
+      "arrival": "2026-05-20",
+      "departure": "2026-06-01"
+    },
+    {
+      "id": "s2026-019",
+      "studio": "baucis",
+      "name": "Šárka",
+      "arrival": "2026-06-03",
+      "departure": "2026-06-10"
+    },
+    {
+      "id": "s2026-003",
+      "studio": "filemon",
+      "name": "Šárka",
+      "arrival": "2026-06-03",
+      "departure": "2026-06-10"
+    },
+    {
+      "id": "s2026-020",
+      "studio": "baucis",
+      "name": "Eliška",
+      "arrival": "2026-06-12",
+      "departure": "2026-06-17"
+    },
+    {
+      "id": "s2026-021",
+      "studio": "baucis",
+      "name": "Zdeněk",
+      "arrival": "2026-06-19",
+      "departure": "2026-06-29"
+    },
+    {
+      "id": "s2026-004",
+      "studio": "filemon",
+      "name": "Milan",
+      "arrival": "2026-07-08",
+      "departure": "2026-07-15"
+    },
+    {
+      "id": "s2026-022",
+      "studio": "baucis",
+      "name": "Marek",
+      "arrival": "2026-07-10",
+      "departure": "2026-07-15"
+    },
+    {
+      "id": "s2026-023",
+      "studio": "baucis",
+      "name": "Lucka",
+      "arrival": "2026-07-17",
+      "departure": "2026-07-27"
+    },
+    {
+      "id": "s2026-005",
+      "studio": "filemon",
+      "name": "Olga",
+      "arrival": "2026-07-22",
+      "departure": "2026-07-27"
+    },
+    {
+      "id": "s2026-024",
+      "studio": "baucis",
+      "name": "Vlado",
+      "arrival": "2026-07-29",
+      "departure": "2026-08-03"
+    },
+    {
+      "id": "s2026-006",
+      "studio": "filemon",
+      "name": "Vlado",
+      "arrival": "2026-07-29",
+      "departure": "2026-08-03"
+    },
+    {
+      "id": "s2026-025",
+      "studio": "baucis",
+      "name": "Naďa",
+      "arrival": "2026-08-05",
+      "departure": "2026-08-12"
+    },
+    {
+      "id": "s2026-007",
+      "studio": "filemon",
+      "name": "Veronika",
+      "arrival": "2026-08-05",
+      "departure": "2026-08-14"
+    },
+    {
+      "id": "s2026-026",
+      "studio": "baucis",
+      "name": "Roman",
+      "arrival": "2026-08-16",
+      "departure": "2026-08-28"
+    },
+    {
+      "id": "s2026-008",
+      "studio": "filemon",
+      "name": "Roman",
+      "arrival": "2026-08-16",
+      "departure": "2026-08-28"
+    },
+    {
+      "id": "s2026-009",
+      "studio": "filemon",
+      "name": "Zuzana",
+      "arrival": "2026-09-01",
+      "departure": "2026-09-05"
+    },
+    {
+      "id": "s2026-027",
+      "studio": "baucis",
+      "name": "Kyr",
+      "arrival": "2026-09-07",
+      "departure": "2026-09-15"
+    },
+    {
+      "id": "s2026-010",
+      "studio": "filemon",
+      "name": "Míša",
+      "arrival": "2026-09-07",
+      "departure": "2026-09-15"
+    },
+    {
+      "id": "s2026-028",
+      "studio": "baucis",
+      "name": "Lukáš",
+      "arrival": "2026-09-18",
+      "departure": "2026-09-25"
+    },
+    {
+      "id": "s2026-011",
+      "studio": "filemon",
+      "name": "Lukáš",
+      "arrival": "2026-09-18",
+      "departure": "2026-09-25"
+    },
+    {
+      "id": "s2026-012",
+      "studio": "filemon",
+      "name": "Katka",
+      "arrival": "2026-09-28",
+      "departure": "2026-10-06"
+    },
+    {
+      "id": "s2026-029",
+      "studio": "baucis",
+      "name": "Josef",
+      "arrival": "2026-09-30",
+      "departure": "2026-10-06"
+    },
+    {
+      "id": "s2026-030",
+      "studio": "baucis",
+      "name": "Šárka",
+      "arrival": "2026-10-08",
+      "departure": "2026-10-13"
+    },
+    {
+      "id": "s2026-013",
+      "studio": "filemon",
+      "name": "Šárka",
+      "arrival": "2026-10-08",
+      "departure": "2026-10-13"
+    },
+    {
+      "id": "s2026-031",
+      "studio": "baucis",
+      "name": "Marek",
+      "arrival": "2026-10-15",
+      "departure": "2026-10-25"
+    },
+    {
+      "id": "s2026-014",
+      "studio": "filemon",
+      "name": "J & J",
+      "arrival": "2026-10-15",
+      "departure": "2026-10-31"
+    }
+  ]
 }

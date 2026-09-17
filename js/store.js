@@ -1,4 +1,4 @@
-const STORE_KEY = "filabau-bookings-v1";
+const STORE_KEY = "filabau-bookings-v2";
 const PIN_KEY = "filabau-pin-hash";
 const STUDIOS = [
   { id: "filemon", label: "Filemon" },
@@ -32,15 +32,48 @@ async function hashPin(pin) {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+function uid() {
+  return "s" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function staysFromDayMap(data) {
+  const stays = [];
+  for (const y of Object.keys(data.years || {})) {
+    for (const st of ["filemon", "baucis"]) {
+      const map = data.years[y]?.[st] || {};
+      const days = Object.keys(map).sort();
+      let cur = null;
+      for (const d of days) {
+        const note = map[d].note || "";
+        if (cur && addDays(cur.departure, 1) === d && cur.name === note && cur.studio === st) {
+          cur.departure = d;
+        } else {
+          if (cur) stays.push(cur);
+          cur = { id: uid(), studio: st, name: note, arrival: d, departure: d };
+        }
+      }
+      if (cur) stays.push(cur);
+    }
+  }
+  return stays;
+}
+
+function ensureStays(data) {
+  if (!Array.isArray(data.stays) || !data.stays.length) {
+    data.stays = staysFromDayMap(data);
+  }
+  return data;
+}
+
 async function loadBookings() {
   const local = localStorage.getItem(STORE_KEY);
   if (local) {
     try {
-      return JSON.parse(local);
+      return ensureStays(JSON.parse(local));
     } catch (_) {}
   }
   const res = await fetch("data/bookings.json", { cache: "no-store" });
-  return res.json();
+  return ensureStays(await res.json());
 }
 
 function saveBookings(data) {
@@ -50,7 +83,13 @@ function saveBookings(data) {
 }
 
 function yearsOf(data) {
-  return Object.keys(data.years).map(Number).sort((a, b) => a - b);
+  const set = new Set(Object.keys(data.years || {}).map(Number));
+  for (const s of data.stays || []) {
+    if (s.arrival) set.add(Number(s.arrival.slice(0, 4)));
+    if (s.departure) set.add(Number(s.departure.slice(0, 4)));
+  }
+  const years = [...set].filter(Boolean).sort((a, b) => a - b);
+  return years.length ? years : [new Date().getFullYear()];
 }
 
 function createYear(data, year) {
@@ -77,7 +116,10 @@ function inSeason(data, dateStr) {
 }
 
 function isBusy(data, year, studio, dateStr) {
-  return Boolean(data.years[String(year)]?.[studio]?.[dateStr]);
+  ensureStays(data);
+  return (data.stays || []).some(
+    (s) => s.studio === studio && dateStr >= s.arrival && dateStr <= s.departure
+  );
 }
 
 function fmtDate(s) {
@@ -134,18 +176,86 @@ function setRange(data, year, studio, start, end, occupy, note) {
 }
 
 function staysInYear(data, year, studio) {
-  const map = data.years[String(year)]?.[studio] || {};
-  const days = Object.keys(map).sort();
-  const groups = [];
-  for (const d of days) {
-    const last = groups[groups.length - 1];
-    if (last && addDays(last.end, 1) === d && (last.note || "") === (map[d].note || "")) {
-      last.end = d;
-    } else {
-      groups.push({ start: d, end: d, note: map[d].note || "", studio });
-    }
+  ensureStays(data);
+  const y = String(year);
+  return (data.stays || [])
+    .filter(
+      (s) =>
+        s.studio === studio &&
+        (s.arrival.slice(0, 4) === y || s.departure.slice(0, 4) === y)
+    )
+    .map((s) => ({
+      id: s.id,
+      start: s.arrival,
+      end: s.departure,
+      note: s.name || "",
+      studio: s.studio,
+    }))
+    .sort((a, b) => a.start.localeCompare(b.start));
+}
+
+function rangesOverlap(a1, a2, b1, b2) {
+  return a1 <= b2 && b1 <= a2;
+}
+
+function findOverlap(data, stay, excludeId) {
+  return (data.stays || []).find(
+    (s) =>
+      s.id !== excludeId &&
+      s.studio === stay.studio &&
+      rangesOverlap(stay.arrival, stay.departure, s.arrival, s.departure)
+  );
+}
+
+function saveStay(data, stay) {
+  ensureStays(data);
+  let a = stay.arrival;
+  let b = stay.departure;
+  if (!a || !b) return { ok: false, error: "Vyplňte příjezd i odjezd." };
+  if (parseIso(a) > parseIso(b)) [a, b] = [b, a];
+  const next = {
+    id: stay.id || uid(),
+    studio: stay.studio,
+    name: (stay.name || "").trim(),
+    arrival: a,
+    departure: b,
+  };
+  if (!next.studio) return { ok: false, error: "Vyberte studio." };
+  const clash = findOverlap(data, next, stay.id);
+  if (clash) {
+    return {
+      ok: false,
+      error: `Termín se kryje s rezervací „${clash.name || "bez jména"}“ (${fmtDate(clash.arrival)} – ${fmtDate(clash.departure)}).`,
+      clash,
+    };
   }
-  return groups;
+  const i = data.stays.findIndex((s) => s.id === next.id);
+  if (i >= 0) data.stays[i] = next;
+  else data.stays.push(next);
+  data.stays.sort((x, y) => x.arrival.localeCompare(y.arrival) || x.studio.localeCompare(y.studio));
+  data.history = data.history || [];
+  data.history.unshift({
+    at: new Date().toISOString(),
+    action: i >= 0 ? "edit" : "add",
+    detail: `${i >= 0 ? "Upraveno" : "Přidáno"} ${next.studio} ${next.name} ${next.arrival} – ${next.departure}`,
+  });
+  saveBookings(data);
+  return { ok: true, stay: next };
+}
+
+function deleteStay(data, id) {
+  ensureStays(data);
+  const s = data.stays.find((x) => x.id === id);
+  data.stays = data.stays.filter((x) => x.id !== id);
+  data.history = data.history || [];
+  if (s) {
+    data.history.unshift({
+      at: new Date().toISOString(),
+      action: "delete",
+      detail: `Smazáno ${s.studio} ${s.name} ${s.arrival} – ${s.departure}`,
+    });
+  }
+  saveBookings(data);
 }
 
 function exportData(data) {

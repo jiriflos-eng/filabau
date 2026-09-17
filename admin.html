@@ -35,50 +35,59 @@
     </div>
 
     <div class="wrap hidden" id="app">
-      <p class="eyebrow">Kalendář ubytování</p>
-      <h1 class="serif" style="font-size:clamp(2rem,4vw,3rem);margin:8px 0">Klikněte na dny. Ukládá se samo.</h1>
-      <p class="muted">Obsadit: první klik příjezd, druhý odjezd (oba celé dny), pak jméno — třeba Šárka. Uvolnit: klik na pobyt ho smaže celý. Roky zůstávají v historii.</p>
+      <p class="eyebrow">Rezervace</p>
+      <h1 class="serif" style="font-size:clamp(2rem,4vw,3rem);margin:8px 0">Jedna rezervace = jeden řádek.</h1>
+      <p class="muted">Vyplňte studio, jméno, příjezd a odjezd. Když se termín kryje s jinou rezervací ve stejném studiu, uložení se nepovede. Klientský kalendář se aktualizuje sám na tomto počítači.</p>
       <p id="flash" class="flash hidden"></p>
+      <p id="err" class="err hidden"></p>
+
+      <form class="new-stay" id="new-form">
+        <label>Studio
+          <select id="new-studio">
+            <option value="filemon">Filemon</option>
+            <option value="baucis">Baucis</option>
+          </select>
+        </label>
+        <label>Jméno
+          <input id="new-name" placeholder="např. Šárka" required />
+        </label>
+        <label>Příjezd
+          <input id="new-from" type="date" required />
+        </label>
+        <label>Odjezd
+          <input id="new-to" type="date" required />
+        </label>
+        <button class="btn btn-terra" type="submit">Přidat rezervaci</button>
+      </form>
+
       <div class="admin-bar">
         <label>Rok <select id="year"></select></label>
-        <button class="btn btn-gold" id="new-year" type="button">+ Nový rok</button>
-        <div class="tools">
-          <button class="tool active-busy" data-tool="busy" type="button">Obsadit</button>
-          <button class="tool" data-tool="free" type="button">Uvolnit</button>
-        </div>
         <button class="btn btn-ghost" id="download" type="button">Stáhnout zálohu</button>
         <label class="btn btn-ghost">Nahrát zálohu<input id="upload" type="file" accept="application/json" hidden /></label>
         <button class="btn btn-ghost" id="reset" type="button">Obnovit z webu</button>
       </div>
       <p id="updated" class="muted"></p>
 
-      <div class="admin-shell">
-        <div id="cal" class="months"></div>
-        <aside class="side">
-          <h3>Pobyty v roce</h3>
-          <div id="stays"></div>
-          <h3 style="margin-top:22px">Historie úprav</h3>
-          <ul class="log" id="log"></ul>
-        </aside>
+      <div class="table-wrap">
+        <table class="stay-table">
+          <thead>
+            <tr>
+              <th>Studio</th>
+              <th>Jméno</th>
+              <th>Příjezd</th>
+              <th>Odjezd</th>
+              <th>Nocí</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
       </div>
     </div>
   </main>
 
-  <div class="modal hidden" id="modal">
-    <div class="box">
-      <h3>Nový pobyt</h3>
-      <p id="modal-range" class="muted"></p>
-      <label>Jméno v kalendáři <input id="guest" placeholder="např. Šárka" /></label>
-      <div style="display:flex;gap:8px;margin-top:16px">
-        <button class="btn btn-terra" id="save-guest" type="button">Uložit</button>
-        <button class="btn btn-ghost" id="cancel-modal" type="button">Zrušit</button>
-      </div>
-    </div>
-  </div>
-
   <script src="js/site.js"></script>
   <script src="js/store.js"></script>
-  <script src="js/calendar.js"></script>
   <script src="js/admin.js"></script>
 </body>
 </html>
