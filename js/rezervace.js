@@ -24,8 +24,6 @@ function paint() {
     onDay: (date, studio, busy) => {
       if (studio !== STUDIO) {
         STUDIO = studio;
-        const box = document.getElementById("studio");
-        if (box) box.value = studio;
         pick = [];
       }
       if (busy || !inSeason(DATA, date)) return;
@@ -47,7 +45,7 @@ function updateInquiry() {
     return;
   }
   if (pick.length < 2) {
-    box.textContent = "Klikněte na den příjezdu a pak na den odjezdu. Oba dny jsou obsazené celé.";
+    box.textContent = "Klikněte v řádku Baucis nebo Filemon na den příjezdu a pak na den odjezdu.";
     btn.disabled = true;
     return;
   }
@@ -75,11 +73,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   YEAR = seasonYear();
   document.getElementById("year").addEventListener("change", (e) => {
     YEAR = Number(e.target.value);
-    pick = [];
-    paint();
-  });
-  document.getElementById("studio").addEventListener("change", (e) => {
-    STUDIO = e.target.value;
     pick = [];
     paint();
   });
