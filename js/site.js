@@ -53,7 +53,6 @@ function brandSvg() {
 }
 
 function initScrollStory() {
-  const bg = document.querySelector(".hero-bg");
   const reveals = document.querySelectorAll(".reveal");
   if (reveals.length) {
     const io = new IntersectionObserver(
@@ -66,23 +65,6 @@ function initScrollStory() {
     );
     reveals.forEach((el) => io.observe(el));
   }
-  const hero = document.querySelector(".hero");
-  const coarse = window.matchMedia("(pointer: coarse)").matches;
-  if (!bg || !hero || coarse) return;
-  let raf = 0;
-  const update = () => {
-    raf = 0;
-    const r = hero.getBoundingClientRect();
-    const top = Math.max(0, -r.top);
-    const bottom = Math.max(0, window.innerHeight - r.bottom);
-    bg.style.clipPath = `inset(${top}px 0 ${bottom}px 0)`;
-  };
-  const onScroll = () => {
-    if (!raf) raf = requestAnimationFrame(update);
-  };
-  update();
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll, { passive: true });
 }
 
 function seasonYear(d) {

@@ -119,7 +119,8 @@ h1, h2, h3, .serif {
   align-items: center;
   position: relative;
   overflow: hidden;
-  background: var(--sea-deep);
+  background: transparent;
+  z-index: 0;
 }
 .hero-bg {
   position: fixed;
@@ -170,7 +171,8 @@ h1, h2, h3, .serif {
 .hero-meta b { display: block; font-size: 1.05rem; color: #fff; }
 
 /* SECTIONS */
-section { padding: 92px 0; }
+section { padding: 92px 0; position: relative; z-index: 1; background: var(--foam); }
+.hero { background: transparent; z-index: 0; }
 .section-head { max-width: 38rem; margin-bottom: 42px; }
 .section-head h2 { font-size: clamp(2rem, 4vw, 3.1rem); margin: 8px 0 12px; }
 .muted { color: var(--muted); }
