@@ -21,7 +21,8 @@
     <nav class="nav-links" data-nav></nav>
   </header>
 
-  <section class="hero" style="background-image:url('img/hero.jpg')">
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true" style="background-image:url('img/hero.jpg')"></div>
     <div class="hero-inner">
       <p class="eyebrow">Řecko · ostrov Korfu · 2026</p>
       <h1>Dvě studia v olivovém tichu, 650 metrů od moře.</h1>
@@ -47,37 +48,41 @@
     </div>
   </div>
 
-  <section id="pribeh">
+  <section id="pribeh" class="reveal">
     <div class="wrap split">
-      <div class="story-frame"><img src="img/olives.jpg" alt="Olivový háj na Korfu" /></div>
+      <div class="story-frame"><img src="img/unas/13.jpg" alt="Pláž Santa Barbara pod útesem" /></div>
       <div class="prose">
         <p class="eyebrow">Dům, ne hotel</p>
         <h2>Klidná část ostrova. Vzbudí vás spíš kohout než diskotéka.</h2>
-        <p>Máme <a href="studia.html">dvě studia</a> — Filemon a Baucis — v naprosto klidné oblasti. Na rozdíl od dřívějších sezón si délku pobytu volíte sami; týdenní intervaly jsme zrušili. Minimum je pět nocí.</p>
-        <p>Na několik kilometrů dlouhou písečnou pláž s pozvolným vstupem do vody je to pěšky 650 metrů po místní silničce. Cestou jsou tři taverny a dva obchůdky. Nebo jděte necelý kilometr olivovým hájem a přes útes — výhledy na moře za to stojí.</p>
-        <p>Na pláži si vyberete: rušnější část u restaurací a barů, nebo kus dál, kde budete skoro sami, s koupáním nahoře i dole. Na hlavní pláži jdou objednat výlety po moři se šnorchlováním a půjčit kajak nebo motorový člun. Lehátka se slunečníkem na organizované pláži máte k objednané kávě, koktejlu, snacku nebo pivu.</p>
+        <p>Dvě studia v naprosto klidné oblasti. Délku pobytu si volíte sami, minimum je pět nocí.</p>
+        <div class="more">
+          <p>Na písečnou pláž s pozvolným vstupem je to 650 metrů. Cestou tři taverny a dva obchůdky. Nebo olivovým hájem přes útes — výhledy na moře za to stojí.</p>
+          <p>Na pláži rušnější část u barů, nebo kus dál skoro sami pod útesem. Na hlavní pláži výlety po moři, kajak, člun. Lehátko se slunečníkem k objednané kávě nebo pivu.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <section id="plaze">
+  <section id="plaze" class="reveal">
     <div class="wrap mosaic">
-      <img class="tall" src="img/unas/15.jpg" alt="Písečná pláž Santa Barbara" />
+      <img class="tall" src="img/unas/17.jpg" alt="Santa Barbara — průzračná voda" />
       <div class="stack">
-        <img src="img/unas/19.jpg" alt="Moře u pláže" />
-        <img src="img/unas/11.jpg" alt="Taverna u pláže" />
+        <img src="img/unas/13.jpg" alt="Liduprázdná pláž pod útesem" />
+        <img src="img/unas/11.jpg" alt="Písek a vlny Santa Barbara" />
       </div>
     </div>
     <div class="wrap prose" style="margin-top:36px">
       <p class="eyebrow">Santa Barbara / Marathias</p>
       <h2>Kilometry písku. U barů, nebo skoro sami pod útesem.</h2>
-      <p>Nejbližší taverna s domácí kuchyní je 80 metrů — stravování si lze objednat. Obchůdek se základními potravinami 250 m. Supermarkety LIDL a Masoutis 4,5 km.</p>
-      <p>Korfu i přilehlé ostrovy nabízejí spoustu výletů. Když budete chtít, rádi poradíme kam vyrazit. Pro cestování po ostrově víc než ležení na pláži se hodí květen, červen, září a říjen.</p>
-      <p><a class="btn btn-sea" href="galerie.html">Galerie: u nás, poblíž, opodál, různé</a></p>
+      <p>Taverna 80 m, obchůdek 250 m, LIDL a Masoutis 4,5 km.</p>
+      <div class="more">
+        <p>Korfu i okolní ostrovy nabízejí spoustu výletů — rádi poradíme. Na cestování po ostrově se hodí květen, červen, září a říjen.</p>
+        <p><a class="btn btn-sea" href="galerie.html">Galerie: u nás, poblíž, opodál, různé</a></p>
+      </div>
     </div>
   </section>
 
-  <section>
+  <section class="reveal">
     <div class="wrap">
       <div class="notice">
         <div>
@@ -90,7 +95,7 @@
     </div>
   </section>
 
-  <section id="studia-teaser" style="background:#efe6d6">
+  <section id="studia-teaser" class="reveal" style="background:#efe6d6">
     <div class="wrap">
       <div class="section-head">
         <p class="eyebrow">Ubytování</p>
@@ -103,8 +108,10 @@
           <div class="body">
             <span class="tag">východ · větší terasa</span>
             <h3>Studio Filemon</h3>
-            <p class="muted">Příjemný odpolední stín. Terasa je větší — ideální na pomalé snídaně.</p>
-            <p><a href="studia.html">Vybavení a všechna fota →</a></p>
+            <p class="muted">Příjemný odpolední stín. Terasa je větší.</p>
+            <div class="more">
+              <p>Ideální na pomalé snídaně. <a href="studia.html">Vybavení a všechna fota →</a></p>
+            </div>
           </div>
         </article>
         <article class="card">
@@ -112,21 +119,25 @@
           <div class="body">
             <span class="tag">západ · olivové háje</span>
             <h3>Studio Baucis</h3>
-            <p class="muted">Menší terasa s výhledem do oliv a na zapadající slunce.</p>
-            <p><a href="studia.html">Vybavení a všechna fota →</a></p>
+            <p class="muted">Menší terasa, olivy a západ slunce.</p>
+            <div class="more">
+              <p><a href="studia.html">Vybavení a všechna fota →</a></p>
+            </div>
           </div>
         </article>
       </div>
     </div>
   </section>
 
-  <section>
+  <section class="reveal">
     <div class="wrap split">
       <div class="prose">
         <p class="eyebrow">Jméno domu</p>
         <h2>Proč Filemon a Baucis?</h2>
-        <p>Inspirovali jsme se starořeckou bájí. Stařečci Filemon a Baucis nabídli hostům všechno, co měli. V řeči dneška: férový poměr cena / výkon. Chceme vám nabídnout maximum možného.</p>
-        <p class="muted">V případě nejasností napište. Cílem je vaše spokojená dovolená. Když nějakou informaci nenašli, není to proto, že bychom chtěli něco zatajit — prostě nelze myslet na všechno.</p>
+        <p>Stařečci z báje nabídli hostům všechno, co měli. My chceme férový poměr cena / pohoda.</p>
+        <div class="more">
+          <p class="muted">Když nějakou informaci nenašli, není to proto, že bychom chtěli něco zatajit — prostě nelze myslet na všechno.</p>
+        </div>
       </div>
       <div>
         <iframe class="yt" src="https://www.youtube.com/embed/eETgCr5KmUw" title="Báje Filemon a Baucis" allowfullscreen></iframe>

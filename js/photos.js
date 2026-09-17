@@ -25,21 +25,36 @@ const ALBUM_META = {
   },
 };
 
-function lightbox(urls, start) {
+function normalizePhotos(files) {
+  return files.map((f) =>
+    typeof f === "string" ? { file: f, caption: "" } : { file: f.file, caption: f.caption || "" }
+  );
+}
+
+function lightbox(items, start) {
   let i = start;
   const box = document.createElement("div");
   box.className = "lb";
   box.innerHTML = `<button type="button" aria-label="Zavřít">×</button>
     <button class="prev" type="button" aria-label="Předchozí">‹</button>
-    <img alt="">
+    <figure>
+      <img alt="">
+      <figcaption></figcaption>
+    </figure>
     <button class="next" type="button" aria-label="Další">›</button>`;
   const img = box.querySelector("img");
-  const show = () => { img.src = urls[i]; };
+  const cap = box.querySelector("figcaption");
+  const show = () => {
+    img.src = items[i].src;
+    img.alt = items[i].caption || "";
+    cap.textContent = items[i].caption || "";
+    cap.style.display = items[i].caption ? "" : "none";
+  };
   show();
   const close = () => box.remove();
   box.querySelector("button").onclick = close;
-  box.querySelector(".prev").onclick = (e) => { e.stopPropagation(); i = (i - 1 + urls.length) % urls.length; show(); };
-  box.querySelector(".next").onclick = (e) => { e.stopPropagation(); i = (i + 1) % urls.length; show(); };
+  box.querySelector(".prev").onclick = (e) => { e.stopPropagation(); i = (i - 1 + items.length) % items.length; show(); };
+  box.querySelector(".next").onclick = (e) => { e.stopPropagation(); i = (i + 1) % items.length; show(); };
   box.addEventListener("click", (e) => { if (e.target === box) close(); });
   document.addEventListener("keydown", function onKey(e) {
     if (!document.body.contains(box)) return document.removeEventListener("keydown", onKey);
@@ -52,19 +67,22 @@ function lightbox(urls, start) {
 
 function renderAlbum(el, key, files, folder) {
   const meta = ALBUM_META[key];
-  const urls = files.map((f) => `img/${folder || key}/${f}`);
+  const photos = normalizePhotos(files);
+  const items = photos.map((p) => ({
+    src: `img/${folder || key}/${p.file}`,
+    caption: p.caption,
+  }));
   const block = document.createElement("section");
   block.className = "album-block";
   block.dataset.album = key;
   block.innerHTML = `<h2>${meta.title}</h2><p class="muted" style="max-width:46rem">${meta.lead}</p><div class="ggrid"></div>`;
   const grid = block.querySelector(".ggrid");
-  urls.forEach((src, idx) => {
-    const im = document.createElement("img");
-    im.src = src;
-    im.alt = meta.title;
-    im.loading = "lazy";
-    im.addEventListener("click", () => lightbox(urls, idx));
-    grid.append(im);
+  items.forEach((item, idx) => {
+    const fig = document.createElement("figure");
+    fig.className = "gitem";
+    fig.innerHTML = `<img src="${item.src}" alt="${item.caption || meta.title}" loading="lazy">${item.caption ? `<figcaption>${item.caption}</figcaption>` : ""}`;
+    fig.addEventListener("click", () => lightbox(items, idx));
+    grid.append(fig);
   });
   el.append(block);
 }

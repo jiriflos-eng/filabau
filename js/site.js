@@ -23,7 +23,30 @@ function brandSvg() {
   return `<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#123a46"/><circle cx="32" cy="26" r="10" fill="#e8c872"/><path d="M18 46c6-10 10-10 14-4 4-8 10-8 14 2 0 0-8 10-14 10S18 46 18 46z" fill="#7d9a5a"/></svg>`;
 }
 
-document.addEventListener("DOMContentLoaded", initNav);
+function initScrollStory() {
+  const bg = document.querySelector(".hero-bg");
+  const reveals = document.querySelectorAll(".reveal");
+  if (reveals.length) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => e.target.classList.toggle("is-on", e.isIntersecting));
+      },
+      { threshold: 0.45, rootMargin: "-12% 0px -12% 0px" }
+    );
+    reveals.forEach((el) => io.observe(el));
+  }
+  if (!bg) return;
+  const onScroll = () => {
+    bg.style.transform = `translate3d(0, ${window.scrollY * 0.28}px, 0)`;
+  };
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initNav();
+  initScrollStory();
+});
 
 const WA = "420725866862";
 const MAIL = "jiripilnaj@seznam.cz";
