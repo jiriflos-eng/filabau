@@ -34,31 +34,44 @@ function paint() {
 }
 
 function onDay(date, studio, busy) {
+  if (TOOL === "free") {
+    const stay = findStay(DATA, YEAR, studio, date);
+    if (!stay) return toast("Tady nic obsazené není.");
+    const n = setRange(DATA, YEAR, studio, stay.start, stay.end, false, "");
+    toast(`Smazán pobyt ${stay.note || ""} · ${fmtDate(stay.start)} – ${fmtDate(stay.end)} (${n} dní)`);
+    pending = null;
+    paint();
+    return;
+  }
+  if (busy && !pending) {
+    toast("Klikněte na volný den příjezdu.");
+    return;
+  }
   if (pending && pending.studio === studio) {
     finishRange(pending.start, date, studio);
     pending = null;
     return;
   }
   pending = { start: date, studio };
-  toast("Klikněte na poslední den rozsahu (nebo znovu na stejný den).");
+  toast("Teď klikněte na den odjezdu (celý den).");
   paint();
 }
 
 function finishRange(a, b, studio) {
-  const occupy = TOOL === "busy";
-  if (occupy) {
-    openModal(a, b, studio);
+  if (parseIso(a) > parseIso(b)) [a, b] = [b, a];
+  if (!rangeFree(DATA, YEAR, studio, a, b)) {
+    toast("Termín se překrývá s jiným pobytem, nebo je mimo sezónu.");
     return;
   }
-  const n = setRange(DATA, YEAR, studio, a, b, false, "");
-  toast(`Uvolněno ${n} dní · ${studio}`);
-  paint();
+  openModal(a, b, studio);
 }
 
 function openModal(a, b, studio) {
+  const nights = nightsBetween(a, b);
+  const days = stayDays(a, b).length;
   const m = document.getElementById("modal");
   document.getElementById("modal-range").textContent =
-    `${studio === "filemon" ? "Filemon" : "Baucis"} · ${a}${a !== b ? " – " + b : ""}`;
+    `${studio === "filemon" ? "Filemon" : "Baucis"} · příjezd ${fmtDate(a)} · odjezd ${fmtDate(b)} · ${nights} nocí (${days} dní včetně odjezdu)`;
   document.getElementById("guest").value = "";
   m.dataset.start = a;
   m.dataset.end = b;
@@ -80,7 +93,7 @@ function renderHistory() {
     ? stays
         .map(
           (s) =>
-            `<div class="stay"><b>${s.studio}</b><br>${s.start} → ${s.end}<br>${s.note || "<span class='muted'>bez jména</span>"}</div>`
+            `<div class="stay"><b>${s.note || "bez jména"}</b> · ${s.studio}<br>příjezd ${fmtDate(s.start)}<br>odjezd ${fmtDate(s.end)}</div>`
         )
         .join("")
     : `<p class="muted">V roce ${YEAR} zatím žádné pobyty.</p>`;
@@ -166,7 +179,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("guest").value.trim()
     );
     closeModal();
-    toast(`Obsazeno ${n} dní`);
+    toast(`Uloženo: příjezd ${fmtDate(m.dataset.start)} · odjezd ${fmtDate(m.dataset.end)}`);
     paint();
   });
   document.getElementById("cancel-modal").addEventListener("click", closeModal);

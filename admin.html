@@ -37,7 +37,7 @@
     <div class="wrap hidden" id="app">
       <p class="eyebrow">Kalendář ubytování</p>
       <h1 class="serif" style="font-size:clamp(2rem,4vw,3rem);margin:8px 0">Klikněte na dny. Ukládá se samo.</h1>
-      <p class="muted">Červená tužka obsadí, zelená uvolní. První klik je začátek, druhý konec. Roky zůstávají v historii.</p>
+      <p class="muted">Obsadit: první klik příjezd, druhý odjezd (oba celé dny), pak jméno — třeba Šárka. Uvolnit: klik na pobyt ho smaže celý. Roky zůstávají v historii.</p>
       <p id="flash" class="flash hidden"></p>
       <div class="admin-bar">
         <label>Rok <select id="year"></select></label>
@@ -66,9 +66,9 @@
 
   <div class="modal hidden" id="modal">
     <div class="box">
-      <h3>Jméno hosta</h3>
+      <h3>Nový pobyt</h3>
       <p id="modal-range" class="muted"></p>
-      <label>Volitelné <input id="guest" placeholder="např. Šárka" /></label>
+      <label>Jméno v kalendáři <input id="guest" placeholder="např. Šárka" /></label>
       <div style="display:flex;gap:8px;margin-top:16px">
         <button class="btn btn-terra" id="save-guest" type="button">Uložit</button>
         <button class="btn btn-ghost" id="cancel-modal" type="button">Zrušit</button>

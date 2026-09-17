@@ -80,6 +80,31 @@ function isBusy(data, year, studio, dateStr) {
   return Boolean(data.years[String(year)]?.[studio]?.[dateStr]);
 }
 
+function fmtDate(s) {
+  const [y, m, d] = s.split("-");
+  return `${Number(d)}. ${Number(m)}. ${y}`;
+}
+
+function stayDays(start, end) {
+  const out = [];
+  let a = start;
+  let b = end;
+  if (parseIso(a) > parseIso(b)) [a, b] = [b, a];
+  for (let d = a; parseIso(d) <= parseIso(b); d = addDays(d, 1)) out.push(d);
+  return out;
+}
+
+function findStay(data, year, studio, date) {
+  return staysInYear(data, year, studio).find((s) => date >= s.start && date <= s.end) || null;
+}
+
+function stayRole(stay, date) {
+  if (stay.start === stay.end) return "both";
+  if (date === stay.start) return "arrive";
+  if (date === stay.end) return "depart";
+  return "mid";
+}
+
 function setRange(data, year, studio, start, end, occupy, note) {
   const y = String(year);
   data.years[y] = data.years[y] || { filemon: {}, baucis: {} };
@@ -136,10 +161,7 @@ function nightsBetween(start, end) {
 }
 
 function rangeFree(data, year, studio, start, end) {
-  if (parseIso(start) > parseIso(end)) return false;
-  for (let d = start; parseIso(d) < parseIso(end); d = addDays(d, 1)) {
-    if (isBusy(data, year, studio, d)) return false;
-    if (!inSeason(data, d)) return false;
-  }
-  return true;
+  const days = stayDays(start, end);
+  if (!days.length) return false;
+  return days.every((d) => !isBusy(data, year, studio, d) && inSeason(data, d));
 }
