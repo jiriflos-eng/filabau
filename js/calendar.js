@@ -112,3 +112,99 @@ function renderCalendar(el, opts) {
     });
   }
 }
+
+function renderGuestCalendar(el, opts) {
+  const { data, year, studio, selected, onDay } = opts;
+  const st = STUDIOS.find((s) => s.id === studio) || STUDIOS[0];
+  const monthNames = [
+    "Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
+    "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec",
+  ];
+  const dow = ["P", "Ú", "S", "Č", "P", "S", "N"];
+  const startM = (data.season && data.season.startMonth) || 4;
+  const endM = (data.season && data.season.endMonth) || 10;
+
+  el.innerHTML = Array.from({ length: endM - startM + 1 }, (_, i) => startM - 1 + i)
+    .map((m) => {
+      const cells = monthGrid(year, m);
+      const weeks = [];
+      for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+      const weekHtml = weeks
+        .map((week) => {
+          const dates = week.map((d) =>
+            d ? `${year}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}` : null
+          );
+          const items = [];
+          let col = 0;
+          while (col < 7) {
+            const date = dates[col];
+            const d = week[col];
+            if (!d) {
+              items.push(`<span class="gpill blank" style="grid-column:${col + 1}"></span>`);
+              col++;
+              continue;
+            }
+            const stay = findStay(data, year, st.id, date);
+            if (!stay) {
+              const season = inSeason(data, date);
+              const sel = selected && selected.dates?.includes(date);
+              items.push(
+                `<button type="button" class="gpill ${season ? "free" : "off"} ${sel ? "sel" : ""}" style="grid-column:${col + 1}" data-date="${date}" data-studio="${st.id}" ${season ? "" : "disabled"}>${d}</button>`
+              );
+              col++;
+              continue;
+            }
+            let end = col;
+            while (
+              end + 1 < 7 &&
+              dates[end + 1] &&
+              findStay(data, year, st.id, dates[end + 1]) &&
+              findStay(data, year, st.id, dates[end + 1]).start === stay.start
+            ) {
+              end++;
+            }
+            const span = end - col + 1;
+            const starts = dates[col] === stay.start;
+            const ends = dates[end] === stay.end;
+            const days = [];
+            for (let k = col; k <= end; k++) {
+              const sel = selected && selected.dates?.includes(dates[k]);
+              const isA = dates[k] === stay.start;
+              const isD = dates[k] === stay.end;
+              days.push(
+                `<button type="button" class="gday ${sel ? "sel" : ""}" data-date="${dates[k]}" data-studio="${st.id}" data-busy="1">
+                  <span class="gnum">${week[k]}</span>
+                  ${isA ? `<span class="gtag">Příjezd</span>` : ""}
+                  ${isD && !isA ? `<span class="gtag">Odjezd</span>` : ""}
+                  ${isA && isD ? `<span class="gtag">Příj. / odj.</span>` : ""}
+                </button>`
+              );
+            }
+            const name = stay.note || "Obsazeno";
+            items.push(
+              `<div class="gband ${starts ? "starts" : ""} ${ends ? "ends" : ""} ${span <= 2 ? "short" : ""}" style="grid-column:${col + 1} / ${end + 2}" title="${name} · ${fmtDate(stay.start)} – ${fmtDate(stay.end)}">
+                <div class="gband-days" style="grid-template-columns:repeat(${span},1fr)">${days.join("")}</div>
+                <div class="gname">${name}</div>
+              </div>`
+            );
+            col = end + 1;
+          }
+          return `<div class="guest-week"><div class="guest-lab">${st.label}</div><div class="guest-track">${items.join("")}</div></div>`;
+        })
+        .join("");
+      return `<section class="guest-month">
+        <h3>${monthNames[m]} ${year}</h3>
+        <div class="guest-dow"><span></span>${dow.map((x) => `<span>${x}</span>`).join("")}</div>
+        ${weekHtml}
+      </section>`;
+    })
+    .join("");
+
+  if (onDay) {
+    el.querySelectorAll(".gpill.free, .gday").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        onDay(btn.dataset.date, btn.dataset.studio, btn.dataset.busy === "1" || btn.classList.contains("busy"));
+      });
+    });
+  }
+}

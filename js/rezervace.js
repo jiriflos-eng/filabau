@@ -16,16 +16,12 @@ function paint() {
   const years = yearsOf(DATA);
   const sel = document.getElementById("year");
   sel.innerHTML = years.map((y) => `<option ${y === YEAR ? "selected" : ""}>${y}</option>`).join("");
-  renderCalendar(document.getElementById("cal"), {
+  renderGuestCalendar(document.getElementById("cal"), {
     data: DATA,
     year: YEAR,
+    studio: STUDIO,
     selected: { studio: STUDIO, dates: selectedDates() },
     onDay: (date, studio, busy) => {
-      if (studio !== STUDIO) {
-        STUDIO = studio;
-        document.getElementById("studio").value = studio;
-        pick = [];
-      }
       if (busy || !inSeason(DATA, date)) return;
       if (pick.length === 0 || pick.length === 2) pick = [date];
       else pick = [pick[0], date];
