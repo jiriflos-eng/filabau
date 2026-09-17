@@ -127,7 +127,7 @@ function guestTrackHtml(data, year, st, week, dates, selected) {
     const stay = findStay(data, year, st.id, date);
     if (!stay) {
       const season = inSeason(data, date);
-      const sel = selected && selected.studio === st.id && selected.dates?.includes(date);
+      const sel = selected && selected[st.id]?.includes(date);
       items.push(
         `<button type="button" class="gpill ${season ? "free" : "off"} ${sel ? "sel" : ""}" style="grid-column:${col + 1}" data-date="${date}" data-studio="${st.id}" ${season ? "" : "disabled"}>${d}</button>`
       );
@@ -148,7 +148,7 @@ function guestTrackHtml(data, year, st, week, dates, selected) {
     const ends = dates[end] === stay.end;
     const days = [];
     for (let k = col; k <= end; k++) {
-      const sel = selected && selected.studio === st.id && selected.dates?.includes(dates[k]);
+      const sel = selected && selected[st.id]?.includes(dates[k]);
       const isA = dates[k] === stay.start;
       const isD = dates[k] === stay.end;
       days.push(
