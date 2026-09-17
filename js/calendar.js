@@ -29,7 +29,7 @@ function splitName(name, dayCount) {
 
 function cellInfo(data, year, studio, date) {
   const stay = findStay(data, year, studio, date);
-  if (!stay) return { busy: false, letter: "", arrive: false, depart: false, title: "Volno" };
+  if (!stay) return { busy: false, letter: "", arrive: false, depart: false, title: t("free") };
   const days = stayDays(stay.start, stay.end);
   const idx = days.indexOf(date);
   const parts = splitName(stay.note, days.length);
@@ -44,11 +44,8 @@ function cellInfo(data, year, studio, date) {
 
 function renderCalendar(el, opts) {
   const { data, year, onDay, selected } = opts;
-  const monthNames = [
-    "Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
-    "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec",
-  ];
-  const dow = ["P", "Ú", "S", "Č", "P", "S", "N"];
+  const monthNames = t("months").split("|");
+  const dow = t("dow").split("|");
   const startM = (data.season && data.season.startMonth) || 4;
   const months = [];
   for (let m = startM - 1; m < 12; m++) months.push(m);
@@ -83,7 +80,7 @@ function renderCalendar(el, opts) {
                   ]
                     .filter(Boolean)
                     .join(" ");
-                  const title = info.busy ? info.title : season ? "Volno" : "Mimo sezónu";
+                  const title = info.busy ? info.title : season ? t("free") : t("off_season");
                   const letter = info.busy ? info.letter : "";
                   return `<td class="${cls}" data-date="${date}" data-studio="${st.id}" title="${title}">${letter}</td>`;
                 })
@@ -154,13 +151,13 @@ function guestTrackHtml(data, year, st, week, dates, selected) {
       days.push(
         `<button type="button" class="gday ${sel ? "sel" : ""}" data-date="${dates[k]}" data-studio="${st.id}" data-busy="1">
           <span class="gnum">${week[k]}</span>
-          ${isA ? `<span class="gtag gtag-in">Příjezd</span>` : ""}
-          ${isD && !isA ? `<span class="gtag gtag-out">Odjezd</span>` : ""}
-          ${isA && isD ? `<span class="gtag gtag-out">Příj. / odj.</span>` : ""}
+          ${isA ? `<span class="gtag gtag-in">${t("arrive")}</span>` : ""}
+          ${isD && !isA ? `<span class="gtag gtag-out">${t("depart")}</span>` : ""}
+          ${isA && isD ? `<span class="gtag gtag-out">${t("arrive_depart")}</span>` : ""}
         </button>`
       );
     }
-    const name = stay.note || "Obsazeno";
+    const name = stay.note || t("occupied");
     items.push(
       `<div class="gband ${starts ? "starts" : ""} ${ends ? "ends" : ""} ${span <= 2 ? "short" : ""}" style="grid-column:${col + 1} / ${end + 2}" title="${name} · ${fmtDate(stay.start)} – ${fmtDate(stay.end)}">
         <div class="gband-days" style="grid-template-columns:repeat(${span},1fr)">${days.join("")}</div>
@@ -178,11 +175,8 @@ function renderGuestCalendar(el, opts) {
     { id: "baucis", label: "Baucis", rowClass: "is-top" },
     { id: "filemon", label: "Filemon", rowClass: "is-bot" },
   ];
-  const monthNames = [
-    "Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
-    "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec",
-  ];
-  const dow = ["P", "Ú", "S", "Č", "P", "S", "N"];
+  const monthNames = t("months").split("|");
+  const dow = t("dow").split("|");
   const startM = (data.season && data.season.startMonth) || 4;
   const endM = (data.season && data.season.endMonth) || 10;
 

@@ -29,13 +29,15 @@ function initNav() {
   const links = document.querySelector("[data-nav]");
   if (links) {
     links.innerHTML = `
-      <a href="index.html">Úvod</a>
-      <a href="studia.html">Studia</a>
-      <a href="cenik.html">Ceník</a>
-      <a href="jak-k-nam.html">Jak k nám</a>
-      <a href="info.html">Info</a>
-      <a href="galerie.html">Galerie</a>
-      <a class="btn btn-gold" href="rezervace.html">Vybrat termín</a>`;
+      <a href="index.html">${t("nav_home")}</a>
+      <a href="studia.html">${t("nav_studios")}</a>
+      <a href="cenik.html">${t("nav_prices")}</a>
+      <a href="jak-k-nam.html">${t("nav_howto")}</a>
+      <a href="info.html">${t("nav_info")}</a>
+      <a href="galerie.html">${t("nav_gallery")}</a>
+      <a class="btn btn-gold" href="rezervace.html">${t("nav_book")}</a>
+      ${langSelectHtml()}`;
+    links.querySelector(".lang-select")?.addEventListener("change", (e) => setLang(e.target.value));
   }
   const nav = document.querySelector(".nav");
   const btn = document.querySelector(".menu-btn");
@@ -91,9 +93,10 @@ function fillSeasonYears() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  fillSeasonYears();
   initIcons();
+  applyI18n();
   initNav();
+  fillSeasonYears();
   initScrollStory();
 });
 

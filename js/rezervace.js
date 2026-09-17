@@ -71,30 +71,30 @@ function updateInquiry() {
   box.classList.remove("has-picks");
   if (bad) {
     if (bad.status === "partial") {
-      box.textContent = `${bad.label}: příjezd ${fmtDate(bad.pick[0])} - teď klikněte na den odjezdu ve stejném řádku.`;
+      box.textContent = t("sum_partial", { label: bad.label, date: fmtDate(bad.pick[0]) });
     } else if (bad.status === "short") {
-      box.textContent = `${bad.label}: minimální pobyt je ${DATA.minNights} nocí. Teď máte ${bad.nights}.`;
+      box.textContent = t("sum_short", { label: bad.label, min: DATA.minNights, n: bad.nights });
     } else {
-      box.textContent = `${bad.label}: ve vybraném termínu je studio obsazené. Zkuste jiné dny.`;
+      box.textContent = t("sum_busy", { label: bad.label });
     }
     btn.disabled = true;
     return;
   }
   if (!ok.length) {
-    box.textContent = "Klikněte v řádku Baucis a/nebo Filemon na příjezd a odjezd. Můžete poptat obě studia najednou.";
+    box.textContent = t("sum_empty");
     btn.disabled = true;
     return;
   }
   box.classList.add("has-picks");
   box.innerHTML =
-    `<div class="pick-head">Vybrané termíny</div>` +
+    `<div class="pick-head">${t("pick_head")}</div>` +
     ok
       .map(
         (s) => `<div class="pick-row">
           <b>${s.label}</b>
-          <span><small>příjezd</small>${fmtDate(s.start)}</span>
-          <span><small>odjezd</small>${fmtDate(s.end)}</span>
-          <span class="pick-nights">${s.nights} nocí</span>
+          <span><small>${t("arrive")}</small>${fmtDate(s.start)}</span>
+          <span><small>${t("depart")}</small>${fmtDate(s.end)}</span>
+          <span class="pick-nights">${t("nights", { n: s.nights })}</span>
         </div>`
       )
       .join("");
@@ -118,12 +118,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const email = document.getElementById("email").value.trim();
     const msg = document.getElementById("msg").value.trim();
     const lines = ok.map(
-      (s) => `Studio ${s.label}\nPříjezd: ${fmtDate(s.start)}\nOdjezd: ${fmtDate(s.end)}\nPočet nocí: ${s.nights}`
+      (s) =>
+        `${t("mail_studio", { label: s.label })}\n${t("mail_in", { date: fmtDate(s.start) })}\n${t("mail_out", { date: fmtDate(s.end) })}\n${t("mail_nights", { n: s.nights })}`
     );
-    const text = `Dobrý den, chtěl(a) bych rezervovat:\n\n${lines.join("\n\n")}\n\nJméno: ${name}\nTelefon: ${phone}\nE-mail: ${email}\n${msg ? "Zpráva: " + msg : ""}`;
+    const text = `${t("mail_hello")}\n\n${lines.join("\n\n")}\n\n${t("mail_name", { v: name })}\n${t("mail_phone", { v: phone })}\n${t("mail_email", { v: email })}\n${msg ? t("mail_msg", { v: msg }) : ""}`;
     const via = document.querySelector("[name=via]:checked").value;
     if (via === "wa") window.open(whatsappLink(text), "_blank");
-    else window.location.href = mailLink("Poptávka Filemon a Baucis", text);
+    else window.location.href = mailLink(t("mail_subject"), text);
   });
   paint();
 });

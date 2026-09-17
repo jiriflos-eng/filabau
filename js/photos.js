@@ -1,34 +1,10 @@
 const ALBUM_META = {
-  unas: {
-    icon: "i-home",
-    title: "U nás",
-    lead: "Cestou k pláži Santa Barbara minete tavernu Maltas, Elia a Barbados. Na Marathias je organizovaná část s lehátky, sprchou a bary - i dlouhá liduprázdná pláž pod útesem. Písek, pozvolný vstup, průzračná voda. Moře bývá klidné, ale umí se i zlobit.",
-  },
-  pobliz: {
-    icon: "i-near",
-    title: "Poblíž",
-    lead: "Cesta na pláž přes útes, jižní Agios Georgios (krámky, bary, taverny, půjčovny), pláž Issos na okraji pouště, Megas Choros, pláž Notos a rybářská vesnice Petriti, Argirades, rezervace Alikes, Kanoula, Lefkimi, Gardenos, Chlomos.",
-  },
-  opodal: {
-    icon: "i-far",
-    title: "Opodál",
-    lead: "Kerkyra - hlavní město ostrova. Achillion, letní sídlo císařovny Sisi. Restaurace Archontiko, Moraitika, Paleokastritsa, pláž Timoni, mys Drastis, Canal d’Amour, Pantokrator, Angelokastro, Kaiser Throne, Agios Simeon, Agios Gordis, ostrov Paxos, Peroulades.",
-  },
-  ruzne: {
-    icon: "i-misc",
-    title: "Různé",
-    lead: "Velikonoce: Květná neděle s procesím sv. Spyridona a dechovkami. Na Bílou sobotu v 11 hodin lidé vyhazují z oken keramické nádoby s vodou - ulice jsou plné střepů, úlomky si někteří schovávají pro štěstí. Masopust v Lefkimmi, jaro a podzim na Korfu.",
-  },
-  filemon: {
-    icon: "i-sun",
-    title: "Studio Filemon",
-    lead: "Východní strana domu, větší terasa, velmi příjemný odpolední stín.",
-  },
-  baucis: {
-    icon: "i-sunset",
-    title: "Studio Baucis",
-    lead: "Západní strana domu, menší terasa s výhledem na olivové háje a zapadající slunce.",
-  },
+  unas: { icon: "i-home", title: "gal_unas", lead: "gal_unas_lead" },
+  pobliz: { icon: "i-near", title: "gal_pobliz", lead: "gal_pobliz_lead" },
+  opodal: { icon: "i-far", title: "gal_opodal", lead: "gal_opodal_lead" },
+  ruzne: { icon: "i-misc", title: "gal_ruzne", lead: "gal_ruzne_lead" },
+  filemon: { icon: "i-sun", title: "Studio Filemon", lead: "gal_filemon_lead" },
+  baucis: { icon: "i-sunset", title: "Studio Baucis", lead: "gal_baucis_lead" },
 };
 
 function normalizePhotos(files) {
@@ -82,7 +58,9 @@ function renderAlbum(el, key, files, folder) {
   block.className = "album-block";
   block.dataset.album = key;
   const icon = meta.icon ? `<svg class="h-ico" aria-hidden="true"><use href="#${meta.icon}"></use></svg>` : "";
-  block.innerHTML = `<h2 class="with-ico">${icon}${meta.title}</h2><p class="muted" style="max-width:46rem">${meta.lead}</p><div class="ggrid"></div>`;
+  const title = t(meta.title);
+  const lead = t(meta.lead);
+  block.innerHTML = `<h2 class="with-ico">${icon}${title}</h2><p class="muted" style="max-width:46rem">${lead}</p><div class="ggrid"></div>`;
   const grid = block.querySelector(".ggrid");
   items.forEach((item, idx) => {
     const fig = document.createElement("figure");

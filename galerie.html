@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Galerie · Filemon a Baucis</title>
+  <title data-i18n="title_gal">Galerie · Filemon a Baucis</title>
   <link rel="icon" href="favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,26 +14,27 @@
   <header class="nav solid">
     <a class="brand" href="index.html">
       <img src="favicon.svg" width="34" height="34" alt="" />
-      <span>Filemon a Baucis<small>Korfu · Řecko</small></span>
+      <span>Filemon a Baucis<small data-i18n="brand_sub">Korfu · Řecko</small></span>
     </a>
     <button class="menu-btn" aria-label="Menu">☰</button>
     <nav class="nav-links" data-nav></nav>
   </header>
   <main class="cal-page">
     <div class="wrap">
-      <p class="eyebrow">Fotogalerie</p>
-      <h1 class="serif" style="font-size:clamp(2rem,4vw,3.2rem)">U nás, poblíž, opodál a různé.</h1>
-      <p class="muted">Kliknutím otevřete foto nadoraz. Studia Filemon a Baucis mají vlastní galerie na stránce <a href="studia.html">Studia</a>.</p>
+      <p class="eyebrow" data-i18n="gal_eye">Fotogalerie</p>
+      <h1 class="serif" style="font-size:clamp(2rem,4vw,3.2rem)" data-i18n="gal_h1">U nás, poblíž, opodál a různé.</h1>
+      <p class="muted" data-i18n="gal_lead">Kliknutím otevřete foto nadoraz. Studia Filemon a Baucis mají vlastní galerie na stránce Studia.</p>
       <div class="filters" id="filters">
-        <button class="filter on" data-filter="all" type="button">Vše</button>
-        <button class="filter" data-filter="unas" type="button">U nás</button>
-        <button class="filter" data-filter="pobliz" type="button">Poblíž</button>
-        <button class="filter" data-filter="opodal" type="button">Opodál</button>
-        <button class="filter" data-filter="ruzne" type="button">Různé</button>
+        <button class="filter on" data-filter="all" type="button" data-i18n="filter_all">Vše</button>
+        <button class="filter" data-filter="unas" type="button" data-i18n="gal_unas">U nás</button>
+        <button class="filter" data-filter="pobliz" type="button" data-i18n="gal_pobliz">Poblíž</button>
+        <button class="filter" data-filter="opodal" type="button" data-i18n="gal_opodal">Opodál</button>
+        <button class="filter" data-filter="ruzne" type="button" data-i18n="gal_ruzne">Různé</button>
       </div>
       <div id="galleries"></div>
     </div>
   </main>
+  <script src="js/i18n.js"></script>
   <script src="js/site.js"></script>
   <script src="js/photos.js"></script>
   <script>

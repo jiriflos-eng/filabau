@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Vybrat termín · Filemon a Baucis</title>
+  <title data-i18n="title_book">Vybrat termín · Filemon a Baucis</title>
   <link rel="icon" href="favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,7 +14,7 @@
   <header class="nav solid">
     <a class="brand" href="index.html">
       <img src="favicon.svg" width="34" height="34" alt="" />
-      <span>Filemon a Baucis<small>Korfu · Řecko</small></span>
+      <span>Filemon a Baucis<small data-i18n="brand_sub">Korfu · Řecko</small></span>
     </a>
     <button class="menu-btn" aria-label="Menu">☰</button>
     <nav class="nav-links" data-nav></nav>
@@ -22,35 +22,36 @@
 
   <main class="cal-page">
     <div class="wrap">
-      <p class="eyebrow">Rezervace <span class="season-year">2026</span></p>
-      <h1 class="serif" style="font-size:clamp(2rem,4vw,3.2rem);margin:8px 0 10px">Vyberte studio a volné dny.</h1>
-      <p class="muted">V řádku <b>Baucis</b> i <b>Filemon</b> klikněte na příjezd a odjezd. Můžete poptat obě studia v jedné poptávce, každé s vlastním termínem. Oba dny bereme celé. Minimum je 5 nocí.</p>
+      <p class="eyebrow"><span data-i18n="book_eye">Rezervace</span> <span class="season-year">2026</span></p>
+      <h1 class="serif" style="font-size:clamp(2rem,4vw,3.2rem);margin:8px 0 10px" data-i18n="book_h1">Vyberte studio a volné dny.</h1>
+      <p class="muted" data-i18n="book_lead">V řádku Baucis i Filemon klikněte na příjezd a odjezd. Můžete poptat obě studia v jedné poptávce, každé s vlastním termínem. Oba dny bereme celé. Minimum je 5 nocí.</p>
       <div class="cal-toolbar">
-        <label>Rok
+        <label><span data-i18n="year">Rok</span>
           <select id="year"></select>
         </label>
       </div>
       <div class="legend">
-        <span><i class="swatch" style="background:#d7eed9"></i>volno</span>
-        <span><i class="swatch" style="background:#e8a090"></i>obsazeno - jméno je v pásku</span>
+        <span><i class="swatch" style="background:#d7eed9"></i><span data-i18n="free">volno</span></span>
+        <span><i class="swatch" style="background:#e8a090"></i><span data-i18n="busy">obsazeno - jméno je v pásku</span></span>
       </div>
       <div id="cal" class="months"></div>
 
       <form class="inquiry" id="form">
-        <div id="summary" class="pick-box muted">Klikněte v řádku Baucis a/nebo Filemon na příjezd a odjezd.</div>
-        <label>Jméno <input id="name" required /></label>
-        <label>Telefon <input id="phone" required /></label>
-        <label>E-mail <input id="email" type="email" required /></label>
-        <label>Zpráva <textarea id="msg" rows="3" placeholder="Počet osob, transfer z letiště…"></textarea></label>
+        <div id="summary" class="pick-box muted" data-i18n="sum_empty">Klikněte v řádku Baucis a/nebo Filemon na příjezd a odjezd.</div>
+        <label><span data-i18n="form_name">Jméno</span> <input id="name" required /></label>
+        <label><span data-i18n="form_phone">Telefon</span> <input id="phone" required /></label>
+        <label><span data-i18n="form_email">E-mail</span> <input id="email" type="email" required /></label>
+        <label><span data-i18n="form_msg">Zpráva</span> <textarea id="msg" rows="3" data-i18n-placeholder="form_ph" placeholder="Počet osob, transfer z letiště…"></textarea></label>
         <div class="via-row">
-          <span class="via-label">Odeslat přes</span>
+          <span class="via-label" data-i18n="via">Odeslat přes</span>
           <label class="via"><input type="radio" name="via" value="wa" checked /> WhatsApp</label>
           <label class="via"><input type="radio" name="via" value="mail" /> E-mail</label>
         </div>
-        <button class="btn btn-terra" id="send" disabled>Odeslat poptávku</button>
+        <button class="btn btn-terra" id="send" disabled data-i18n="send">Odeslat poptávku</button>
       </form>
     </div>
   </main>
+  <script src="js/i18n.js"></script>
   <script src="js/site.js"></script>
   <script src="js/store.js"></script>
   <script src="js/calendar.js"></script>
