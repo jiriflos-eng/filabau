@@ -1,4 +1,3 @@
-const LANG_KEY = "filabau-lang";
 const LANGS = [
   { id: "cs", label: "CZ" },
   { id: "en", label: "EN" },
@@ -1022,13 +1021,11 @@ const I18N = {
 };
 
 function getLang() {
-  const v = localStorage.getItem(LANG_KEY);
-  return LANGS.some((l) => l.id === v) ? v : "cs";
-}
-
-function setLang(id) {
-  localStorage.setItem(LANG_KEY, id);
-  location.reload();
+  const ids = LANGS.map((l) => l.id);
+  const cands = [...(navigator.languages || []), navigator.language]
+    .filter(Boolean)
+    .map((x) => String(x).slice(0, 2).toLowerCase());
+  return cands.find((id) => ids.includes(id)) || "en";
 }
 
 function t(key, vars) {
@@ -1061,10 +1058,4 @@ function applyI18n() {
   });
 }
 
-function langSelectHtml() {
-  const cur = getLang();
-  return `<label class="lang-wrap"><span class="visually-hidden">${t("lang")}</span>
-    <select class="lang-select" aria-label="${t("lang")}">
-      ${LANGS.map((l) => `<option value="${l.id}" ${l.id === cur ? "selected" : ""}>${l.label}</option>`).join("")}
-    </select></label>`;
-}
+

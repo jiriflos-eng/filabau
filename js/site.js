@@ -35,9 +35,7 @@ function initNav() {
       <a href="jak-k-nam.html">${t("nav_howto")}</a>
       <a href="info.html">${t("nav_info")}</a>
       <a href="galerie.html">${t("nav_gallery")}</a>
-      <a class="btn btn-gold" href="rezervace.html">${t("nav_book")}</a>
-      ${langSelectHtml()}`;
-    links.querySelector(".lang-select")?.addEventListener("change", (e) => setLang(e.target.value));
+      <a class="btn btn-gold" href="rezervace.html">${t("nav_book")}</a>`;
     const page = currentPage();
     links.querySelectorAll("a[href]").forEach((a) => {
       const href = (a.getAttribute("href") || "").split("/").pop() || "index.html";
