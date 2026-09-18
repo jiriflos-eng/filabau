@@ -21,9 +21,11 @@
   </header>
   <main class="cal-page">
     <div class="wrap">
-      <p class="eyebrow" data-i18n="gal_eye">Fotogalerie</p>
-      <h1 class="serif" style="font-size:clamp(2rem,4vw,3.2rem)" data-i18n="gal_h1">U nás, poblíž, opodál a různé.</h1>
-      <p class="muted" data-i18n="gal_lead">Kliknutím otevřete foto nadoraz. Studia Filemon a Baucis mají vlastní galerie na stránce Studia.</p>
+      <header class="page-head">
+        <p class="eyebrow" data-i18n="gal_eye">Fotogalerie</p>
+        <h1 data-i18n="gal_h1">U nás, poblíž, opodál a různé.</h1>
+        <p class="muted" data-i18n="gal_lead">Kliknutím otevřete foto nadoraz. Studia Filemon a Baucis mají vlastní galerie na stránce Studia.</p>
+      </header>
       <div class="filters" id="filters">
         <button class="filter on" data-filter="all" type="button" data-i18n="filter_all">Vše</button>
         <button class="filter" data-filter="unas" type="button" data-i18n="gal_unas">U nás</button>
@@ -34,6 +36,12 @@
       <div id="galleries"></div>
     </div>
   </main>
+  <footer>
+    <div class="wrap">
+      <div data-i18n="footer">Filemon a Baucis · Korfu · studia pro klidnou dovolenou</div>
+      <div><a href="admin.html" data-i18n="admin_link">Administrace kalendáře</a></div>
+    </div>
+  </footer>
   <script src="js/i18n.js"></script>
   <script src="js/site.js"></script>
   <script src="js/photos.js"></script>

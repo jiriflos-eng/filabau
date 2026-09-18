@@ -21,17 +21,19 @@
   </header>
   <main class="cal-page">
     <div class="wrap">
-      <p class="eyebrow" data-i18n="stay_eye">Ubytování</p>
-      <h1 class="serif" style="font-size:clamp(2rem,4vw,3.2rem)" data-i18n="studios_h1">Dvě stejná studia, dvě nálady.</h1>
-      <div class="page-mast">
-        <img src="img/baucis/02.jpg" alt="Dům se studii Filemon a Baucis" />
-      </div>
-      <div class="prose">
-        <p data-i18n="st_p1">Studia jsou rozměrově identická - 23 m². Tvoří je jeden pokoj pro dvě osoby, kuchyňka, WC s bidetkou a sprcha. U každého je venkovní posezení na terase.</p>
-        <p data-i18n="st_p2">Filemon je na východní straně domu. Má větší terasu a velmi příjemný odpolední stín.</p>
-        <p data-i18n="st_p3">Baucis je na západní straně. Terasa je menší, s výhledem na olivové háje a zapadající slunce.</p>
-        <p data-i18n="st_p4">V celém objektu je bezplatný vysokorychlostní internet Starlink. Parkování na pozemku zdarma, venkovní sprcha.</p>
-        <p data-i18n="st_p5">Studia jsou nekuřácká. Na terasách si lze zapálit bez omezení.</p>
+      <header class="page-head">
+        <p class="eyebrow" data-i18n="stay_eye">Ubytování</p>
+        <h1 data-i18n="studios_h1">Dvě stejná studia, dvě nálady.</h1>
+      </header>
+      <div class="split page-intro">
+        <div class="story-frame"><img class="parallax-img" src="img/baucis/02.jpg" alt="Dům se studii Filemon a Baucis" /></div>
+        <div class="prose">
+          <p data-i18n="st_p1">Studia jsou rozměrově identická - 23 m². Tvoří je jeden pokoj pro dvě osoby, kuchyňka, WC s bidetkou a sprcha. U každého je venkovní posezení na terase.</p>
+          <p data-i18n="st_p2">Filemon je na východní straně domu. Má větší terasu a velmi příjemný odpolední stín.</p>
+          <p data-i18n="st_p3">Baucis je na západní straně. Terasa je menší, s výhledem na olivové háje a zapadající slunce.</p>
+          <p data-i18n="st_p4">V celém objektu je bezplatný vysokorychlostní internet Starlink. Parkování na pozemku zdarma, venkovní sprcha.</p>
+          <p data-i18n="st_p5">Studia jsou nekuřácká. Na terasách si lze zapálit bez omezení.</p>
+        </div>
       </div>
 
       <h2 class="serif with-ico"><svg class="h-ico" aria-hidden="true"><use href="#i-bed"></use></svg><span data-i18n="equip">Vybavení</span></h2>
@@ -74,6 +76,12 @@
       <div id="studios" style="margin-top:36px"></div>
     </div>
   </main>
+  <footer>
+    <div class="wrap">
+      <div data-i18n="footer">Filemon a Baucis · Korfu · studia pro klidnou dovolenou</div>
+      <div><a href="admin.html" data-i18n="admin_link">Administrace kalendáře</a></div>
+    </div>
+  </footer>
   <script src="js/i18n.js"></script>
   <script src="js/site.js"></script>
   <script src="js/photos.js"></script>

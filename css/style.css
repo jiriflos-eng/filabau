@@ -357,41 +357,49 @@ section { padding: 92px 0; position: relative; z-index: 1; background: var(--foa
   .ggrid img { height: 150px; }
 }
 
-.page-mast {
-  height: 240px;
-  overflow: hidden;
-  border-radius: 12px;
-  margin: 16px 0 32px;
+.page-head {
+  max-width: 42rem;
+  margin: 0 0 40px;
 }
-.page-mast img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.page-head h1 {
+  font-size: clamp(2.1rem, 4.4vw, 3.4rem);
+  margin: 8px 0 14px;
+}
+.page-head .muted {
+  font-size: 1.08rem;
+  max-width: 38rem;
+}
+.page-intro { margin: 0 0 52px; }
 .with-photo {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) 240px;
-  gap: 28px;
+  grid-template-columns: minmax(0, 1.35fr) 260px;
+  gap: 36px;
   align-items: start;
 }
 .with-photo img {
   width: 100%;
-  height: 220px;
+  height: 240px;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: var(--radius);
   display: block;
 }
 @media (max-width: 800px) {
   .with-photo { grid-template-columns: 1fr; }
-  .with-photo img { height: 180px; }
+  .with-photo img { height: 200px; }
 }
 .prose { max-width: 46rem; }
 .prose p { font-size: 1.05rem; }
 .prose h2 { margin-top: 2.2rem; }
 .equip {
   columns: 2; gap: 8px 36px; padding: 0; list-style: none; color: var(--muted);
+  margin: 8px 0 36px;
 }
 .equip li { break-inside: avoid; padding: 6px 0 6px 1.1rem; position: relative; }
 .equip li::before { content: "·"; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
 .price-table {
   width: min(420px, 100%); border-collapse: collapse; background: var(--white);
   border-radius: 18px; overflow: hidden; font-size: 1.05rem;
+  border: 1px solid rgba(18,58,70,.1);
 }
 .price-table th, .price-table td { padding: 12px 18px; text-align: left; }
 .price-table thead { background: var(--sea); color: #fff; }
@@ -400,7 +408,14 @@ section { padding: 92px 0; position: relative; z-index: 1; background: var(--foa
 .price-table .mid { color: #c49a2a; font-weight: 700; }
 .price-table .lo { color: var(--aqua); font-weight: 700; }
 .price-table td:last-child { font-variant-numeric: tabular-nums; font-weight: 650; }
-.route { background: var(--white); border-radius: 24px; padding: 24px; margin: 16px 0; }
+.route {
+  background: transparent;
+  padding: 32px 0;
+  margin: 0;
+  border-top: 1px solid rgba(18,58,70,.1);
+}
+.route:first-of-type { border-top: 0; padding-top: 0; }
+.route h2, .route h3 { margin-top: 0; }
 .h-ico {
   width: 22px;
   height: 22px;
@@ -417,7 +432,12 @@ section { padding: 92px 0; position: relative; z-index: 1; background: var(--foa
   gap: 10px;
 }
 .nums { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
-.nums div { background: var(--white); border-radius: 16px; padding: 16px; }
+.nums div {
+  background: transparent;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid rgba(18,58,70,.12);
+}
 .nums b { display: block; font-size: 1.2rem; color: var(--sea); }
 .yt { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 18px; }
 @media (max-width: 700px) { .equip { columns: 1; } }
@@ -495,6 +515,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wr
 /* CALENDAR - spreadsheet layout like the original */
 .cal-page { padding: calc(var(--nav) + 36px) 0 80px; }
 .cal-page .wrap { width: min(1240px, calc(100% - 24px)); }
+.cal-page .story-frame { border: 1px solid rgba(18,58,70,.1); }
 .cal-toolbar, .admin-bar {
   display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 18px 0 22px;
 }
@@ -590,6 +611,7 @@ select, input, textarea {
   border-radius: 28px;
   padding: 22px 22px 16px;
   margin-bottom: 22px;
+  border: 1px solid rgba(18,58,70,.1);
 }
 .guest-month h3 {
   margin: 0 0 14px;
@@ -738,6 +760,7 @@ select, input, textarea {
 .inquiry {
   margin-top: 28px; background: var(--white); border-radius: 28px; padding: 28px;
   display: grid; gap: 14px; max-width: 640px;
+  border: 1px solid rgba(18,58,70,.1);
 }
 .inquiry label { display: grid; gap: 6px; font-size: .9rem; font-weight: 650; }
 .inquiry button { margin-top: 8px; }

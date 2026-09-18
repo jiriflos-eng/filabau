@@ -22,9 +22,11 @@
 
   <main class="cal-page">
     <div class="wrap">
-      <p class="eyebrow"><span data-i18n="book_eye">Rezervace</span> <span class="season-year">2026</span></p>
-      <h1 class="serif" style="font-size:clamp(2rem,4vw,3.2rem);margin:8px 0 10px" data-i18n="book_h1">Vyberte studio a volné dny.</h1>
-      <p class="muted" data-i18n="book_lead">V řádku Baucis i Filemon klikněte na příjezd a odjezd. Můžete poptat obě studia v jedné poptávce, každé s vlastním termínem. Oba dny bereme celé. Minimum je 5 nocí.</p>
+      <header class="page-head">
+        <p class="eyebrow"><span data-i18n="book_eye">Rezervace</span> <span class="season-year">2026</span></p>
+        <h1 data-i18n="book_h1">Vyberte studio a volné dny.</h1>
+        <p class="muted" data-i18n="book_lead">V řádku Baucis i Filemon klikněte na příjezd a odjezd. Můžete poptat obě studia v jedné poptávce, každé s vlastním termínem. Oba dny bereme celé. Minimum je 5 nocí.</p>
+      </header>
       <div class="cal-toolbar">
         <label><span data-i18n="year">Rok</span>
           <select id="year"></select>
@@ -51,6 +53,12 @@
       </form>
     </div>
   </main>
+  <footer>
+    <div class="wrap">
+      <div data-i18n="footer">Filemon a Baucis · Korfu · studia pro klidnou dovolenou</div>
+      <div><a href="admin.html" data-i18n="admin_link">Administrace kalendáře</a></div>
+    </div>
+  </footer>
   <script src="js/i18n.js"></script>
   <script src="js/site.js"></script>
   <script src="js/store.js"></script>
