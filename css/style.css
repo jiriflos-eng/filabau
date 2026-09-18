@@ -79,6 +79,16 @@ h1, h2, h3, .serif {
 .nav-links a { text-decoration: none; opacity: .92; }
 .nav-links a:hover { opacity: 1; }
 .nav-links a:not(.btn):hover { color: var(--gold); }
+.nav-links a.is-current:not(.btn) {
+  color: var(--gold);
+  font-weight: 650;
+}
+.nav-links a.btn.is-current {
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .45);
+}
+.nav.solid .nav-links a.btn.is-current {
+  box-shadow: inset 0 0 0 2px var(--sea);
+}
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   border: 0; cursor: pointer; text-decoration: none;
@@ -265,6 +275,7 @@ section { padding: 92px 0; position: relative; z-index: 1; background: var(--foa
   border-radius: 28px;
   overflow: hidden;
 }
+.cal-page .card { border: 1px solid rgba(18,58,70,.1); }
 .card .media { height: 280px; overflow: hidden; }
 .card .body { padding: 26px; }
 .tag {
@@ -612,6 +623,16 @@ select, input, textarea {
   padding: 22px 22px 16px;
   margin-bottom: 22px;
   border: 1px solid rgba(18,58,70,.1);
+  scroll-margin-top: calc(var(--nav) + 16px);
+}
+.guest-month.is-past {
+  opacity: 0.38;
+  filter: grayscale(0.45);
+  pointer-events: none;
+}
+.gpill.is-past {
+  opacity: 0.4;
+  cursor: default;
 }
 .guest-month h3 {
   margin: 0 0 14px;

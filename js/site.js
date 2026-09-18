@@ -38,6 +38,14 @@ function initNav() {
       <a class="btn btn-gold" href="rezervace.html">${t("nav_book")}</a>
       ${langSelectHtml()}`;
     links.querySelector(".lang-select")?.addEventListener("change", (e) => setLang(e.target.value));
+    const page = currentPage();
+    links.querySelectorAll("a[href]").forEach((a) => {
+      const href = (a.getAttribute("href") || "").split("/").pop() || "index.html";
+      if (href.toLowerCase() === page) {
+        a.classList.add("is-current");
+        a.setAttribute("aria-current", "page");
+      }
+    });
   }
   const nav = document.querySelector(".nav");
   const btn = document.querySelector(".menu-btn");
@@ -93,6 +101,13 @@ function initScrollStory() {
   tick();
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", onScroll, { passive: true });
+}
+
+function currentPage() {
+  let p = (location.pathname || "").replace(/\/+$/, "");
+  p = p.split("/").pop() || "index.html";
+  if (!p.includes(".")) p = "index.html";
+  return p.toLowerCase();
 }
 
 function seasonYear(d) {

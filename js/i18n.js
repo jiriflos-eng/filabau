@@ -1045,6 +1045,7 @@ function t(key, vars) {
 function applyI18n() {
   document.documentElement.lang = getLang();
   document.querySelectorAll("[data-i18n]").forEach((el) => {
+    if (el.tagName === "META" || el.tagName === "TITLE") return;
     el.textContent = t(el.dataset.i18n);
   });
   document.querySelectorAll("[data-i18n-html]").forEach((el) => {
@@ -1055,8 +1056,9 @@ function applyI18n() {
   });
   const titleEl = document.querySelector("title[data-i18n]");
   if (titleEl) document.title = t(titleEl.dataset.i18n);
-  const meta = document.querySelector("meta[name='description'][data-i18n]");
-  if (meta) meta.content = t(meta.dataset.i18n);
+  document.querySelectorAll("meta[data-i18n]").forEach((el) => {
+    el.content = t(el.dataset.i18n);
+  });
 }
 
 function langSelectHtml() {

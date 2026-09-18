@@ -1,3 +1,17 @@
+function todayIso() {
+  const n = new Date();
+  return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(n.getDate()).padStart(2, "0")}`;
+}
+
+function isPastMonth(year, monthIndex) {
+  const now = new Date();
+  return year < now.getFullYear() || (year === now.getFullYear() && monthIndex < now.getMonth());
+}
+
+function isPastDate(iso) {
+  return iso < todayIso();
+}
+
 function monthGrid(year, month) {
   const first = new Date(year, month, 1);
   const startPad = (first.getDay() + 6) % 7;
@@ -125,8 +139,9 @@ function guestTrackHtml(data, year, st, week, dates, selected) {
     if (!stay) {
       const season = inSeason(data, date);
       const sel = selected && selected[st.id]?.includes(date);
+      const past = isPastDate(date);
       items.push(
-        `<button type="button" class="gpill ${season ? "free" : "off"} ${sel ? "sel" : ""}" style="grid-column:${col + 1}" data-date="${date}" data-studio="${st.id}" ${season ? "" : "disabled"}>${d}</button>`
+        `<button type="button" class="gpill ${season ? "free" : "off"} ${sel ? "sel" : ""} ${past ? "is-past" : ""}" style="grid-column:${col + 1}" data-date="${date}" data-studio="${st.id}" ${season && !past ? "" : "disabled"}>${d}</button>`
       );
       col++;
       continue;
@@ -196,7 +211,8 @@ function renderGuestCalendar(el, opts) {
           return `<div class="guest-pair ${wi % 2 ? "is-alt" : ""}">${rows}</div>`;
         })
         .join("");
-      return `<section class="guest-month">
+      const past = isPastMonth(year, m);
+      return `<section class="guest-month${past ? " is-past" : ""}" data-month="${year}-${m}">
         <h3>${monthNames[m]} ${year}</h3>
         <div class="guest-dow"><span></span>${dow.map((x) => `<span>${x}</span>`).join("")}</div>
         ${weekHtml}
@@ -207,8 +223,18 @@ function renderGuestCalendar(el, opts) {
   if (onDay) {
     el.querySelectorAll(".gpill.free, .gday").forEach((btn) => {
       btn.addEventListener("click", () => {
+        if (isPastDate(btn.dataset.date)) return;
         onDay(btn.dataset.date, btn.dataset.studio, btn.dataset.busy === "1" || btn.classList.contains("busy"));
       });
     });
   }
+}
+
+function jumpToRelevantMonth(el) {
+  if (!el) return;
+  const now = new Date();
+  const here = el.querySelector(`[data-month="${now.getFullYear()}-${now.getMonth()}"]`);
+  const live = el.querySelector(".guest-month:not(.is-past)");
+  const last = el.querySelector(".guest-month:last-of-type");
+  (here || live || last)?.scrollIntoView({ block: "start", behavior: "auto" });
 }

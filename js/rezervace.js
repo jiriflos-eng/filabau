@@ -48,7 +48,7 @@ function paint() {
       filemon: expandRange(picks.filemon),
     },
     onDay: (date, studio, busy) => {
-      if (busy || !inSeason(DATA, date)) return;
+      if (busy || !inSeason(DATA, date) || isPastDate(date)) return;
       const cur = picks[studio] || [];
       if (cur.length === 0 || cur.length === 2) picks[studio] = [date];
       else picks[studio] = [cur[0], date];
@@ -108,6 +108,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     YEAR = Number(e.target.value);
     picks = { baucis: [], filemon: [] };
     paint();
+    jumpToRelevantMonth(document.getElementById("cal"));
   });
   document.getElementById("form").addEventListener("submit", (e) => {
     e.preventDefault();
@@ -127,4 +128,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     else window.location.href = mailLink(t("mail_subject"), text);
   });
   paint();
+  jumpToRelevantMonth(document.getElementById("cal"));
 });
