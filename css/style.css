@@ -279,6 +279,19 @@ section { padding: 92px 0; position: relative; z-index: 1; background: var(--foa
 .mosaic .stack { display: grid; gap: 16px; }
 .mosaic .stack img { height: 252px; object-fit: cover; border-radius: var(--radius); }
 
+.notice-sec {
+  padding: 0;
+  background: transparent;
+}
+.video-slit {
+  height: 150px;
+}
+.notice-sheet {
+  position: relative;
+  z-index: 1;
+  background: var(--foam);
+  padding: 28px 0 92px;
+}
 .notice {
   background: var(--sea); color: #fff; border-radius: 28px; padding: 36px;
   display: grid; grid-template-columns: 1.4fr auto; gap: 20px; align-items: center;
