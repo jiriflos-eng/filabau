@@ -14,7 +14,8 @@
   --free-ink: #2f5b28;
   --busy-ink: #8a2d1a;
   --white: #fffcf7;
-  --shadow: 0 12px 28px rgba(18, 58, 70, 0.16);
+  --shadow: 0 10px 14px rgba(11, 39, 47, 0.14), 0 22px 40px rgba(11, 39, 47, 0.22);
+  --shadow-drop: drop-shadow(0 16px 28px rgba(11, 39, 47, 0.28));
   --radius: 12px;
   --max: 1180px;
   --nav: 76px;
@@ -205,7 +206,7 @@ section { padding: 92px 0; position: relative; z-index: 1; background: var(--foa
   flex-direction: column;
   justify-content: center;
   border: 1px solid rgba(18,58,70,.08);
-  box-shadow: 0 14px 28px rgba(11, 39, 47, 0.2);
+  box-shadow: var(--shadow);
 }
 .reveal {
   opacity: .4;
@@ -236,7 +237,7 @@ section { padding: 92px 0; position: relative; z-index: 1; background: var(--foa
   min-height: 460px;
   overflow: hidden;
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  filter: var(--shadow-drop);
 }
 .story-frame iframe {
   position: absolute;
@@ -262,7 +263,10 @@ section { padding: 92px 0; position: relative; z-index: 1; background: var(--foa
 
 .studios { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .card {
-  background: var(--white); border-radius: 28px; overflow: hidden; box-shadow: var(--shadow);
+  background: var(--white);
+  border-radius: 28px;
+  overflow: hidden;
+  filter: var(--shadow-drop);
 }
 .card .media { height: 280px; overflow: hidden; }
 .card .body { padding: 26px; }
