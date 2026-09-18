@@ -292,8 +292,8 @@ section { padding: 92px 0; position: relative; z-index: 1; background: var(--foa
   margin-inline: auto;
 }
 .notice-sec h2 {
-  font-size: clamp(2.2rem, 5.5vw, 4.4rem);
-  max-width: 16ch;
+  font-size: clamp(1.55rem, 3vw, 2.2rem);
+  max-width: 22ch;
   margin: 12px 0 18px;
 }
 .notice-sec .lead {
