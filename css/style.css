@@ -525,7 +525,10 @@ footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wr
 
 /* CALENDAR - spreadsheet layout like the original */
 .cal-page { padding: calc(var(--nav) + 36px) 0 80px; }
-.cal-page .wrap { width: min(1240px, calc(100% - 24px)); }
+.cal-page .wrap { width: min(var(--max), calc(100% - 80px)); }
+@media (max-width: 720px) {
+  .cal-page .wrap { width: min(var(--max), calc(100% - 40px)); }
+}
 .cal-page .story-frame { border: 1px solid rgba(18,58,70,.1); }
 .cal-toolbar, .admin-bar {
   display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 18px 0 22px;
