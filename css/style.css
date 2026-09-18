@@ -284,13 +284,13 @@ section { padding: 92px 0; position: relative; z-index: 1; background: var(--foa
   background: transparent;
 }
 .video-slit {
-  height: 150px;
+  height: 300px;
 }
 .notice-sheet {
   position: relative;
   z-index: 1;
   background: var(--foam);
-  padding: 28px 0 92px;
+  padding: 30px 0 92px;
 }
 .notice {
   background: var(--sea); color: #fff; border-radius: 28px; padding: 36px;
