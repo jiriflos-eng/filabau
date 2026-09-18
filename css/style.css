@@ -426,9 +426,41 @@ section { padding: 92px 0; position: relative; z-index: 1; background: var(--foa
 .contact-card { background: var(--white); border-radius: 28px; padding: 28px; }
 .contact-card a { color: var(--sea); font-weight: 650; text-decoration: none; }
 
+#kontakt {
+  background: transparent;
+  color: #fff;
+  min-height: 420px;
+  padding: 80px 0;
+}
+#kontakt .section-head h2 {
+  font-size: clamp(1.55rem, 3vw, 2.2rem);
+  max-width: 22ch;
+}
+#kontakt .muted,
+#kontakt .contact-card,
+#kontakt .contact-card a {
+  color: rgba(255, 255, 255, .92);
+}
+#kontakt .contact-card {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+#kontakt .contact-card h3 { color: #fff; margin-top: 0; }
+#kontakt .section-head h2,
+#kontakt .muted,
+#kontakt .contact-card {
+  -webkit-text-stroke: 0.7px rgba(90, 94, 98, .72);
+  paint-order: stroke fill;
+  text-shadow:
+    -1px -1px 0 rgba(88, 90, 94, .45),
+    1px -1px 0 rgba(88, 90, 94, .45),
+    -1px 1px 0 rgba(88, 90, 94, .45),
+    1px 1px 0 rgba(88, 90, 94, .45);
+}
+
 .home .fact,
-.home .yt,
-.home .contact-card {
+.home .yt {
   box-shadow: var(--shadow);
 }
 .home .story-frame,
