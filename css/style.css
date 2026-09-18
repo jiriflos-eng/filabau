@@ -280,21 +280,36 @@ section { padding: 92px 0; position: relative; z-index: 1; background: var(--foa
 .mosaic .stack img { height: 252px; object-fit: cover; border-radius: var(--radius); }
 
 .notice-sec {
-  padding: 0;
+  display: grid;
+  align-items: center;
+  min-height: 420px;
+  padding: 80px 0;
   background: transparent;
+  color: #fff;
 }
-.video-slit {
-  height: 300px;
+.notice-inner {
+  width: min(var(--max), calc(100% - 40px));
+  margin-inline: auto;
 }
-.notice-sheet {
-  position: relative;
-  z-index: 1;
-  background: var(--foam);
-  padding: 30px 0 92px;
+.notice-sec h2 {
+  font-size: clamp(2.2rem, 5.5vw, 4.4rem);
+  max-width: 16ch;
+  margin: 12px 0 18px;
 }
-.notice {
-  background: var(--sea); color: #fff; border-radius: 28px; padding: 36px;
-  display: grid; grid-template-columns: 1.4fr auto; gap: 20px; align-items: center;
+.notice-sec .lead {
+  max-width: 46ch;
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, .92);
+}
+.notice-sec h2,
+.notice-sec .lead {
+  -webkit-text-stroke: 0.7px rgba(90, 94, 98, .72);
+  paint-order: stroke fill;
+  text-shadow:
+    -1px -1px 0 rgba(88, 90, 94, .45),
+    1px -1px 0 rgba(88, 90, 94, .45),
+    -1px 1px 0 rgba(88, 90, 94, .45),
+    1px 1px 0 rgba(88, 90, 94, .45);
 }
 .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .gallery-grid img { height: 240px; width: 100%; object-fit: cover; border-radius: 16px; }
@@ -412,7 +427,6 @@ section { padding: 92px 0; position: relative; z-index: 1; background: var(--foa
 .contact-card a { color: var(--sea); font-weight: 650; text-decoration: none; }
 
 .home .fact,
-.home .notice,
 .home .yt,
 .home .contact-card {
   box-shadow: var(--shadow);
@@ -434,7 +448,7 @@ footer {
 footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
 
 @media (max-width: 900px) {
-  .facts, .split, .studios, .mosaic, .notice, .contact-grid, .gallery-grid { grid-template-columns: 1fr; }
+  .facts, .split, .studios, .mosaic, .contact-grid, .gallery-grid { grid-template-columns: 1fr; }
   .mosaic .tall, .story-frame { min-height: 280px; }
   section { padding: 64px 0; }
   .facts-band {
