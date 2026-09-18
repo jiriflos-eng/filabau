@@ -66,16 +66,20 @@ function initScrollStory() {
     reveals.forEach((el) => io.observe(el));
   }
 
-  const hero = document.querySelector(".hero");
-  const bg = document.querySelector(".hero-bg");
+  const heroVideo = document.querySelector("video.hero-bg");
+  if (heroVideo) {
+    heroVideo.muted = true;
+    heroVideo.defaultMuted = true;
+    heroVideo.playsInline = true;
+    const tryPlay = () => heroVideo.play().catch(() => {});
+    tryPlay();
+    document.addEventListener("touchstart", tryPlay, { once: true, passive: true });
+  }
+
   const shots = document.querySelectorAll(".parallax-img");
   let raf = 0;
   const tick = () => {
     raf = 0;
-    if (bg && hero) {
-      const y = Math.max(0, -hero.getBoundingClientRect().top);
-      bg.style.transform = `translate3d(0, ${y * 0.42}px, 0)`;
-    }
     const vh = window.innerHeight || 1;
     shots.forEach((img) => {
       const box = img.parentElement.getBoundingClientRect();

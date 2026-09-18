@@ -6,6 +6,7 @@
   <title data-i18n="title_home">Filemon a Baucis · studia na Korfu</title>
   <meta name="description" data-i18n="desc_home" content="Dvě klidná studia na jihu Korfu, 650 m od písečné pláže Santa Barbara." />
   <link rel="icon" href="favicon.svg" />
+  <link rel="preload" as="image" href="img/hero-poster.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,480;9..144,600&family=Outfit:wght@360;500;650&display=swap" rel="stylesheet" />
@@ -22,7 +23,9 @@
   </header>
 
   <section class="hero">
-    <img class="hero-bg" src="img/hero.jpg" alt="" />
+    <video class="hero-bg" autoplay muted loop playsinline webkit-playsinline disablepictureinpicture preload="auto" poster="img/hero-poster.jpg" aria-hidden="true">
+      <source src="img/hero.mp4" type="video/mp4" />
+    </video>
     <div class="hero-inner">
       <p class="eyebrow"><span data-i18n="hero_eyebrow">Řecko · ostrov Korfu ·</span> <span class="season-year">2026</span></p>
       <h1 data-i18n="hero_h1">Dvě studia v olivovém tichu, 650 metrů od moře.</h1>
