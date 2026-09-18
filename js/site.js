@@ -57,7 +57,7 @@ function initNav() {
 }
 
 function brandSvg() {
-  return `<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#123a46"/><circle cx="32" cy="26" r="10" fill="#e8c872"/><path d="M18 46c6-10 10-10 14-4 4-8 10-8 14 2 0 0-8 10-14 10S18 46 18 46z" fill="#7d9a5a"/></svg>`;
+  return `<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0b272f"/><g fill="none" stroke="#d4b36a" stroke-width="2.4" stroke-linecap="round"><path d="M32 10v6M32 48v6M10 32h6M48 32h6M15.4 15.4l4.2 4.2M44.4 44.4l4.2 4.2M15.4 48.6l4.2-4.2M44.4 19.6l4.2-4.2"/><circle cx="32" cy="32" r="11"/><path d="M24 36c2.2-6 5.5-9 8-9s5.8 3 8 9" stroke="#c45c32" stroke-width="2.2"/></g></svg>`;
 }
 
 function initScrollStory() {
