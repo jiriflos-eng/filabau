@@ -420,6 +420,13 @@ footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wr
   .facts, .split, .studios, .mosaic, .notice, .contact-grid, .gallery-grid { grid-template-columns: 1fr; }
   .mosaic .tall, .story-frame { min-height: 280px; }
   section { padding: 64px 0; }
+  .facts-band {
+    height: auto;
+    background: var(--foam);
+  }
+  .facts {
+    transform: translateY(calc(var(--fact-h) / -2));
+  }
 }
 
 /* CALENDAR - spreadsheet layout like the original */
