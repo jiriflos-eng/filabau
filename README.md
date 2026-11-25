@@ -26,7 +26,7 @@ Záznamy nadále používají datum `arrival` a `departure`; stávající data n
 
 ## Odesílání poptávky
 
-GitHub Pages poskytuje statický web. JavaScript může odeslat požadavek externí službě; samotný GitHub Pages e-mail ani zprávu WhatsApp neodesílá. Veřejná konfigurace je v `js/delivery-config.js`, adaptér v `js/delivery.js`.
+GitHub Pages poskytuje statický web. JavaScript může odeslat požadavek externí službě; samotný GitHub Pages e-mail ani zprávu WhatsApp neodesílá. Veřejná konfigurace je v `data/config.json`, načítá ji `js/delivery-config.js`, adaptér je v `js/delivery.js`.
 
 ### E-mail na jiripilnaj@seznam.cz
 
@@ -35,18 +35,18 @@ Je připravené odeslání pomocí `POST` na AJAX endpoint služby FormSubmit. *
 1. Nahrajte přiložené soubory a otevřete na webu `aktivace_emailu.html`.
 2. Odešlete z ní technický test a potvrďte aktivační e-mail ve schránce příjemce. Tato stránka skutečně odesílá; náhledy v distribučním ZIPu nikoli.
 3. Po aktivaci odešlete technický test znovu a ověřte jeho přijetí ve schránce.
-4. Změňte `email.activated` na `true`, nahrajte konfiguraci a vynuceně obnovte rezervační stránku.
+4. Změňte `email.activated` v `data/config.json` na `true`, uložte konfiguraci a obnovte rezervační stránku.
 5. Odešlete vlastní zkušební poptávku a ověřte jak potvrzení na stránce, tak došlý e-mail s termínem, kontaktem a číslem poptávky. Tím ověříte i AJAX cestu. Po aktivaci se na veřejné stránce předvolí e-mail.
 
 Při automatickém odesílání se kontaktní údaje a text předávají službě FormSubmit. Zelené potvrzení znamená přijetí k odeslání, nikoli potvrzené doručení do schránky či rezervaci termínu. Host musí dál dostat osobní potvrzení termínu. Automatický potvrzovací e-mail hostovi tato verze neposílá (FormSubmit `_autoresponse` není pro AJAX podporován).
 
 Aktivační odpověď, chybná odpověď nebo časový limit se nevydávají za úspěch. Vyplněné údaje zůstávají zachované. Při nejasném výsledku se požadavek automaticky neopakuje, aby nevznikaly duplicity. Opakované kliknutí během odesílání je blokované; opakovaná totožná úspěšná poptávka je blokovaná do změny údajů nebo obnovení stránky. Číslo poptávky zůstává pro opakování stejného pokusu stejné, ale FormSubmit negarantuje potlačení duplicit podle tohoto čísla.
 
-FormSubmit je vnější služba. Živé doručení ani chování CAPTCHA nebyly při přípravě souborů ověřovány skutečnou zprávou. Případné odmítnutí služby zobrazí kontaktní alternativy. Při změně cílové schránky je nutná nová aktivace a současná aktualizace kontaktů v `js/site.js`, `js/delivery-config.js`, `rezervace.html` a `aktivace_emailu.html`.
+FormSubmit je vnější služba. Živé doručení ani chování CAPTCHA nebyly při přípravě souborů ověřovány skutečnou zprávou. Případné odmítnutí služby zobrazí kontaktní alternativy. Při změně cílové schránky upravte pouze `email.address` v `data/config.json`, nastavte `email.activated` na `false`, vyprázdněte `email.formsubmitRecipient` a proveďte novou aktivaci. Volitelný `email.formsubmitRecipient` je anonymní identifikátor formuláře od FormSubmit; musí patřit k nastavené adrese. Kontakty na běžné prezentační stránce jsou nezávislé.
 
-### WhatsApp na +420 725 866 862
+### WhatsApp – číslo v data/config.json
 
-Výchozí volba otevře `https://wa.me/420725866862?text=…` s připravenou zprávou. Návštěvník ji musí odeslat ve WhatsAppu. Web po otevření odkazu hlásí pouze tento další krok a neslibuje úspěšné odeslání.
+Číslo se čte z `whatsapp.phone` (mezinárodní formát bez `+`). Výchozí volba otevře `https://wa.me/<číslo>?text=…` s připravenou zprávou. Šablony `whatsapp.template`, `whatsapp.stayTemplate` a `whatsapp.messageTemplate` lze upravit v JSONu. Podporují zástupné hodnoty `{stays}`, `{name}`, `{phone}`, `{email}`, `{messageBlock}`, v bloku pobytu `{studio}`, `{arrival}`, `{departure}`, `{nights}` a v doplňující zprávě `{message}`. Hvězdičky označují tučný text WhatsAppu, `\n` je nový řádek. Zpráva obsahuje obě studia, pokud jsou vybrána, a je standardně česky pro hostitele; rozhraní webu zůstává vícejazyčné. Návštěvník ji musí odeslat ve WhatsAppu. Web po otevření odkazu hlásí pouze tento další krok a neslibuje úspěšné odeslání.
 
 Pro automatické odeslání je připravený klientský adaptér na vlastní HTTPS serverovou funkci. **Serverová funkce ani WhatsApp Business účet nejsou součástí tohoto balíčku.** Běžný GET/POST na `wa.me` tuto funkci nenahrazuje. Token WhatsApp Business API patří pouze na server, nikdy do veřejných souborů GitHub Pages.
 

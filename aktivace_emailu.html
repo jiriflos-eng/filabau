@@ -24,17 +24,17 @@
   <main>
     <p>NASTAVENÍ PRO PROVOZOVATELE</p>
     <h1>Zapnutí skutečného odesílání e-mailu</h1>
-    <p>Cílová schránka: <strong>jiripilnaj@seznam.cz</strong>.</p>
+    <p>Cílová schránka: <strong data-recipient>—</strong>.</p>
     <p class="notice">Toto je skutečný aktivační a testovací formulář. Stisknutím tlačítka předáte technickou zprávu službě FormSubmit. Kalendář ani rezervace se tím nezmění.</p>
     <ol>
       <li>Otevřete tuto stránku z webu po jejím nahrání na GitHub Pages.</li>
       <li>Vyplňte svůj e-mail a odešlete technický test. Dokončete případné ověření proti robotům na stránce FormSubmit.</li>
-      <li>Ve schránce <strong>jiripilnaj@seznam.cz</strong> otevřete aktivační e-mail od FormSubmit a potvrďte aktivaci. Zkontrolujte i spam.</li>
+      <li>Ve schránce <strong data-recipient>—</strong> otevřete aktivační e-mail od FormSubmit a potvrďte aktivaci. Zkontrolujte i spam.</li>
       <li>Po aktivaci odešlete tento test znovu a ověřte, že skutečná zpráva dorazila.</li>
-      <li>V souboru <code>js/delivery-config.js</code> změňte u e-mailu <code>activated: false</code> na <code>activated: true</code> a nahrajte soubor na web.</li>
+      <li>V souboru <code>data/config.json</code> změňte u e-mailu <code>&quot;activated&quot;: false</code> na <code>&quot;activated&quot;: true</code> a nahrajte soubor na web.</li>
       <li>Na <a href="rezervace.html">rezervační stránce</a> vyzkoušejte jednu vlastní e-mailovou poptávku. Ověřte hlášku na stránce i obsah doručené zprávy. Tato aktivační stránka ověřuje schránku; samostatný test rezervačního formuláře ověřuje jeho odesílání na pozadí.</li>
     </ol>
-    <form action="https://formsubmit.co/jiripilnaj@seznam.cz" method="POST">
+    <form id="activation-form" method="POST">
       <input type="hidden" name="_subject" value="Filabau — aktivace a technický test formuláře" />
       <input type="hidden" name="_url" value="https://jiriflos-eng.github.io/filabau/rezervace.html" />
       <input type="hidden" name="_template" value="table" />
@@ -43,10 +43,25 @@
       <label>Váš e-mail pro tento test
         <input type="email" name="email" autocomplete="email" required />
       </label>
-      <button type="submit">Odeslat aktivační / testovací e-mail</button>
+      <button type="submit" disabled>Odeslat aktivační / testovací e-mail</button>
+      <p id="activation-error" role="status"></p>
     </form>
     <p>Dokud přepínač nezapnete, veřejný formulář dál nabízí dokončení e-mailu v poštovním programu. Po zprovoznění můžete tuto aktivační stránku z webu odstranit.</p>
     <p><a href="https://formsubmit.co/help">Nápověda FormSubmit</a> · <a href="https://formsubmit.co/ajax-documentation">Dokumentace odesílání na pozadí</a></p>
   </main>
+  <script src="js/delivery-config.js"></script>
+  <script>
+    const form = document.getElementById("activation-form");
+    form.addEventListener("submit", e => { if (!INQUIRY_DELIVERY) e.preventDefault(); });
+    loadInquiryConfig().then(config => {
+      if (!config) {
+        document.getElementById("activation-error").textContent = "Konfiguraci nelze načíst. Odeslání je vypnuté.";
+        return;
+      }
+      document.querySelectorAll("[data-recipient]").forEach(el => el.textContent = config.email.address);
+      form.action = "https://formsubmit.co/" + encodeURIComponent(config.email.recipient);
+      form.querySelector("button").disabled = false;
+    });
+  </script>
 </body>
 </html>

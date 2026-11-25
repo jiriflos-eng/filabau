@@ -227,10 +227,12 @@ function inquiryPayload() {
     `${t("mail_studio", { label: s.label })}\n${t("mail_in", { date: fmtDate(s.start) })}\n${t("mail_out", { date: fmtDate(s.end) })}\n${t("mail_nights", { n: s.nights })}`
   );
   const text = `${t("mail_hello")}\n\n${lines.join("\n\n")}\n\n${t("mail_name", { v: name })}\n${t("mail_phone", { v: phone })}\n${t("mail_email", { v: email })}\n${message ? t("mail_msg", { v: message }) : ""}`;
-  return {
-    subject: t("mail_subject"), text, name, phone, email, message,
+  const payload = {
+    subject: INQUIRY_DELIVERY?.email.subject || t("mail_subject"), text, name, phone, email, message,
     stays: ok.map((s) => ({ studio: s.studio, arrival: s.start, departure: s.end, nights: s.nights })),
   };
+  if (INQUIRY_DELIVERY) payload.whatsappText = whatsappInquiryText(payload);
+  return payload;
 }
 
 function inquiryIdentity(channel, payload) {
@@ -254,11 +256,16 @@ function showDeliveryNotice(kind, textKey, payload, identity) {
   const contact = document.getElementById("delivery-contact");
   contact.hidden = !["error", "manual"].includes(kind);
   const text = payload.text + (payload.requestId ? `\n\n${t("delivery_reference", { id: payload.requestId })}` : "");
-  document.getElementById("fallback-wa").href = whatsappLink(text);
+  document.getElementById("fallback-wa").href = whatsappLink(payload.whatsappText + (payload.requestId ? `\n\n${t("delivery_reference", { id: payload.requestId })}` : ""));
   document.getElementById("fallback-mail").href = mailLink(payload.subject, text);
 }
 
 function updateDeliveryUi() {
+  if (!INQUIRY_DELIVERY) {
+    document.getElementById("send").disabled = true;
+    document.getElementById("delivery-hint").textContent = t("delivery_config_error");
+    return;
+  }
   const channel = inquiryChannel();
   const direct = deliveryMode(channel) === "direct";
   const payload = inquiryPayload();
@@ -269,7 +276,7 @@ function updateDeliveryUi() {
   button.textContent = t(deliveryPending ? "send_pending" : accepted ? "send_done" : direct ? "send_direct" : channel === "whatsapp" ? "send_wa" : "send_mail");
   document.getElementById("delivery-hint").textContent = t(
     direct ? (channel === "email" ? "delivery_email" : "delivery_wa") : (channel === "email" ? "delivery_mail_manual" : "delivery_wa_manual"),
-    { email: MAIL, phone: `+${WA}` }
+    { email: INQUIRY_DELIVERY.email.address, phone: `+${INQUIRY_DELIVERY.whatsapp.phone}` }
   );
   if (!deliveryPending && deliveryNotice && deliveryNotice.identity !== identity) {
     deliveryNotice = null;
@@ -300,7 +307,7 @@ function setDeliveryPending(pending) {
 
 async function submitInquiry(e) {
   e.preventDefault();
-  if (deliveryPending) return;
+  if (deliveryPending || !INQUIRY_DELIVERY) return;
   const form = document.getElementById("form");
   if (!form.reportValidity()) return;
   const payload = inquiryPayload();
@@ -311,7 +318,7 @@ async function submitInquiry(e) {
 
   if (deliveryMode(channel) !== "direct") {
     showDeliveryNotice("manual", channel === "whatsapp" ? "delivery_wa_opened" : "delivery_mail_opened", payload, identity);
-    if (channel === "whatsapp") window.open(whatsappLink(payload.text), "_blank", "noopener,noreferrer");
+    if (channel === "whatsapp") window.open(whatsappLink(payload.whatsappText), "_blank", "noopener,noreferrer");
     else window.location.href = mailLink(payload.subject, payload.text);
     return;
   }
@@ -338,8 +345,17 @@ async function submitInquiry(e) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  DATA = await loadBookings();
+  const [bookings] = await Promise.all([loadBookings(), loadInquiryConfig()]);
+  DATA = bookings;
   YEAR = seasonYear();
+  if (INQUIRY_DELIVERY) {
+    const phone = document.getElementById("delivery-phone");
+    const email = document.getElementById("delivery-email");
+    phone.textContent = "+" + INQUIRY_DELIVERY.whatsapp.phone;
+    phone.href = "tel:+" + INQUIRY_DELIVERY.whatsapp.phone;
+    email.textContent = INQUIRY_DELIVERY.email.address;
+    email.href = "mailto:" + INQUIRY_DELIVERY.email.address;
+  }
   document.getElementById("guide-reset")?.addEventListener("click", (e) => clearPick(e.currentTarget.dataset.studio));
   document.getElementById("guide-form")?.addEventListener("click", (e) => {
     e.preventDefault();

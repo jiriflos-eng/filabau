@@ -136,13 +136,11 @@ document.addEventListener("DOMContentLoaded", () => {
   initScrollStory();
 });
 
-const WA = "420725866862";
-const MAIL = "jiripilnaj@seznam.cz";
-
 function whatsappLink(text) {
-  return `https://wa.me/${WA}?text=${encodeURIComponent(text)}`;
+  const phone = INQUIRY_DELIVERY.whatsapp.phone;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
 }
 
 function mailLink(subject, text) {
-  return `mailto:${MAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+  return `mailto:${INQUIRY_DELIVERY.email.address}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
 }

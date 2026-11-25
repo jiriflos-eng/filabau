@@ -10,7 +10,7 @@ function inquiryDeliveryEndpoint(value) {
 }
 
 function deliveryMode(channel) {
-  if (typeof INQUIRY_DELIVERY === "undefined") return "manual";
+  if (typeof INQUIRY_DELIVERY === "undefined" || !INQUIRY_DELIVERY) return "unavailable";
   const config = INQUIRY_DELIVERY[channel];
   if (!config || !inquiryDeliveryEndpoint(config.endpoint)) return "manual";
   if (channel === "email" && config.provider === "formsubmit" && config.activated === true) return "direct";
@@ -55,7 +55,7 @@ async function sendInquiry(channel, payload) {
     _honey: "",
   } : {
     subject: payload.subject,
-    text: payload.text,
+    text: payload.whatsappText || payload.text,
     name: payload.name,
     phone: payload.phone,
     email: payload.email,
