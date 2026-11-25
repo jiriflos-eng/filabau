@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Aktivace e-mailu · Filemon a Baucis</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; color: #123a46; background: #efe7d5; }
+    * { box-sizing: border-box; }
+    body { max-width: 760px; margin: 0 auto; padding: 32px 18px; line-height: 1.65; }
+    main { background: #fffdf8; border-radius: 22px; padding: clamp(22px, 5vw, 40px); }
+    h1 { font-size: clamp(1.6rem, 4vw, 2.1rem); line-height: 1.2; }
+    li { margin: 12px 0; }
+    label { display: grid; gap: 7px; font-weight: 650; }
+    input, button { padding: 13px; font: inherit; border-radius: 10px; border: 1px solid #a7b8b8; }
+    button { margin-top: 18px; background: #123a46; color: white; cursor: pointer; font-weight: 650; }
+    code { background: #edf0eb; border-radius: 4px; padding: 2px 4px; overflow-wrap: anywhere; }
+    .notice { padding: 14px; background: #fff1cc; border-radius: 12px; }
+    a { color: #15566d; }
+  </style>
+</head>
+<body>
+  <main>
+    <p>NASTAVENÍ PRO PROVOZOVATELE</p>
+    <h1>Zapnutí skutečného odesílání e-mailu</h1>
+    <p>Cílová schránka: <strong>jiripilnaj@seznam.cz</strong>.</p>
+    <p class="notice">Toto je skutečný aktivační a testovací formulář. Stisknutím tlačítka předáte technickou zprávu službě FormSubmit. Kalendář ani rezervace se tím nezmění.</p>
+    <ol>
+      <li>Otevřete tuto stránku z webu po jejím nahrání na GitHub Pages.</li>
+      <li>Vyplňte svůj e-mail a odešlete technický test. Dokončete případné ověření proti robotům na stránce FormSubmit.</li>
+      <li>Ve schránce <strong>jiripilnaj@seznam.cz</strong> otevřete aktivační e-mail od FormSubmit a potvrďte aktivaci. Zkontrolujte i spam.</li>
+      <li>Po aktivaci odešlete tento test znovu a ověřte, že skutečná zpráva dorazila.</li>
+      <li>V souboru <code>js/delivery-config.js</code> změňte u e-mailu <code>activated: false</code> na <code>activated: true</code> a nahrajte soubor na web.</li>
+      <li>Na <a href="rezervace.html">rezervační stránce</a> vyzkoušejte jednu vlastní e-mailovou poptávku. Ověřte hlášku na stránce i obsah doručené zprávy. Tato aktivační stránka ověřuje schránku; samostatný test rezervačního formuláře ověřuje jeho odesílání na pozadí.</li>
+    </ol>
+    <form action="https://formsubmit.co/jiripilnaj@seznam.cz" method="POST">
+      <input type="hidden" name="_subject" value="Filabau — aktivace a technický test formuláře" />
+      <input type="hidden" name="_url" value="https://jiriflos-eng.github.io/filabau/rezervace.html" />
+      <input type="hidden" name="_template" value="table" />
+      <input type="hidden" name="name" value="Provozovatel — technický test" />
+      <input type="hidden" name="message" value="Technická zkouška e-mailového formuláře Filemon a Baucis. Toto není rezervace ubytování." />
+      <label>Váš e-mail pro tento test
+        <input type="email" name="email" autocomplete="email" required />
+      </label>
+      <button type="submit">Odeslat aktivační / testovací e-mail</button>
+    </form>
+    <p>Dokud přepínač nezapnete, veřejný formulář dál nabízí dokončení e-mailu v poštovním programu. Po zprovoznění můžete tuto aktivační stránku z webu odstranit.</p>
+    <p><a href="https://formsubmit.co/help">Nápověda FormSubmit</a> · <a href="https://formsubmit.co/ajax-documentation">Dokumentace odesílání na pozadí</a></p>
+  </main>
+</body>
+</html>

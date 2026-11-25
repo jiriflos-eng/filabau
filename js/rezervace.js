@@ -2,6 +2,12 @@ let DATA = null;
 let YEAR = typeof seasonYear === "function" ? seasonYear() : new Date().getFullYear();
 let picks = { baucis: [], filemon: [] };
 let activeStudio = "baucis";
+let deliveryPending = false;
+let inquiryValid = false;
+let deliveryAttempt = null;
+let deliveryReceipt = null;
+let deliveryNotice = null;
+let disabledDuringDelivery = [];
 
 function expandRange(pick) {
   if (!pick || pick.length < 2) return (pick || []).slice();
@@ -49,7 +55,7 @@ function paint() {
     getHint: calendarHint,
     getPreview: calendarPreview,
     onDay: (date, studio, busy) => {
-      if (busy || !inSeason(DATA, date) || isPastDate(date)) return;
+      if (deliveryPending || busy || !inSeason(DATA, date) || isPastDate(date)) return;
       activeStudio = studio;
       const cur = picks[studio] || [];
       if (cur.length === 0 || cur.length === 2) picks[studio] = [date];
@@ -90,6 +96,7 @@ function calendarPreview(date, studio) {
 }
 
 function clearPick(studio) {
+  if (deliveryPending) return;
   picks[studio] = [];
   paint();
 }
@@ -163,6 +170,7 @@ function updateInquiry() {
   const ok = both.filter((s) => s.status === "ok");
   const priority = activeStudio === "filemon" ? [filemon, baucis] : both;
   const bad = priority.find((s) => s.status === "partial" || s.status === "short" || s.status === "busy");
+  inquiryValid = !bad && ok.length > 0;
 
   box.classList.remove("has-picks");
   if (bad) {
@@ -200,6 +208,133 @@ function updateInquiry() {
   }
   if (resetBox.childElementCount) box.append(resetBox);
   updateGuide({ baucis, filemon });
+  updateDeliveryUi();
+}
+
+function inquiryChannel() {
+  return document.querySelector("[name=via]:checked")?.value === "wa" ? "whatsapp" : "email";
+}
+
+function inquiryPayload() {
+  const choices = ["baucis", "filemon"].map((studio) => ({ ...studioChoice(studio), studio }));
+  const ok = choices.filter((s) => s.status === "ok");
+  if (!ok.length || choices.some((s) => s.status !== "ok" && s.status !== "empty")) return null;
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const message = document.getElementById("msg").value.trim();
+  const lines = ok.map((s) =>
+    `${t("mail_studio", { label: s.label })}\n${t("mail_in", { date: fmtDate(s.start) })}\n${t("mail_out", { date: fmtDate(s.end) })}\n${t("mail_nights", { n: s.nights })}`
+  );
+  const text = `${t("mail_hello")}\n\n${lines.join("\n\n")}\n\n${t("mail_name", { v: name })}\n${t("mail_phone", { v: phone })}\n${t("mail_email", { v: email })}\n${message ? t("mail_msg", { v: message }) : ""}`;
+  return {
+    subject: t("mail_subject"), text, name, phone, email, message,
+    stays: ok.map((s) => ({ studio: s.studio, arrival: s.start, departure: s.end, nights: s.nights })),
+  };
+}
+
+function inquiryIdentity(channel, payload) {
+  return payload ? JSON.stringify([channel, payload.name, payload.phone, payload.email, payload.message, payload.stays]) : "";
+}
+
+function inquiryRequestId() {
+  if (globalThis.crypto?.randomUUID) return `FB-${globalThis.crypto.randomUUID()}`;
+  return `FB-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
+function showDeliveryNotice(kind, textKey, payload, identity) {
+  deliveryNotice = { kind, textKey, payload, identity };
+  const box = document.getElementById("delivery-status");
+  box.hidden = false;
+  box.dataset.state = kind;
+  document.getElementById("delivery-message").textContent = t(textKey);
+  const reference = document.getElementById("delivery-reference");
+  reference.textContent = payload.requestId ? t("delivery_reference", { id: payload.requestId }) : "";
+  reference.hidden = !payload.requestId;
+  const contact = document.getElementById("delivery-contact");
+  contact.hidden = !["error", "manual"].includes(kind);
+  const text = payload.text + (payload.requestId ? `\n\n${t("delivery_reference", { id: payload.requestId })}` : "");
+  document.getElementById("fallback-wa").href = whatsappLink(text);
+  document.getElementById("fallback-mail").href = mailLink(payload.subject, text);
+}
+
+function updateDeliveryUi() {
+  const channel = inquiryChannel();
+  const direct = deliveryMode(channel) === "direct";
+  const payload = inquiryPayload();
+  const identity = inquiryIdentity(channel, payload);
+  const accepted = deliveryReceipt?.identity === identity && Boolean(identity);
+  const button = document.getElementById("send");
+  button.disabled = deliveryPending || !inquiryValid || accepted;
+  button.textContent = t(deliveryPending ? "send_pending" : accepted ? "send_done" : direct ? "send_direct" : channel === "whatsapp" ? "send_wa" : "send_mail");
+  document.getElementById("delivery-hint").textContent = t(
+    direct ? (channel === "email" ? "delivery_email" : "delivery_wa") : (channel === "email" ? "delivery_mail_manual" : "delivery_wa_manual"),
+    { email: MAIL, phone: `+${WA}` }
+  );
+  if (!deliveryPending && deliveryNotice && deliveryNotice.identity !== identity) {
+    deliveryNotice = null;
+    document.getElementById("delivery-status").hidden = true;
+  }
+  if (accepted && !deliveryPending && !deliveryNotice) {
+    showDeliveryNotice("success", "delivery_success", deliveryReceipt.payload, identity);
+  }
+}
+
+function setDeliveryPending(pending) {
+  deliveryPending = pending;
+  const form = document.getElementById("form");
+  form.setAttribute("aria-busy", String(pending));
+  if (pending) {
+    disabledDuringDelivery = [...form.querySelectorAll("input, textarea, select, button"),
+      document.getElementById("year"), document.getElementById("guide-reset")]
+      .filter((el) => el && el.id !== "send")
+      .map((el) => ({ el, disabled: el.disabled }));
+    disabledDuringDelivery.forEach(({ el }) => { el.disabled = true; });
+  } else {
+    disabledDuringDelivery.forEach(({ el, disabled }) => { el.disabled = disabled; });
+    disabledDuringDelivery = [];
+  }
+  document.getElementById("cal").inert = pending;
+  updateDeliveryUi();
+}
+
+async function submitInquiry(e) {
+  e.preventDefault();
+  if (deliveryPending) return;
+  const form = document.getElementById("form");
+  if (!form.reportValidity()) return;
+  const payload = inquiryPayload();
+  if (!payload) return;
+  const channel = inquiryChannel();
+  const identity = inquiryIdentity(channel, payload);
+  if (deliveryReceipt?.identity === identity) return;
+
+  if (deliveryMode(channel) !== "direct") {
+    showDeliveryNotice("manual", channel === "whatsapp" ? "delivery_wa_opened" : "delivery_mail_opened", payload, identity);
+    if (channel === "whatsapp") window.open(whatsappLink(payload.text), "_blank", "noopener,noreferrer");
+    else window.location.href = mailLink(payload.subject, payload.text);
+    return;
+  }
+
+  // Reuse the reference for an explicit retry of the same request; never retry automatically.
+  const requestId = deliveryAttempt?.identity === identity ? deliveryAttempt.requestId : inquiryRequestId();
+  deliveryAttempt = { identity, requestId };
+  const snapshot = { ...payload, requestId };
+  setDeliveryPending(true);
+  showDeliveryNotice("pending", "delivery_pending", snapshot, identity);
+  try {
+    const result = await sendInquiry(channel, snapshot);
+    if (result?.accepted !== true) throw inquiryDeliveryError("unconfirmed");
+    deliveryReceipt = { identity, payload: snapshot };
+    showDeliveryNotice("success", "delivery_success", snapshot, identity);
+  } catch (error) {
+    const key = ["not_configured", "activation_required"].includes(error?.code) ? "delivery_activation"
+      : error?.code === "rejected" ? "delivery_rejected" : "delivery_unconfirmed";
+    showDeliveryNotice("error", key, snapshot, identity);
+  } finally {
+    setDeliveryPending(false);
+    document.getElementById("delivery-status").focus({ preventScroll: true });
+  }
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -212,29 +347,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("name").focus({ preventScroll: true });
   });
   document.getElementById("year").addEventListener("change", (e) => {
+    if (deliveryPending) return;
     YEAR = Number(e.target.value);
     picks = { baucis: [], filemon: [] };
     paint();
     jumpToRelevantMonth(document.getElementById("cal"));
   });
-  document.getElementById("form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const choices = ["baucis", "filemon"].map(studioChoice);
-    const ok = choices.filter((s) => s.status === "ok");
-    if (!ok.length || choices.some((s) => s.status !== "ok" && s.status !== "empty")) return;
-    const name = document.getElementById("name").value.trim();
-    const phone = document.getElementById("phone").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const msg = document.getElementById("msg").value.trim();
-    const lines = ok.map(
-      (s) =>
-        `${t("mail_studio", { label: s.label })}\n${t("mail_in", { date: fmtDate(s.start) })}\n${t("mail_out", { date: fmtDate(s.end) })}\n${t("mail_nights", { n: s.nights })}`
-    );
-    const text = `${t("mail_hello")}\n\n${lines.join("\n\n")}\n\n${t("mail_name", { v: name })}\n${t("mail_phone", { v: phone })}\n${t("mail_email", { v: email })}\n${msg ? t("mail_msg", { v: msg }) : ""}`;
-    const via = document.querySelector("[name=via]:checked").value;
-    if (via === "wa") window.open(whatsappLink(text), "_blank");
-    else window.location.href = mailLink(t("mail_subject"), text);
-  });
+  const form = document.getElementById("form");
+  if (deliveryMode("email") === "direct") form.querySelector('[name="via"][value="mail"]').checked = true;
+  form.addEventListener("input", updateDeliveryUi);
+  form.addEventListener("change", updateDeliveryUi);
+  form.addEventListener("submit", submitInquiry);
   paint();
   jumpToRelevantMonth(document.getElementById("cal"));
 });

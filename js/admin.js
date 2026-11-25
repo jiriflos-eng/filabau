@@ -17,6 +17,45 @@ function rowsForYear() {
     .sort((a, b) => a.arrival.localeCompare(b.arrival) || a.studio.localeCompare(b.studio));
 }
 
+function syncDepartureDate(arrival, departure, suggest = false) {
+  if (!isIsoDate(arrival.value)) {
+    departure.removeAttribute("min");
+    return;
+  }
+  const min = addDays(arrival.value, 1);
+  departure.min = min;
+  // A selected value, rather than min alone, anchors the native picker month.
+  if (suggest && (!isIsoDate(departure.value) || departure.value < min)) {
+    departure.value = min;
+  }
+}
+
+function bindStayDateInputs(arrival, departure) {
+  const suggest = () => syncDepartureDate(arrival, departure, true);
+  arrival.addEventListener("input", () => syncDepartureDate(arrival, departure));
+  arrival.addEventListener("change", suggest);
+  departure.addEventListener("focus", suggest);
+  departure.addEventListener("pointerdown", suggest);
+  departure.addEventListener("keydown", (e) => {
+    if ((e.altKey && e.key === "ArrowDown") || ["F4", "Enter", " "].includes(e.key)) suggest();
+  });
+  syncDepartureDate(arrival, departure);
+}
+
+function stayDateError(arrival, departure) {
+  // Validation must not silently correct manually entered dates on Save.
+  syncDepartureDate(arrival, departure);
+  if (!arrival.checkValidity() || !isIsoDate(arrival.value)) {
+    arrival.reportValidity();
+    return "Vyplňte platné datum příjezdu.";
+  }
+  if (!departure.checkValidity() || !isIsoDate(departure.value) || departure.value <= arrival.value) {
+    // Keep the invalid value visible; reporting validity can focus and seed it.
+    return "Odjezd musí být nejdříve následující den po příjezdu.";
+  }
+  return "";
+}
+
 function paint() {
   const years = [...new Set([...yearsOf(DATA), ...seasonYears()])].sort((a, b) => a - b);
   if (!years.includes(YEAR)) YEAR = seasonYear();
@@ -36,8 +75,8 @@ function paint() {
         </select>
       </td>
       <td><input data-f="name" value="${(s.name || "").replace(/"/g, "&quot;")}" /></td>
-      <td><input data-f="arrival" type="date" value="${s.arrival}" /></td>
-      <td><input data-f="departure" type="date" value="${s.departure}" /></td>
+      <td><input data-f="arrival" type="date" value="${s.arrival}" required /></td>
+      <td><input data-f="departure" type="date" value="${s.departure}" required /></td>
       <td class="nights">${nightsBetween(s.arrival, s.departure)}</td>
       <td class="acts">
         <button type="button" class="btn btn-sea save" data-id="${s.id}">Uložit</button>
@@ -47,6 +86,9 @@ function paint() {
         )
         .join("")
     : `<tr><td colspan="6" class="muted">V roce ${YEAR} zatím žádné rezervace.</td></tr>`;
+  body.querySelectorAll("tr[data-id]").forEach((tr) => {
+    bindStayDateInputs(tr.querySelector('[data-f="arrival"]'), tr.querySelector('[data-f="departure"]'));
+  });
   document.getElementById("updated").textContent = DATA.updatedAt
     ? `Uloženo ${DATA.updatedAt.replace("T", " ").slice(0, 16)} · ${rows.length} rezervací`
     : "";
@@ -100,6 +142,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   DATA = await loadBookings();
   YEAR = seasonYear();
   await gate();
+  const newArrival = document.getElementById("new-from");
+  const newDeparture = document.getElementById("new-to");
+  bindStayDateInputs(newArrival, newDeparture);
 
   document.getElementById("pin-form").addEventListener("submit", (e) => {
     e.preventDefault();
@@ -111,18 +156,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
   document.getElementById("new-form").addEventListener("submit", (e) => {
     e.preventDefault();
+    const dateError = stayDateError(newArrival, newDeparture);
+    if (dateError) return toast(dateError, true);
     const stay = {
       studio: document.getElementById("new-studio").value,
       name: document.getElementById("new-name").value,
-      arrival: document.getElementById("new-from").value,
-      departure: document.getElementById("new-to").value,
+      arrival: newArrival.value,
+      departure: newDeparture.value,
     };
     const r = saveStay(DATA, stay);
     if (!r.ok) return toast(r.error, true);
     YEAR = Number(r.stay.arrival.slice(0, 4));
     document.getElementById("new-name").value = "";
-    document.getElementById("new-from").value = "";
-    document.getElementById("new-to").value = "";
+    newArrival.value = "";
+    newDeparture.value = "";
+    syncDepartureDate(newArrival, newDeparture);
     toast(`Přidáno: ${r.stay.name} · ${fmtDate(r.stay.arrival)} – ${fmtDate(r.stay.departure)}`);
     paint();
   });
@@ -131,6 +179,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     const del = e.target.closest(".del");
     if (save) {
       const tr = save.closest("tr");
+      const dateError = stayDateError(
+        tr.querySelector('[data-f="arrival"]'),
+        tr.querySelector('[data-f="departure"]')
+      );
+      if (dateError) {
+        tr.classList.add("row-error");
+        return toast(dateError, true);
+      }
       const r = saveStay(DATA, readRow(tr));
       if (!r.ok) {
         tr.classList.add("row-error");

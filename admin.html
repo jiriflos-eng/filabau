@@ -38,6 +38,7 @@
       <p class="eyebrow">Rezervace</p>
       <h1 class="serif" style="font-size:clamp(2rem,4vw,3rem);margin:8px 0">Jedna rezervace = jeden řádek.</h1>
       <p class="muted">Vyplňte studio, jméno, příjezd a odjezd. V den odjezdu může přijet další host: odjezd zabírá levou polovinu políčka dne, příjezd pravou. Překrytí obsazených nocí ve stejném studiu nelze uložit. Klientský kalendář se aktualizuje sám na tomto počítači.</p>
+      <p class="muted" id="date-help">Po výběru příjezdu se prázdný nebo příliš brzký odjezd předvyplní na následující den. Termín si upravte podle délky pobytu; již zvolený pozdější odjezd zůstane zachován.</p>
       <p id="flash" class="flash hidden"></p>
       <p id="err" class="err hidden"></p>
 
@@ -55,7 +56,7 @@
           <input id="new-from" type="date" required />
         </label>
         <label>Odjezd
-          <input id="new-to" type="date" required />
+          <input id="new-to" type="date" aria-describedby="date-help" required />
         </label>
         <button class="btn btn-terra" type="submit">Přidat rezervaci</button>
       </form>

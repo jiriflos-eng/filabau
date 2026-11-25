@@ -1019,6 +1019,18 @@ select, input, textarea {
 }
 .modal .box { background: var(--white); padding: 24px; border-radius: 20px; width: min(420px, calc(100% - 32px)); }
 .hidden { display: none !important; }
+.delivery-hint { margin: 4px 0 0; line-height: 1.55; color: var(--muted); }
+.delivery-status { padding: 18px; border-radius: 16px; border: 1px solid #b9cdd2; background: #eef5f6; line-height: 1.55; }
+.delivery-status[hidden], .delivery-status [hidden] { display: none !important; }
+.delivery-status[data-state="success"] { background: #e7f4ea; border-color: #a7cdb0; color: #215c32; }
+.delivery-status[data-state="error"] { background: #fff4db; border-color: #e0bd69; color: #634a19; }
+.delivery-status p { margin: 0 0 8px; }
+.delivery-status p:last-child { margin-bottom: 0; }
+.delivery-status small { display: block; overflow-wrap: anywhere; }
+.delivery-contact { margin-top: 14px; padding-top: 12px; border-top: 1px solid currentColor; }
+.delivery-contact a { text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.delivery-contact > a { display: block; width: fit-content; margin-top: 9px; }
+.inquiry[aria-busy="true"] #send { cursor: wait; }
 .flash { background: #e7f4ea; color: #215c32; padding: 10px 12px; border-radius: 12px; font-size: .9rem; }
 .err { background: #fde8e4; color: #8a2d1a; padding: 10px 12px; border-radius: 12px; font-size: .95rem; font-weight: 650; }
 .new-stay {
