@@ -164,14 +164,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       arrival: newArrival.value,
       departure: newDeparture.value,
     };
-    const r = saveStay(DATA, stay);
+    const r = saveNewStay(DATA, stay);
     if (!r.ok) return toast(r.error, true);
     YEAR = Number(r.stay.arrival.slice(0, 4));
     document.getElementById("new-name").value = "";
     newArrival.value = "";
     newDeparture.value = "";
     syncDepartureDate(newArrival, newDeparture);
-    toast(`Přidáno: ${r.stay.name} · ${fmtDate(r.stay.arrival)} – ${fmtDate(r.stay.departure)}`);
+    const label = stay.studio === "both" ? "Filemon + Baucis" : STUDIOS.find((s) => s.id === stay.studio).label;
+    toast(`Přidáno: ${label} · ${r.stay.name} · ${fmtDate(r.stay.arrival)} – ${fmtDate(r.stay.departure)}`);
     paint();
   });
   document.getElementById("rows").addEventListener("click", (e) => {

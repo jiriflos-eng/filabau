@@ -176,6 +176,7 @@ function guestTrackHtml(data, year, st, week, dates, selected, getHint) {
     const tooltip = `${hint}\n${st.label} · ${fmtDate(date)}${occupied ? `\n${title}` : ""}`;
     const classes = ["gpill", "gdate", full ? "busy" : season ? "free" : "off",
       occupied ? "has-stay" : "", occupied && !full ? "partial" : "",
+      full && state.morningStay.id !== state.afternoonStay.id ? "handover" : "",
       past ? "is-past" : "", part ? "has-selection" : ""].filter(Boolean).join(" ");
     items.push(`<button type="button" class="${classes}" style="grid-column:${col * 2 + 1} / span 2"
       data-date="${date}" data-studio="${st.id}" data-busy="${full ? "1" : "0"}"

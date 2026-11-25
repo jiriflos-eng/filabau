@@ -225,7 +225,7 @@ function findOverlap(data, stay, excludeId) {
   );
 }
 
-function saveStay(data, stay) {
+function saveStay(data, stay, persist = true) {
   ensureStays(data);
   let a = stay.arrival;
   let b = stay.departure;
@@ -240,7 +240,7 @@ function saveStay(data, stay) {
     arrival: a,
     departure: b,
   };
-  if (!next.studio) return { ok: false, error: "Vyberte studio." };
+  if (!STUDIOS.some((s) => s.id === next.studio)) return { ok: false, error: "Vyberte studio." };
   const clash = findOverlap(data, next, stay.id);
   if (clash) {
     return {
@@ -259,8 +259,28 @@ function saveStay(data, stay) {
     action: i >= 0 ? "edit" : "add",
     detail: `${i >= 0 ? "Upraveno" : "Přidáno"} ${next.studio} ${next.name} ${next.arrival} – ${next.departure}`,
   });
-  saveBookings(data);
+  if (persist) saveBookings(data);
   return { ok: true, stay: next };
+}
+
+// The combined option is only a creation shortcut, not a third studio.
+// Stage both inserts and persist exactly once, only if both pass validation.
+function saveNewStay(data, stay) {
+  if (stay.studio !== "both") return saveStay(data, stay);
+  const staged = JSON.parse(JSON.stringify(data));
+  const created = [];
+  for (const studio of STUDIOS) {
+    const result = saveStay(staged, { ...stay, id: undefined, studio: studio.id }, false);
+    if (!result.ok) return { ...result, error: `${studio.label}: ${result.error} Nebyla uložena žádná z obou rezervací.` };
+    created.push(result.stay);
+  }
+  try {
+    saveBookings(staged);
+  } catch (_) {
+    return { ok: false, error: "Rezervace se nepodařilo uložit do prohlížeče. Nebyla uložena žádná z obou rezervací." };
+  }
+  Object.assign(data, staged);
+  return { ok: true, stay: created[0], stays: created };
 }
 
 function deleteStay(data, id) {

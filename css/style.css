@@ -754,41 +754,48 @@ select, input, textarea {
   pointer-events: none;
   min-width: 0;
   height: 48px;
-  background: linear-gradient(180deg, #f3c5b6, #e8a090);
-  box-shadow: inset 0 0 0 1px rgba(139, 58, 40, .18);
+  --band-color: linear-gradient(180deg, #f3c5b6, #e8a090);
+  --band-skew: -20deg;
+  --band-in: 0px;
+  --band-out: 0px;
+  padding-left: var(--band-in);
+  padding-right: var(--band-out);
+  background: var(--band-color) no-repeat;
+  background-origin: content-box;
+  background-clip: content-box;
 }
 .gband.continues-in { margin-left: calc(var(--day-gap) / 2); }
 .gband.continues-out { margin-right: calc(var(--day-gap) / 2); }
 .guest-week.is-top .gband { border-radius: 7px 7px 0 0; }
 .guest-week.is-bot .gband { border-radius: 0 0 7px 7px; }
-.gband.starts { border-left: 1px solid rgba(255, 252, 247, .65); }
-.gband.ends { border-right: 1px solid rgba(255, 252, 247, .65); }
-/* Soft diagonal ramps stay inside the occupied half-day, including handovers. */
+/* Real slanted edges centered on noon, with rounded outside corners.
+   Two adjacent stays use the same slope so their boundaries meet. */
+.gband.starts { --band-in: min(15px, 30%); }
+.gband.ends { --band-out: min(15px, 30%); }
 .gband.starts::before, .gband.ends::after {
   content: "";
   position: absolute;
-  top: 1px;
-  bottom: 1px;
-  width: min(18px, 35%);
+  top: 0;
+  bottom: 0;
+  width: min(36px, 75%);
   z-index: 0;
-  border-radius: inherit;
   pointer-events: none;
+  background: var(--band-color);
+  transform: skewX(var(--band-skew));
+  transform-origin: center;
 }
-.gband.starts::before {
-  left: 0;
-  background: linear-gradient(115deg,
-    rgba(255, 252, 247, .78) 0%,
-    rgba(255, 252, 247, .42) 32%,
-    rgba(255, 252, 247, .12) 55%,
-    rgba(255, 252, 247, 0) 78%);
+.gband.starts::before { left: 0; border-left: 1px solid rgba(139,58,40,.55); }
+.gband.ends::after { right: 0; border-right: 1px solid rgba(139,58,40,.55); }
+.guest-week.is-top .gband.starts::before { border-radius: 7px 0 0 0; }
+.guest-week.is-top .gband.ends::after { border-radius: 0 7px 0 0; }
+.guest-week.is-bot .gband.starts::before { border-radius: 0 0 0 7px; }
+.guest-week.is-bot .gband.ends::after { border-radius: 0 0 7px 0; }
+.gdate.handover { background: linear-gradient(180deg, #f3c5b6, #e8a090); }
+@media (max-width: 800px) {
+  .gband { --band-skew: -10deg; }
 }
-.gband.ends::after {
-  right: 0;
-  background: linear-gradient(245deg,
-    rgba(255, 252, 247, .78) 0%,
-    rgba(255, 252, 247, .42) 32%,
-    rgba(255, 252, 247, .12) 55%,
-    rgba(255, 252, 247, 0) 78%);
+@media (max-width: 400px) {
+  .gband { --band-skew: -6deg; }
 }
 .gband .gname, .gband .gtag { z-index: 1; }
 .gname {
@@ -1035,7 +1042,7 @@ select, input, textarea {
 .err { background: #fde8e4; color: #8a2d1a; padding: 10px 12px; border-radius: 12px; font-size: .95rem; font-weight: 650; }
 .new-stay {
   display: grid;
-  grid-template-columns: 140px 1fr 160px 160px auto;
+  grid-template-columns: minmax(165px, auto) minmax(0, 1fr) 160px 160px auto;
   gap: 10px;
   align-items: end;
   background: var(--white);
