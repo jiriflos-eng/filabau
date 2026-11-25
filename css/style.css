@@ -619,17 +619,16 @@ select, input, textarea {
   padding: 22px 22px 16px;
   margin-bottom: 22px;
   border: 1px solid rgba(18,58,70,.1);
-  scroll-margin-top: calc(var(--nav) + 16px);
+  scroll-margin-top: calc(var(--nav) + 130px);
 }
 .guest-month.is-past {
   opacity: 0.38;
   filter: grayscale(0.45);
   pointer-events: none;
 }
-.gpill.is-past {
-  opacity: 0.4;
-  cursor: default;
-}
+.gpill.is-past { cursor: default; }
+.gpill.is-past .gnum { opacity: .45; }
+.gpill.is-past.free { background: #edf4ed; }
 .guest-month h3 {
   margin: 0 0 14px;
   font-size: 1.55rem;
@@ -673,108 +672,259 @@ select, input, textarea {
   display: flex;
   align-items: center;
 }
+/* Fourteen tracks keep each arrival/departure exactly at the middle of a day. */
 .guest-track {
+  --day-gap: 5px;
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 5px;
-  height: 44px;
-}
-.gpill, .gday {
-  border: 0;
-  font: inherit;
-  cursor: pointer;
-  height: 44px;
-  min-height: 44px;
-  box-sizing: border-box;
+  grid-template-columns: repeat(14, minmax(0, 1fr));
+  height: 48px;
+  position: relative;
 }
 .gpill {
+  grid-row: 1;
+  min-width: 0;
+  height: 48px;
+  min-height: 48px;
+  margin-inline: calc(var(--day-gap) / 2);
+  padding: 0;
+  border: 0;
   border-radius: 0;
   background: #d7eed9;
   color: #2f5b28;
+  font: inherit;
   font-weight: 650;
   display: grid;
   place-items: center;
+  cursor: pointer;
 }
+.gdate { position: relative; }
 .guest-week.is-top .gpill { border-radius: 12px 12px 0 0; }
 .guest-week.is-bot .gpill { border-radius: 0 0 12px 12px; }
-.gpill.off, .gpill.blank { background: transparent; color: #ccc; cursor: default; box-shadow: none; }
-.gpill.sel, .gday.sel { box-shadow: inset 0 0 0 2px var(--sea); }
-.gband {
-  position: relative;
-  background: linear-gradient(180deg, #f3c5b6, #e8a090);
-  border-radius: 0;
-  height: 44px;
-  min-height: 44px;
-  box-sizing: border-box;
-  box-shadow: inset 0 0 0 1px rgba(139, 58, 40, .18);
+.gpill.off, .gpill.blank, .gpill.busy {
+  background: transparent;
+  cursor: default;
+  box-shadow: none;
 }
-.guest-week.is-top .gband { border-radius: 8px 8px 0 0; }
-.guest-week.is-top .gband.starts { border-top-left-radius: 12px; border-bottom-left-radius: 0; }
-.guest-week.is-top .gband.ends { border-top-right-radius: 12px; border-bottom-right-radius: 0; }
-.guest-week.is-bot .gband { border-radius: 0 0 8px 8px; }
-.guest-week.is-bot .gband.starts { border-top-left-radius: 0; border-bottom-left-radius: 12px; }
-.guest-week.is-bot .gband.ends { border-top-right-radius: 0; border-bottom-right-radius: 12px; }
-.gband-days {
-  display: grid;
-  height: 100%;
+.gpill.off { color: #aaa; }
+.gnum { position: relative; z-index: 3; font-weight: 650; font-size: .9rem; pointer-events: none; }
+.gdate.has-stay .gnum, .gdate.has-selection .gnum {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: .78rem;
+  color: #4e4937;
+}
+.gdate:focus-visible { outline: none; }
+.gdate:focus-visible::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border: 2px solid var(--sea);
+  border-radius: inherit;
+  pointer-events: none;
+}
+.gselection, .gpreview {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.gselection {
+  z-index: 4;
+  border: 2px solid var(--sea);
+  background: rgba(18, 58, 70, .07);
+}
+.gpreview {
+  z-index: 2;
+  background: #f4d77a;
+  box-shadow: inset 0 0 0 1px rgba(157, 118, 25, .2);
+}
+.gselection.morning, .gpreview.morning { right: 50%; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.gselection.afternoon, .gpreview.afternoon { left: 50%; border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.gband {
+  grid-row: 1;
   position: relative;
   z-index: 1;
-}
-.gday {
-  background: transparent;
-  color: #7a3a2c;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 2px 6px;
+  pointer-events: none;
   min-width: 0;
-  position: relative;
-  overflow: hidden;
+  height: 48px;
+  background: linear-gradient(180deg, #f3c5b6, #e8a090);
+  box-shadow: inset 0 0 0 1px rgba(139, 58, 40, .18);
 }
-.gnum { font-weight: 650; font-size: .82rem; opacity: .85; }
-.gtag {
+.gband.continues-in { margin-left: calc(var(--day-gap) / 2); }
+.gband.continues-out { margin-right: calc(var(--day-gap) / 2); }
+.guest-week.is-top .gband { border-radius: 7px 7px 0 0; }
+.guest-week.is-bot .gband { border-radius: 0 0 7px 7px; }
+.gband.starts { border-left: 1px solid rgba(255, 252, 247, .65); }
+.gband.ends { border-right: 1px solid rgba(255, 252, 247, .65); }
+/* Soft diagonal ramps stay inside the occupied half-day, including handovers. */
+.gband.starts::before, .gband.ends::after {
+  content: "";
   position: absolute;
-  left: 6px;
-  top: 21px;
-  font-size: .5rem;
-  font-weight: 800;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  margin-top: 0;
-  color: #5c241c;
+  top: 1px;
+  bottom: 1px;
+  width: min(18px, 35%);
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
 }
-.gtag-out { left: auto; right: 6px; text-align: right; }
+.gband.starts::before {
+  left: 0;
+  background: linear-gradient(115deg,
+    rgba(255, 252, 247, .78) 0%,
+    rgba(255, 252, 247, .42) 32%,
+    rgba(255, 252, 247, .12) 55%,
+    rgba(255, 252, 247, 0) 78%);
+}
+.gband.ends::after {
+  right: 0;
+  background: linear-gradient(245deg,
+    rgba(255, 252, 247, .78) 0%,
+    rgba(255, 252, 247, .42) 32%,
+    rgba(255, 252, 247, .12) 55%,
+    rgba(255, 252, 247, 0) 78%);
+}
+.gband .gname, .gband .gtag { z-index: 1; }
 .gname {
   position: absolute;
-  left: 8px; right: 8px;
-  top: 50%;
-  bottom: auto;
+  left: 8px;
+  right: 8px;
+  top: 53%;
   transform: translateY(-50%);
   text-align: center;
   font-family: "Outfit", system-ui, sans-serif;
   font-size: clamp(.92rem, 1.8vw, 1.2rem);
   font-weight: 700;
   color: #fff;
-  letter-spacing: 0.02em;
-  pointer-events: none;
-  z-index: 2;
-  line-height: 1;
+  letter-spacing: .02em;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   -webkit-text-stroke: 1.2px #5a2218;
   paint-order: stroke fill;
 }
-.gband.starts .gname { left: 8px; }
-.gband.ends .gname { right: 8px; }
-.gband.starts.ends .gname { left: 6px; right: 6px; }
 .gband.short .gname { left: 4px; right: 4px; font-size: .9rem; }
+.gband.edge-only .gname { display: none; }
+.gtag {
+  position: absolute;
+  left: 4px;
+  bottom: 2px;
+  font-size: .47rem;
+  font-weight: 800;
+  letter-spacing: .03em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: #5c241c;
+  white-space: nowrap;
+}
+.gtag-out { left: auto; right: 4px; text-align: right; }
+.swatch-arrive { background: linear-gradient(90deg, #d7eed9 50%, #e8a090 50%); }
+.swatch-depart { background: linear-gradient(90deg, #e8a090 50%, #d7eed9 50%); }
+.legend .swatch-arrive, .legend .swatch-depart { width: 24px; box-shadow: inset 0 0 0 1px rgba(18,58,70,.14); }
+
+/* A visible two-step guide also works on phones, where hover tips do not exist. */
+.calendar-guide {
+  position: sticky;
+  top: calc(var(--nav) + 8px);
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  margin: 0 0 18px;
+  border: 1px solid #d9c083;
+  border-radius: 18px;
+  background: #fff7df;
+  box-shadow: 0 4px 14px rgba(18,58,70,.09);
+}
+.guide-step {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--sea);
+  color: white;
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+.calendar-guide > div { flex: 1; min-width: 0; }
+#guide-title { display: block; color: var(--sea); font-size: 1.05rem; line-height: 1.35; }
+#guide-detail { display: block; color: #59615b; font-size: .86rem; line-height: 1.4; margin-top: 3px; }
+.calendar-guide.is-complete { background: #edf6ed; border-color: #bed4bc; }
+.calendar-guide.is-error { background: #fff0ea; border-color: #dfa996; }
+.guide-reset, .pick-reset {
+  border: 0;
+  padding: 6px 0;
+  font: inherit;
+  font-size: .8rem;
+  color: var(--sea);
+  background: transparent;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.guide-form {
+  flex-shrink: 0;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: var(--sea);
+  color: white;
+  font-size: .85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.calendar-guide [hidden], .calendar-tooltip[hidden] { display: none; }
+.calendar-tooltip {
+  position: fixed;
+  z-index: 100;
+  max-width: min(340px, calc(100vw - 16px));
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--sea-deep);
+  color: #fff;
+  box-shadow: 0 5px 20px rgba(0,0,0,.18);
+  font-size: .85rem;
+  line-height: 1.45;
+  white-space: pre-line;
+  pointer-events: none;
+}
+.pick-actions { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 10px; }
 @media (max-width: 800px) {
   .guest-dow, .guest-week { grid-template-columns: 1fr; }
   .guest-dow { display: none; }
-  .guest-lab { padding: 4px 0 0; }
-  .gname { font-size: .85rem; left: 4px !important; right: 4px !important; }
+  .guest-lab { padding: 4px 0 2px; }
+  .gname { font-size: .85rem; left: 4px; right: 4px; }
+  .calendar-guide { flex-wrap: wrap; gap: 8px 10px; padding: 10px 12px; }
+  .calendar-guide > div { flex-basis: calc(100% - 48px); }
+  .guide-reset { margin-left: 46px; }
+  .guide-form { margin-left: auto; }
+  .guest-month { scroll-margin-top: calc(var(--nav) + 150px); }
+}
+@media (max-width: 480px) {
+  .guest-month { padding: 14px 8px 10px; border-radius: 20px; }
+  .guest-pair { padding: 5px 2px; }
+  .guest-track { --day-gap: 3px; }
+  .gnum { font-size: .85rem; }
+  .gtag { font-size: 0; }
+  .gtag-in::after { content: "→"; font-size: 12px; }
+  .gtag-out::after { content: "←"; font-size: 12px; }
+  #guide-title { font-size: .95rem; }
+  #guide-detail { font-size: .78rem; }
+  .guide-step { flex-basis: 30px; width: 30px; height: 30px; }
+  .guide-reset { margin-left: 40px; }
 }
 
 .inquiry {
+  scroll-margin-top: calc(var(--nav) + 180px);
   margin-top: 28px; background: var(--white); border-radius: 28px; padding: 28px;
   display: grid; gap: 14px; max-width: 640px;
   border: 1px solid rgba(18,58,70,.1);

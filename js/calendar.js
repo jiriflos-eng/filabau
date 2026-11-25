@@ -124,68 +124,166 @@ function renderCalendar(el, opts) {
   }
 }
 
-function guestTrackHtml(data, year, st, week, dates, selected) {
+function escapeCalendarHtml(value) {
+  return String(value).replace(/[&<>"']/g, (ch) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[ch]));
+}
+
+function selectedDayPart(data, year, studio, date, pick) {
+  if (!pick?.length) return "";
+  if (pick.length === 1) {
+    if (pick[0] !== date) return "";
+    const state = dayAvailability(data, year, studio, date);
+    return state.afternoonBusy ? "morning" : "afternoon";
+  }
+  const start = pick[0] < pick[1] ? pick[0] : pick[1];
+  const end = pick[0] < pick[1] ? pick[1] : pick[0];
+  if (date < start || date > end || start === end) return "";
+  if (date === start) return "afternoon";
+  if (date === end) return "morning";
+  return "both";
+}
+
+function guestTrackHtml(data, year, st, week, dates, selected, getHint) {
   const items = [];
-  let col = 0;
-  while (col < 7) {
+  // Each date has two slots. A stay owns arrival afternoon through departure morning.
+  const halves = [];
+  for (let col = 0; col < 7; col++) {
     const date = dates[col];
     const d = week[col];
     if (!d) {
-      items.push(`<span class="gpill blank" style="grid-column:${col + 1}"></span>`);
-      col++;
+      halves.push(null, null);
+      items.push(`<span class="gpill blank" style="grid-column:${col * 2 + 1} / span 2" aria-hidden="true"></span>`);
       continue;
     }
-    const stay = findStay(data, year, st.id, date);
-    if (!stay) {
-      const season = inSeason(data, date);
-      const sel = selected && selected[st.id]?.includes(date);
-      const past = isPastDate(date);
-      items.push(
-        `<button type="button" class="gpill ${season ? "free" : "off"} ${sel ? "sel" : ""} ${past ? "is-past" : ""}" style="grid-column:${col + 1}" data-date="${date}" data-studio="${st.id}" ${season && !past ? "" : "disabled"}>${d}</button>`
-      );
-      col++;
-      continue;
-    }
-    let end = col;
-    while (
-      end + 1 < 7 &&
-      dates[end + 1] &&
-      findStay(data, year, st.id, dates[end + 1]) &&
-      findStay(data, year, st.id, dates[end + 1]).start === stay.start
-    ) {
-      end++;
-    }
-    const span = end - col + 1;
-    const starts = dates[col] === stay.start;
-    const ends = dates[end] === stay.end;
-    const days = [];
-    for (let k = col; k <= end; k++) {
-      const sel = selected && selected[st.id]?.includes(dates[k]);
-      const isA = dates[k] === stay.start;
-      const isD = dates[k] === stay.end;
-      days.push(
-        `<button type="button" class="gday ${sel ? "sel" : ""}" data-date="${dates[k]}" data-studio="${st.id}" data-busy="1">
-          <span class="gnum">${week[k]}</span>
-          ${isA ? `<span class="gtag gtag-in">${t("arrive")}</span>` : ""}
-          ${isD && !isA ? `<span class="gtag gtag-out">${t("depart")}</span>` : ""}
-          ${isA && isD ? `<span class="gtag gtag-out">${t("arrive_depart")}</span>` : ""}
-        </button>`
-      );
-    }
+    const state = dayAvailability(data, year, st.id, date);
+    halves.push(state.morningStay, state.afternoonStay);
+    const season = inSeason(data, date);
+    const past = isPastDate(date);
+    const full = state.morningBusy && state.afternoonBusy;
+    const occupied = state.morningBusy || state.afternoonBusy;
+    const part = selectedDayPart(data, year, st.id, date, selected?.[st.id]);
+    const canPick = season && !past && !full;
+    const describe = (stay, available) => stay
+      ? `${stay.note || t("occupied")} (${fmtDate(stay.start)} – ${fmtDate(stay.end)})`
+      : t(available);
+    const title = !season ? t("off_season") : occupied
+      ? `${t("morning")}: ${describe(state.morningStay, "available_departure")} · ${t("afternoon")}: ${describe(state.afternoonStay, "available_arrival")}`
+      : t("free");
+    const hint = getHint ? getHint(date, st.id, state) : title;
+    const label = `${st.label} · ${fmtDate(date)} · ${hint} · ${title}${part ? ` · ${t("selected")}` : ""}`;
+    const tooltip = `${hint}\n${st.label} · ${fmtDate(date)}${occupied ? `\n${title}` : ""}`;
+    const classes = ["gpill", "gdate", full ? "busy" : season ? "free" : "off",
+      occupied ? "has-stay" : "", occupied && !full ? "partial" : "",
+      past ? "is-past" : "", part ? "has-selection" : ""].filter(Boolean).join(" ");
+    items.push(`<button type="button" class="${classes}" style="grid-column:${col * 2 + 1} / span 2"
+      data-date="${date}" data-studio="${st.id}" data-busy="${full ? "1" : "0"}"
+      data-morning-busy="${state.morningBusy ? "1" : "0"}" data-afternoon-busy="${state.afternoonBusy ? "1" : "0"}"
+      data-tooltip="${escapeCalendarHtml(tooltip)}" aria-label="${escapeCalendarHtml(label)}" aria-pressed="${Boolean(part)}" ${canPick ? "" : "disabled"}>
+      <span class="gnum" aria-hidden="true">${d}</span>
+      ${part ? `<span class="gselection ${part}" aria-hidden="true"></span>` : ""}
+    </button>`);
+  }
+
+  // Group half-day slots by reservation identity, including two different stays on one date.
+  for (let slot = 0; slot < 14;) {
+    const stay = halves[slot];
+    if (!stay) { slot++; continue; }
+    let end = slot + 1;
+    while (end < 14 && halves[end] && halves[end].id === stay.id &&
+      halves[end].start === stay.start && halves[end].end === stay.end) end++;
+    const starts = slot % 2 === 1 && dates[Math.floor(slot / 2)] === stay.start;
+    const ends = end % 2 === 1 && dates[Math.floor((end - 1) / 2)] === stay.end;
+    const count = end - slot;
+    const classes = ["gband", starts ? "starts" : "continues-in", ends ? "ends" : "continues-out",
+      count <= 4 ? "short" : "", count === 1 ? "edge-only" : ""].filter(Boolean).join(" ");
     const name = stay.note || t("occupied");
-    items.push(
-      `<div class="gband ${starts ? "starts" : ""} ${ends ? "ends" : ""} ${span <= 2 ? "short" : ""}" style="grid-column:${col + 1} / ${end + 2}" title="${name} · ${fmtDate(stay.start)} – ${fmtDate(stay.end)}">
-        <div class="gband-days" style="grid-template-columns:repeat(${span},1fr)">${days.join("")}</div>
-        <div class="gname">${name}</div>
-      </div>`
-    );
-    col = end + 1;
+    items.push(`<div class="${classes}" style="grid-column:${slot + 1} / ${end + 1}" data-stay="${escapeCalendarHtml(stay.id || "")}" aria-hidden="true">
+      <span class="gname">${escapeCalendarHtml(name)}</span>
+      ${starts ? `<span class="gtag gtag-in">${escapeCalendarHtml(t("arrive"))}</span>` : ""}
+      ${ends ? `<span class="gtag gtag-out">${escapeCalendarHtml(t("depart"))}</span>` : ""}
+    </div>`);
+    slot = end;
   }
   return `<div class="guest-week ${st.rowClass || ""}"><div class="guest-lab">${st.label}</div><div class="guest-track">${items.join("")}</div></div>`;
 }
 
+function bindCalendarTooltips(el) {
+  let tooltip = document.getElementById("calendar-tooltip");
+  if (!tooltip) {
+    tooltip = document.createElement("div");
+    tooltip.id = "calendar-tooltip";
+    tooltip.className = "calendar-tooltip";
+    tooltip.setAttribute("aria-hidden", "true");
+    tooltip.hidden = true;
+    document.body.append(tooltip);
+    const hide = () => { tooltip.hidden = true; };
+    document.addEventListener("scroll", hide, true);
+    window.addEventListener("resize", hide);
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") hide(); });
+  }
+  tooltip.hidden = true;
+  el.querySelectorAll(".gdate").forEach((btn) => {
+    const show = (event) => {
+      if (!window.matchMedia("(hover: hover)").matches) return;
+      tooltip.textContent = btn.dataset.tooltip;
+      tooltip.hidden = false;
+      const rect = btn.getBoundingClientRect();
+      const x = event.clientX ?? (rect.left + rect.width / 2);
+      const y = event.clientY ?? rect.bottom;
+      const left = Math.max(8, Math.min(x + 12, window.innerWidth - tooltip.offsetWidth - 8));
+      const top = y + tooltip.offsetHeight + 20 > window.innerHeight
+        ? Math.max(8, y - tooltip.offsetHeight - 12) : y + 12;
+      tooltip.style.left = `${left}px`;
+      tooltip.style.top = `${top}px`;
+    };
+    const hide = () => { tooltip.hidden = true; };
+    btn.addEventListener("pointerenter", show);
+    btn.addEventListener("pointermove", show);
+    btn.addEventListener("focus", show);
+    btn.addEventListener("pointerleave", hide);
+    btn.addEventListener("blur", hide);
+  });
+}
+
+function bindCalendarPreview(el, getPreview) {
+  if (!getPreview) return;
+  let current = "";
+  const buttons = Array.from(el.querySelectorAll(".gdate"));
+  const clear = () => {
+    if (!current) return;
+    el.querySelectorAll(".gpreview").forEach((mark) => mark.remove());
+    current = "";
+  };
+  const show = (btn, event) => {
+    if (event.pointerType === "touch") return;
+    const preview = getPreview(btn.dataset.date, btn.dataset.studio);
+    if (!preview) { clear(); return; }
+    const key = `${preview.studio}:${preview.start}:${preview.end}`;
+    if (key === current) return;
+    clear();
+    current = key;
+    buttons.forEach((day) => {
+      const date = day.dataset.date;
+      if (day.dataset.studio !== preview.studio || date < preview.start || date > preview.end) return;
+      const part = date === preview.start ? "afternoon" : date === preview.end ? "morning" : "both";
+      const mark = document.createElement("span");
+      mark.className = `gpreview ${part}`;
+      mark.setAttribute("aria-hidden", "true");
+      day.append(mark);
+    });
+  };
+  buttons.forEach((btn) => {
+    btn.addEventListener("pointerenter", (event) => show(btn, event));
+    btn.addEventListener("pointerleave", clear);
+    btn.addEventListener("focus", (event) => show(btn, event));
+    btn.addEventListener("blur", clear);
+  });
+}
+
 function renderGuestCalendar(el, opts) {
-  const { data, year, selected, onDay } = opts;
+  const { data, year, selected, onDay, getHint, getPreview } = opts;
   const order = [
     { id: "baucis", label: "Baucis", rowClass: "is-top" },
     { id: "filemon", label: "Filemon", rowClass: "is-bot" },
@@ -206,7 +304,7 @@ function renderGuestCalendar(el, opts) {
             d ? `${year}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}` : null
           );
           const rows = order
-            .map((st) => guestTrackHtml(data, year, st, week, dates, selected))
+            .map((st) => guestTrackHtml(data, year, st, week, dates, selected, getHint))
             .join("");
           return `<div class="guest-pair ${wi % 2 ? "is-alt" : ""}">${rows}</div>`;
         })
@@ -221,13 +319,15 @@ function renderGuestCalendar(el, opts) {
     .join("");
 
   if (onDay) {
-    el.querySelectorAll(".gpill.free, .gday").forEach((btn) => {
+    el.querySelectorAll(".gdate:not(:disabled)").forEach((btn) => {
       btn.addEventListener("click", () => {
         if (isPastDate(btn.dataset.date)) return;
-        onDay(btn.dataset.date, btn.dataset.studio, btn.dataset.busy === "1" || btn.classList.contains("busy"));
+        onDay(btn.dataset.date, btn.dataset.studio, btn.dataset.busy === "1");
       });
     });
   }
+  bindCalendarTooltips(el);
+  bindCalendarPreview(el, getPreview);
 }
 
 function jumpToRelevantMonth(el) {

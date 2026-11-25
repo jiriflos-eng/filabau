@@ -36,7 +36,7 @@
       <header class="page-head">
         <p class="eyebrow"><span data-i18n="book_eye">Rezervace</span> <span class="season-year">2026</span></p>
         <h1 data-i18n="book_h1">Vyberte studio a volné dny.</h1>
-        <p class="muted" data-i18n="book_lead">V řádku Baucis i Filemon klikněte na příjezd a odjezd. Můžete poptat obě studia v jedné poptávce, každé s vlastním termínem. Oba dny bereme celé. Minimum je 5 nocí.</p>
+        <p class="muted" data-i18n="book_lead">Vyberte příjezd a odjezd v řádku svého studia. Poptat můžete i obě studia. Minimum je 5 nocí.</p>
       </header>
       <div class="cal-toolbar">
         <label><span data-i18n="year">Rok</span>
@@ -46,11 +46,22 @@
       <div class="legend">
         <span><i class="swatch" style="background:#d7eed9"></i><span data-i18n="free">volno</span></span>
         <span><i class="swatch" style="background:#e8a090"></i><span data-i18n="busy">obsazeno - jméno je v pásku</span></span>
+        <span><i class="swatch swatch-arrive" aria-hidden="true"></i><span data-i18n="arrive">Příjezd</span></span>
+        <span><i class="swatch swatch-depart" aria-hidden="true"></i><span data-i18n="depart">Odjezd</span></span>
+      </div>
+      <div class="calendar-guide" id="calendar-guide" role="status" aria-live="polite" aria-atomic="true">
+        <span class="guide-step" id="guide-step" aria-hidden="true">1</span>
+        <div>
+          <strong id="guide-title" data-i18n="guide_arrival">Klikněte na den příjezdu.</strong>
+          <span id="guide-detail" data-i18n="guide_start_detail">Vyberte volný den v řádku Baucis nebo Filemon. Pak vyberete den odjezdu.</span>
+        </div>
+        <button type="button" class="guide-reset" id="guide-reset" hidden></button>
+        <a class="guide-form" id="guide-form" href="#form" data-i18n="guide_form" hidden>Pokračovat k formuláři</a>
       </div>
       <div id="cal" class="months"></div>
 
       <form class="inquiry" id="form">
-        <div id="summary" class="pick-box muted" data-i18n="sum_empty">Klikněte v řádku Baucis a/nebo Filemon na příjezd a odjezd.</div>
+        <div id="summary" class="pick-box muted" data-i18n="sum_empty" aria-live="polite">Klikněte v řádku Baucis a/nebo Filemon na příjezd a odjezd.</div>
         <label><span data-i18n="form_name">Jméno</span> <input id="name" required /></label>
         <label><span data-i18n="form_phone">Telefon</span> <input id="phone" required /></label>
         <label><span data-i18n="form_email">E-mail</span> <input id="email" type="email" required /></label>

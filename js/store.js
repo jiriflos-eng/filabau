@@ -18,6 +18,10 @@ function parseIso(s) {
   return new Date(y, m - 1, d);
 }
 
+function isIsoDate(s) {
+  return typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s) && iso(parseIso(s)) === s;
+}
+
 function addDays(s, n) {
   const d = parseIso(s);
   d.setDate(d.getDate() + n);
@@ -59,7 +63,8 @@ function staysFromDayMap(data) {
 }
 
 function ensureStays(data) {
-  if (!Array.isArray(data.stays) || !data.stays.length) {
+  // An explicitly empty list is authoritative, including after the last deletion.
+  if (!Array.isArray(data.stays)) {
     data.stays = staysFromDayMap(data);
   }
   return data;
@@ -116,10 +121,21 @@ function inSeason(data, dateStr) {
 }
 
 function isBusy(data, year, studio, dateStr) {
-  ensureStays(data);
-  return (data.stays || []).some(
-    (s) => s.studio === studio && dateStr >= s.arrival && dateStr <= s.departure
-  );
+  const day = dayAvailability(data, year, studio, dateStr);
+  return day.morningBusy || day.afternoonBusy;
+}
+
+function dayAvailability(data, year, studio, date) {
+  const stays = staysInYear(data, year, studio);
+  // A departing guest occupies the morning; an arriving guest the afternoon.
+  const morningStay = stays.find((s) => s.start < date && date <= s.end) || null;
+  const afternoonStay = stays.find((s) => s.start <= date && date < s.end) || null;
+  return {
+    morningBusy: morningStay !== null,
+    afternoonBusy: afternoonStay !== null,
+    morningStay,
+    afternoonStay,
+  };
 }
 
 function fmtDate(s) {
@@ -182,7 +198,7 @@ function staysInYear(data, year, studio) {
     .filter(
       (s) =>
         s.studio === studio &&
-        (s.arrival.slice(0, 4) === y || s.departure.slice(0, 4) === y)
+        s.arrival <= `${y}-12-31` && s.departure >= `${y}-01-01`
     )
     .map((s) => ({
       id: s.id,
@@ -195,13 +211,15 @@ function staysInYear(data, year, studio) {
 }
 
 function rangesOverlap(a1, a2, b1, b2) {
-  return a1 <= b2 && b1 <= a2;
+  // Occupied nights form [arrival, departure); touching endpoints can hand over.
+  return a1 < a2 && b1 < b2 && a1 < b2 && b1 < a2;
 }
 
 function findOverlap(data, stay, excludeId) {
+  ensureStays(data);
   return (data.stays || []).find(
     (s) =>
-      s.id !== excludeId &&
+      (excludeId == null || s.id !== excludeId) &&
       s.studio === stay.studio &&
       rangesOverlap(stay.arrival, stay.departure, s.arrival, s.departure)
   );
@@ -212,7 +230,9 @@ function saveStay(data, stay) {
   let a = stay.arrival;
   let b = stay.departure;
   if (!a || !b) return { ok: false, error: "Vyplňte příjezd i odjezd." };
+  if (!isIsoDate(a) || !isIsoDate(b)) return { ok: false, error: "Vyplňte platné datum příjezdu a odjezdu." };
   if (parseIso(a) > parseIso(b)) [a, b] = [b, a];
+  if (a === b) return { ok: false, error: "Pobyt musí zahrnovat alespoň jednu noc." };
   const next = {
     id: stay.id || uid(),
     studio: stay.studio,
@@ -271,7 +291,10 @@ function nightsBetween(start, end) {
 }
 
 function rangeFree(data, year, studio, start, end) {
-  const days = stayDays(start, end);
-  if (!days.length) return false;
-  return days.every((d) => !isBusy(data, year, studio, d) && inSeason(data, d));
+  if (!isIsoDate(start) || !isIsoDate(end)) return false;
+  let a = start;
+  let b = end;
+  if (a > b) [a, b] = [b, a];
+  if (a === b || !stayDays(a, b).every((d) => inSeason(data, d))) return false;
+  return !findOverlap(data, { studio, arrival: a, departure: b });
 }
