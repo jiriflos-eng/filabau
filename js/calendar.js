@@ -198,6 +198,8 @@ function guestTrackHtml(data, year, st, week, dates, selected, getHint) {
     const ends = end % 2 === 1 && dates[Math.floor((end - 1) / 2)] === stay.end;
     const count = end - slot;
     const classes = ["gband", starts ? "starts" : "continues-in", ends ? "ends" : "continues-out",
+      starts && halves[slot - 1] ? "handover-in" : "",
+      ends && halves[end] ? "handover-out" : "",
       count <= 4 ? "short" : "", count === 1 ? "edge-only" : ""].filter(Boolean).join(" ");
     const name = stay.note || t("occupied");
     items.push(`<div class="${classes}" style="grid-column:${slot + 1} / ${end + 1}" data-stay="${escapeCalendarHtml(stay.id || "")}" aria-hidden="true">
