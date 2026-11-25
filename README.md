@@ -28,21 +28,16 @@ Záznamy nadále používají datum `arrival` a `departure`; stávající data n
 
 GitHub Pages poskytuje statický web. JavaScript může odeslat požadavek externí službě; samotný GitHub Pages e-mail ani zprávu WhatsApp neodesílá. Veřejná konfigurace je v `data/config.json`, načítá ji `js/delivery-config.js`, adaptér je v `js/delivery.js`.
 
-### E-mail na jiripilnaj@seznam.cz
+### E-mail – Web3Forms
 
-Je připravené odeslání pomocí `POST` na AJAX endpoint služby FormSubmit. **Výchozí `activated: false` záměrně ponechává ruční otevření e-mailového programu, dokud provozovatel nepotvrdí příjemce a neověří skutečné doručení.**
+Přímé AJAX odesílání bez poštovního klienta používá Web3Forms. Veřejný identifikátor `email.accessKey` a očekávaná adresa `email.address` jsou v `data/config.json`. Skutečného příjemce určuje nastavení formuláře na Web3Forms; změna adresy v JSON sama o sobě doručení nepřesměruje. Při změně příjemce ověřte správný klíč a adresu v dashboardu.
 
-1. Nahrajte přiložené soubory a otevřete na webu `aktivace_emailu.html`.
-2. Odešlete z ní technický test a potvrďte aktivační e-mail ve schránce příjemce. Tato stránka skutečně odesílá; náhledy v distribučním ZIPu nikoli.
-3. Po aktivaci odešlete technický test znovu a ověřte jeho přijetí ve schránce.
-4. Změňte `email.activated` v `data/config.json` na `true`, uložte konfiguraci a obnovte rezervační stránku.
-5. Odešlete vlastní zkušební poptávku a ověřte jak potvrzení na stránce, tak došlý e-mail s termínem, kontaktem a číslem poptávky. Tím ověříte i AJAX cestu. Po aktivaci se na veřejné stránce předvolí e-mail.
+1. Otevřete `aktivace_emailu.html` a odešlete test.
+2. Ověřte skutečné doručení zprávy v cílové schránce.
+3. Nastavte `email.activated` na `true` v JSON a znovu nasaďte web.
+4. Otestujte běžnou rezervační poptávku.
 
-Při automatickém odesílání se kontaktní údaje a text předávají službě FormSubmit. Zelené potvrzení znamená přijetí k odeslání, nikoli potvrzené doručení do schránky či rezervaci termínu. Host musí dál dostat osobní potvrzení termínu. Automatický potvrzovací e-mail hostovi tato verze neposílá (FormSubmit `_autoresponse` není pro AJAX podporován).
-
-Aktivační odpověď, chybná odpověď nebo časový limit se nevydávají za úspěch. Vyplněné údaje zůstávají zachované. Při nejasném výsledku se požadavek automaticky neopakuje, aby nevznikaly duplicity. Opakované kliknutí během odesílání je blokované; opakovaná totožná úspěšná poptávka je blokovaná do změny údajů nebo obnovení stránky. Číslo poptávky zůstává pro opakování stejného pokusu stejné, ale FormSubmit negarantuje potlačení duplicit podle tohoto čísla.
-
-FormSubmit je vnější služba. Živé doručení ani chování CAPTCHA nebyly při přípravě souborů ověřovány skutečnou zprávou. Případné odmítnutí služby zobrazí kontaktní alternativy. Při změně cílové schránky upravte pouze `email.address` v `data/config.json`, nastavte `email.activated` na `false`, vyprázdněte `email.formsubmitRecipient` a proveďte novou aktivaci. Volitelný `email.formsubmitRecipient` je anonymní identifikátor formuláře od FormSubmit; musí patřit k nastavené adrese. Kontakty na běžné prezentační stránce jsou nezávislé.
+Do ověření je veřejná e-mailová volba vypnutá, WhatsApp zůstává funkční. Potvrzení API znamená přijetí k odeslání, nikoli doručení nebo potvrzení rezervace. Kontaktní údaje a text se při odeslání předávají službě Web3Forms. Veřejný klíč není tajný token; používejte ochranu proti spamu a sledujte kvótu. Při nejasném výsledku se požadavek automaticky neopakuje.
 
 ### WhatsApp – číslo v data/config.json
 
@@ -54,9 +49,8 @@ Server přijme `POST` JSON: `{subject, text, name, phone, email, message, stays:
 
 ### Zdroje k odesílání
 
-- [FormSubmit AJAX](https://formsubmit.co/ajax-documentation)
-- [Aktivace a nápověda FormSubmit](https://formsubmit.co/help)
-- [Dokumentace FormSubmit včetně omezení autoresponse](https://formsubmit.co/documentation)
+- [Web3Forms API](https://docs.web3forms.com/getting-started/api-reference)
+- [Web3Forms – diagnostika](https://docs.web3forms.com/getting-started/troubleshooting)
 - [WhatsApp Click to Chat](https://faq.whatsapp.com/5913398998672934)
 - [WhatsApp Business Platform](https://developers.facebook.com/documentation/business-messaging/whatsapp/overview/)
 - [HTML datumové pole](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/date)

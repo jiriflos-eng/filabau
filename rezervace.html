@@ -66,6 +66,7 @@
         <label><span data-i18n="form_phone">Telefon</span> <input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="60" required /></label>
         <label><span data-i18n="form_email">E-mail</span> <input id="email" name="email" type="email" autocomplete="email" maxlength="254" required /></label>
         <label><span data-i18n="form_msg">Zpráva</span> <textarea id="msg" name="message" rows="3" maxlength="5000" data-i18n-placeholder="form_ph" placeholder="Počet osob, transfer z letiště…"></textarea></label>
+        <input type="checkbox" id="inquiry-botcheck" name="botcheck" hidden tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none" />
         <div class="via-row">
           <span class="via-label" data-i18n="via">Odeslat přes</span>
           <label class="via"><input type="radio" name="via" value="wa" checked /> WhatsApp</label>
@@ -80,7 +81,7 @@
             <p data-i18n="delivery_contact">Kontakt pro ověření nebo dokončení poptávky:</p>
             <p><a id="delivery-phone"></a> · <a id="delivery-email"></a></p>
             <a id="fallback-wa" target="_blank" rel="noopener noreferrer" data-i18n="delivery_fallback_wa">Otevřít poptávku ve WhatsAppu</a>
-            <a id="fallback-mail" data-i18n="delivery_fallback_mail">Otevřít poptávku v e-mailu</a>
+            <a id="fallback-mail" hidden data-i18n="delivery_fallback_mail">Otevřít poptávku v e-mailu</a>
           </div>
         </div>
       </form>
@@ -96,8 +97,8 @@
   <script src="js/site.js"></script>
   <script src="js/store.js"></script>
   <script src="js/calendar.js"></script>
-  <script src="js/delivery-config.js?v=20261125-2"></script>
-  <script src="js/delivery.js"></script>
-  <script src="js/rezervace.js"></script>
+  <script src="js/delivery-config.js?v=web3forms-1"></script>
+  <script src="js/delivery.js?v=web3forms-1"></script>
+  <script src="js/rezervace.js?v=web3forms-1"></script>
 </body>
 </html>

@@ -13,7 +13,7 @@ function deliveryMode(channel) {
   if (typeof INQUIRY_DELIVERY === "undefined" || !INQUIRY_DELIVERY) return "unavailable";
   const config = INQUIRY_DELIVERY[channel];
   if (!config || !inquiryDeliveryEndpoint(config.endpoint)) return "manual";
-  if (channel === "email" && config.provider === "formsubmit" && config.activated === true) return "direct";
+  if (channel === "email" && config.provider === "web3forms" && config.activated === true) return "direct";
   if (channel === "whatsapp" && config.provider === "webhook") return "direct";
   return "manual";
 }
@@ -24,16 +24,9 @@ function inquiryDeliveryError(code) {
   return error;
 }
 
-function inquiryActivationRequired(body) {
-  if (body.activation_required === true || body.activated === false || body.verified === false) return true;
-  const message = typeof body.message === "string" ? body.message : "";
-  // Dokumentace AJAX neudává úplné schéma odpovědí. Aktivační zprávu nikdy
-  // nepovažujeme za úspěšné odeslání, ani když současně obsahuje success:true.
-  return /\bactivat\w*\b|\bactived\b|\bunverified\b|\bnot\s+(?:yet\s+)?verified\b|\b(?:verify|confirm)\w*\b.{0,60}\b(?:email|e-mail|form|address)\b|\b(?:email|e-mail|form|address)\b.{0,60}\b(?:verification|confirmation)\b/i.test(message);
-}
-
-async function sendInquiry(channel, payload) {
-  if (deliveryMode(channel) !== "direct") throw inquiryDeliveryError("not_configured");
+async function sendInquiry(channel, payload, { test = false } = {}) {
+  const testAllowed = test === true && channel === "email" && INQUIRY_DELIVERY?.email?.provider === "web3forms" && !!INQUIRY_DELIVERY.email.accessKey;
+  if (deliveryMode(channel) !== "direct" && !testAllowed) throw inquiryDeliveryError("not_configured");
   if (!payload || typeof payload.text !== "string" || !payload.text.trim() ||
       typeof payload.email !== "string" || !payload.email.trim() ||
       typeof payload.requestId !== "string" || !payload.requestId.trim()) {
@@ -43,16 +36,16 @@ async function sendInquiry(channel, payload) {
   const config = INQUIRY_DELIVERY[channel];
   const endpoint = inquiryDeliveryEndpoint(config.endpoint);
   const body = channel === "email" ? {
-    _subject: payload.subject,
-    _replyto: payload.email,
-    _template: "table",
-    _url: "https://jiriflos-eng.github.io/filabau/rezervace.html",
+    access_key: config.accessKey,
+    subject: payload.subject,
+    from_name: "Filemon a Baucis",
+    replyto: payload.email,
     name: payload.name,
     phone: payload.phone,
     email: payload.email,
     message: payload.text,
     request_id: payload.requestId,
-    _honey: "",
+    botcheck: Boolean(payload.botcheck),
   } : {
     subject: payload.subject,
     text: payload.whatsappText || payload.text,
@@ -68,6 +61,7 @@ async function sendInquiry(channel, payload) {
     })),
     requestId: payload.requestId,
   };
+  if (payload.botcheck) throw inquiryDeliveryError("rejected");
   const controller = new AbortController();
   const configuredTimeout = Number(INQUIRY_DELIVERY.timeoutMs);
   const timeoutMs = Number.isFinite(configuredTimeout) && configuredTimeout > 0 ? configuredTimeout : 20000;
@@ -94,13 +88,10 @@ async function sendInquiry(channel, payload) {
     if (!result || typeof result !== "object" || Array.isArray(result)) {
       throw inquiryDeliveryError(response.ok ? "unconfirmed" : httpError);
     }
-    if (channel === "email" && inquiryActivationRequired(result)) {
-      throw inquiryDeliveryError("activation_required");
-    }
     if (!response.ok) throw inquiryDeliveryError(httpError);
 
     if (channel === "email") {
-      if (result.success === true || result.success === "true") return { accepted: true };
+      if (result.success === true && response.status === 200) return { accepted: true };
       if (result.success === false || result.success === "false") throw inquiryDeliveryError("rejected");
     } else {
       if (result.accepted === true && typeof result.messageId === "string" && result.messageId.trim()) {

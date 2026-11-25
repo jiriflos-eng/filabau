@@ -229,6 +229,7 @@ function inquiryPayload() {
   const text = `${t("mail_hello")}\n\n${lines.join("\n\n")}\n\n${t("mail_name", { v: name })}\n${t("mail_phone", { v: phone })}\n${t("mail_email", { v: email })}\n${message ? t("mail_msg", { v: message }) : ""}`;
   const payload = {
     subject: INQUIRY_DELIVERY?.email.subject || t("mail_subject"), text, name, phone, email, message,
+    botcheck: document.getElementById("inquiry-botcheck")?.checked === true,
     stays: ok.map((s) => ({ studio: s.studio, arrival: s.start, departure: s.end, nights: s.nights })),
   };
   if (INQUIRY_DELIVERY) payload.whatsappText = whatsappInquiryText(payload);
@@ -258,6 +259,7 @@ function showDeliveryNotice(kind, textKey, payload, identity) {
   const text = payload.text + (payload.requestId ? `\n\n${t("delivery_reference", { id: payload.requestId })}` : "");
   document.getElementById("fallback-wa").href = whatsappLink(payload.whatsappText + (payload.requestId ? `\n\n${t("delivery_reference", { id: payload.requestId })}` : ""));
   document.getElementById("fallback-mail").href = mailLink(payload.subject, text);
+  document.getElementById("fallback-mail").hidden = true;
 }
 
 function updateDeliveryUi() {
@@ -313,13 +315,14 @@ async function submitInquiry(e) {
   const payload = inquiryPayload();
   if (!payload) return;
   const channel = inquiryChannel();
+  if (payload.botcheck || (channel === "email" && deliveryMode(channel) !== "direct")) return;
   const identity = inquiryIdentity(channel, payload);
   if (deliveryReceipt?.identity === identity) return;
 
   if (deliveryMode(channel) !== "direct") {
     showDeliveryNotice("manual", channel === "whatsapp" ? "delivery_wa_opened" : "delivery_mail_opened", payload, identity);
     if (channel === "whatsapp") window.open(whatsappLink(payload.whatsappText), "_blank", "noopener,noreferrer");
-    else window.location.href = mailLink(payload.subject, payload.text);
+    // E-mail never opens a local mail client.
     return;
   }
 
@@ -370,7 +373,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     jumpToRelevantMonth(document.getElementById("cal"));
   });
   const form = document.getElementById("form");
-  if (deliveryMode("email") === "direct") form.querySelector('[name="via"][value="mail"]').checked = true;
+  const emailOption = form.querySelector('[name="via"][value="mail"]');
+  const emailReady = deliveryMode("email") === "direct";
+  emailOption.disabled = !emailReady;
+  if (emailReady) emailOption.checked = true;
+  else form.querySelector('[name="via"][value="wa"]').checked = true;
   form.addEventListener("input", updateDeliveryUi);
   form.addEventListener("change", updateDeliveryUi);
   form.addEventListener("submit", submitInquiry);

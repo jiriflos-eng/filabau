@@ -12,10 +12,10 @@ function normalizeInquiryConfig(raw) {
   if (![wa.template, wa.stayTemplate, wa.messageTemplate].every(v => typeof v === "string" && v.length)) throw Error("Missing WhatsApp templates");
   const required = (s, keys) => keys.every(k => s.includes("{" + k + "}"));
   if (!required(wa.template, ["stays","name","phone","email","messageBlock"]) || !required(wa.stayTemplate, ["studio","arrival","departure","nights"]) || !required(wa.messageTemplate, ["message"])) throw Error("Incomplete WhatsApp template");
-  const recipient = raw.email.formsubmitRecipient?.trim() || email;
-  if (recipient !== email && !/^[a-zA-Z0-9_-]{8,128}$/.test(recipient)) throw Error("Invalid FormSubmit recipient");
+  const accessKey = String(raw.email.accessKey || "").trim();
+  if (raw.email.provider !== "web3forms" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(accessKey)) throw Error("Invalid Web3Forms access key");
   return {
-    email: { address: email, provider: "formsubmit", activated: raw.email.activated === true, subject: typeof raw.email.subject === "string" ? raw.email.subject : "", recipient, endpoint: "https://formsubmit.co/ajax/" + encodeURIComponent(recipient) },
+    email: { address: email, provider: "web3forms", activated: raw.email.activated === true, subject: typeof raw.email.subject === "string" ? raw.email.subject : "", accessKey, endpoint: "https://api.web3forms.com/submit" },
     whatsapp: { phone, provider: "webhook", endpoint: typeof wa.endpoint === "string" ? wa.endpoint : "", template: wa.template, stayTemplate: wa.stayTemplate, messageTemplate: wa.messageTemplate },
     timeoutMs: Number(raw.timeoutMs) || 20000
   };
