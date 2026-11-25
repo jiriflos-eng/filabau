@@ -3,7 +3,7 @@
     "provider": "web3forms",
     "address": "jiri.flos@gmail.com",
     "accessKey": "66b366b5-8bb8-4a2a-a974-f36a7a1f527a",
-    "activated": false,
+    "activated": true,
     "subject": "Poptávka Filemon a Baucis"
   },
   "whatsapp": {
