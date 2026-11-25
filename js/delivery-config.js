@@ -5,7 +5,7 @@ let inquiryConfigError = null;
 
 function normalizeInquiryConfig(raw) {
   const email = raw?.email?.address?.trim();
-  const phone = String(raw?.whatsapp?.phone ?? "").replace(/[+\s()-]/g, "");
+  const phone = String(raw?.whatsapp?.phone ?? "").trim().replace(/[\s()-]/g, "").replace(/^(?:\+|00)/, "");
   if (typeof email !== "string" || !/^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) throw Error("Invalid email address");
   if (!/^[1-9]\d{7,14}$/.test(phone)) throw Error("Invalid WhatsApp number");
   const wa = raw.whatsapp;

@@ -15,6 +15,7 @@
     label { display: grid; gap: 7px; font-weight: 650; }
     input, button { padding: 13px; font: inherit; border-radius: 10px; border: 1px solid #a7b8b8; }
     button { margin-top: 18px; background: #123a46; color: white; cursor: pointer; font-weight: 650; }
+    button:disabled { opacity: .45; cursor: not-allowed; }
     code { background: #edf0eb; border-radius: 4px; padding: 2px 4px; overflow-wrap: anywhere; }
     .notice { padding: 14px; background: #fff1cc; border-radius: 12px; }
     a { color: #15566d; }
@@ -49,13 +50,21 @@
     <p>Dokud přepínač nezapnete, veřejný formulář dál nabízí dokončení e-mailu v poštovním programu. Po zprovoznění můžete tuto aktivační stránku z webu odstranit.</p>
     <p><a href="https://formsubmit.co/help">Nápověda FormSubmit</a> · <a href="https://formsubmit.co/ajax-documentation">Dokumentace odesílání na pozadí</a></p>
   </main>
-  <script src="js/delivery-config.js"></script>
+  <script src="js/delivery-config.js?v=20261125-2"></script>
   <script>
     const form = document.getElementById("activation-form");
     form.addEventListener("submit", e => { if (!INQUIRY_DELIVERY) e.preventDefault(); });
     loadInquiryConfig().then(config => {
       if (!config) {
-        document.getElementById("activation-error").textContent = "Konfiguraci nelze načíst. Odeslání je vypnuté.";
+        const reason = inquiryConfigError?.message || "";
+        const explanations = {
+          "Invalid email address": "Neplatná cílová e-mailová adresa.",
+          "Invalid WhatsApp number": "Neplatné telefonní číslo WhatsApp.",
+          "Missing WhatsApp templates": "Chybí šablony zpráv WhatsApp.",
+          "Incomplete WhatsApp template": "V šabloně WhatsApp chybí povinné položky.",
+          "Invalid FormSubmit recipient": "Neplatný identifikátor FormSubmit."
+        };
+        document.getElementById("activation-error").textContent = "Konfiguraci nelze načíst. Odeslání je vypnuté. " + (explanations[reason] || reason);
         return;
       }
       document.querySelectorAll("[data-recipient]").forEach(el => el.textContent = config.email.address);
