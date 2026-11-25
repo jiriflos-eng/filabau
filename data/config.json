@@ -1,12 +1,12 @@
 {
   "email": {
-    "address": "jiripilnaj@seznam.cz",
+    "address": "jflos@seznam.cz",
     "activated": false,
     "subject": "Poptávka Filemon a Baucis",
     "formsubmitRecipient": ""
   },
   "whatsapp": {
-    "phone": "420725866862",
+    "phone": "00420725063507",
     "endpoint": "",
     "template": "*POPTÁVKA UBYTOVÁNÍ – FILEMON A BAUCIS*\n\nDobrý den,\nrád(a) bych poptal(a) následující termín:\n\n{stays}\n\n*KONTAKT*\nJméno: {name}\nTelefon: {phone}\nE-mail: {email}{messageBlock}",
     "stayTemplate": "*Studio {studio}*\nPříjezd: {arrival}\nOdjezd: {departure}\nPočet nocí: {nights}",
