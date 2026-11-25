@@ -755,47 +755,49 @@ select, input, textarea {
   min-width: 0;
   height: 48px;
   --band-color: linear-gradient(180deg, #f3c5b6, #e8a090);
-  --band-skew: -20deg;
   --band-in: 0px;
   --band-out: 0px;
-  padding-left: var(--band-in);
-  padding-right: var(--band-out);
-  background: var(--band-color) no-repeat;
-  background-origin: content-box;
-  background-clip: content-box;
+  --band-left: none;
+  --band-right: none;
 }
 .gband.continues-in { margin-left: calc(var(--day-gap) / 2); }
 .gband.continues-out { margin-right: calc(var(--day-gap) / 2); }
 .guest-week.is-top .gband { border-radius: 7px 7px 0 0; }
 .guest-week.is-bot .gband { border-radius: 0 0 7px 7px; }
-/* Real slanted edges centered on noon, with rounded outside corners.
-   Two adjacent stays use the same slope so their boundaries meet. */
-.gband.starts { --band-in: min(15px, 30%); }
-.gband.ends { --band-out: min(15px, 30%); }
-.gband.starts::before, .gband.ends::after {
+/* Arrival: upper left chamfer, then a vertical lower edge.
+   Departure: mirrored upper right chamfer. Rounded SVG curves, no skew.
+   The edge art stays inside its own half-day slot; text is not clipped. */
+.gband.starts {
+  --band-in: min(24px, 45%);
+  --band-left: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2048%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%2248%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20stop-color%3D%22%23f3c5b6%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e8a090%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cg%3E%3Cpath%20fill%3D%22url(%23g)%22%20d%3D%22M24%200%20H21%20Q18%200%2015%203%20L3%2016%20Q0%2019%200%2023%20V42%20Q0%2048%206%2048%20H24%20Z%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23ba7969%22%20stroke-opacity%3D%22.75%22%20stroke-width%3D%221%22%20vector-effect%3D%22non-scaling-stroke%22%20d%3D%22M21%20.5%20Q18%20.5%2015.5%203.5%20L3.5%2016.5%20Q.5%2019.5%20.5%2023%20V42%20Q.5%2047.5%206%2047.5%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+.gband.ends {
+  --band-out: min(24px, 45%);
+  --band-right: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2048%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%2248%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20stop-color%3D%22%23f3c5b6%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e8a090%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cg%20transform%3D%22translate(24%200)%20scale(-1%201)%22%3E%3Cpath%20fill%3D%22url(%23g)%22%20d%3D%22M24%200%20H21%20Q18%200%2015%203%20L3%2016%20Q0%2019%200%2023%20V42%20Q0%2048%206%2048%20H24%20Z%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23ba7969%22%20stroke-opacity%3D%22.75%22%20stroke-width%3D%221%22%20vector-effect%3D%22non-scaling-stroke%22%20d%3D%22M21%20.5%20Q18%20.5%2015.5%203.5%20L3.5%2016.5%20Q.5%2019.5%20.5%2023%20V42%20Q.5%2047.5%206%2047.5%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+.gband::before {
   content: "";
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: min(36px, 75%);
+  inset: 0;
   z-index: 0;
+  border-radius: inherit;
   pointer-events: none;
-  background: var(--band-color);
-  transform: skewX(var(--band-skew));
-  transform-origin: center;
+  background-image: var(--band-left), var(--band-right), var(--band-color);
+  background-repeat: no-repeat;
+  background-position: left top, right top, var(--band-center, center top);
+  background-size: var(--band-in) 100%, var(--band-out) 100%, calc(100% - var(--band-in) - var(--band-out) + 2px) 100%;
 }
-.gband.starts::before { left: 0; border-left: 1px solid rgba(139,58,40,.55); }
-.gband.ends::after { right: 0; border-right: 1px solid rgba(139,58,40,.55); }
-.guest-week.is-top .gband.starts::before { border-radius: 7px 0 0 0; }
-.guest-week.is-top .gband.ends::after { border-radius: 0 7px 0 0; }
-.guest-week.is-bot .gband.starts::before { border-radius: 0 0 0 7px; }
-.guest-week.is-bot .gband.ends::after { border-radius: 0 0 7px 0; }
-.gdate.handover { background: linear-gradient(180deg, #f3c5b6, #e8a090); }
+.gband.starts:not(.ends) { --band-center: right top; }
+.gband.ends:not(.starts) { --band-center: left top; }
+/* The small notch at a changeover is not a free half-day. */
+.gdate.handover { background: #f4ded4; }
 @media (max-width: 800px) {
-  .gband { --band-skew: -10deg; }
+  .gband.starts { --band-in: min(18px, 45%); }
+  .gband.ends { --band-out: min(18px, 45%); }
 }
 @media (max-width: 400px) {
-  .gband { --band-skew: -6deg; }
+  .gband.starts { --band-in: min(13px, 45%); }
+  .gband.ends { --band-out: min(13px, 45%); }
 }
 .gband .gname, .gband .gtag { z-index: 1; }
 .gname {
