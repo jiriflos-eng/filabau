@@ -45,7 +45,7 @@ document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{if(busy)return
 function discardText(){if(!textDirty)return true;if(!confirm("Zahodit dosud nepoužitou úpravu textu?"))return false;textDirty=false;sync();return true;}
 let page=$("cms-page").value;
 $("cms-page").onchange=()=>{if(!discardText()){$("cms-page").value=page;return;}page=$("cms-page").value;selectedKey="";$("cms-value").disabled=true;$("cms-value").value="";resetPriceEditor();sync();loadPreview();};
-function loadPreview(){$("cms-preview").src=page+"?cms=prices-1";}
+function loadPreview(){$("cms-preview").src=page+"?cms=multiline-1";}
 function previewApply(){
   const w=$("cms-preview").contentWindow;if(!w||!draft)return;
   try{w.cmsPreview?.(draft.content,$("cms-lang").value);}catch(e){console.warn("Preview",e);}

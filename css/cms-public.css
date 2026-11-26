@@ -24,3 +24,13 @@
 .cms-crossroad-book:hover { background:var(--sea-deep); }
 @media(max-width:760px){.cms-crossroads-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.content-page .page-head{margin-bottom:22px;}}
 @media(max-width:420px){.cms-crossroads-grid{grid-template-columns:1fr;}.cms-crossroad{min-height:60px;}}
+
+/* Preserve author-entered line breaks without interpreting text as HTML.
+   Normal wrapping and collapsed spaces remain unchanged. Applies in preview
+   and on the public pages; the reservation calendar has no CMS stylesheet. */
+.cms-home :is([data-i18n], [data-cms-key], [data-album-title], [data-album-lead]),
+.content-page :is([data-i18n], [data-cms-key], [data-album-title], [data-album-lead]),
+.content-page .gitem figcaption,
+.content-page .lb figcaption {
+  white-space: pre-line;
+}
