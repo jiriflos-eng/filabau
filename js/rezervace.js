@@ -277,6 +277,9 @@ function updateDeliveryUi() {
     direct ? (channel === "email" ? "delivery_email" : "delivery_wa") : (channel === "email" ? "delivery_mail_manual" : "delivery_wa_manual"),
     { phone: `+${INQUIRY_DELIVERY.whatsapp.phone}` }
   );
+  if (centralBookings() && !bookingCaptchaToken && !deliveryPending) {
+    document.getElementById("delivery-hint").textContent += " " + t("booking_verify");
+  }
   if (!deliveryPending && deliveryNotice && deliveryNotice.identity !== identity && !deliveryNotice.payload.centralSaved) {
     deliveryNotice = null;
     document.getElementById("delivery-status").hidden = true;

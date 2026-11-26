@@ -22,7 +22,7 @@ Příjezd vybarvuje pravou polovinu políčka dne, odjezd levou. Dny mezi nimi j
 
 Host vybírá příjezd a odjezd kliknutím v řádku studia. Volná část dne umožňuje příjezd po odjezdu jiného hosta nebo odjezd před jeho příjezdem. Baucis a Filemon se vybírají nezávisle a poptávka nadále vyžaduje alespoň 5 nocí. Barevné poloviny popisují dostupnost; nestanovují konkrétní čas předání studia.
 
-Záznamy nadále používají datum `arrival` a `departure`; stávající data není potřeba převádět ani posouvat. Poptávka přes WhatsApp či e-mail rezervaci sama do kalendáře nezapisuje.
+Záznamy nadále používají datum `arrival` a `departure`; stávající data není potřeba převádět ani posouvat. V původním lokálním režimu poptávka kalendář nemění. Po připojení centrálního API vznikne čekající rezervace před předáním notifikace.
 
 ## Odesílání poptávky
 
@@ -37,7 +37,7 @@ Přímé AJAX odesílání bez poštovního klienta používá Web3Forms. Veřej
 3. Nastavte `email.activated` na `true` v JSON a znovu nasaďte web.
 4. Otestujte běžnou rezervační poptávku.
 
-Do ověření je veřejná e-mailová volba vypnutá, WhatsApp zůstává funkční. Potvrzení API znamená přijetí k odeslání, nikoli doručení nebo potvrzení rezervace. Kontaktní údaje a text se při odeslání předávají službě Web3Forms. Veřejný klíč není tajný token; používejte ochranu proti spamu a sledujte kvótu. Při nejasném výsledku se požadavek automaticky neopakuje.
+Pokud je email.activated false, veřejná e-mailová volba je vypnutá, WhatsApp zůstává funkční. Potvrzení API znamená přijetí k odeslání, nikoli doručení nebo potvrzení rezervace. Kontaktní údaje a text se při odeslání předávají službě Web3Forms. Veřejný klíč není tajný token; používejte ochranu proti spamu a sledujte kvótu. Při nejasném výsledku se požadavek automaticky neopakuje.
 
 ### WhatsApp – číslo v data/config.json
 
