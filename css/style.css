@@ -239,6 +239,9 @@ section { padding: 92px 0; position: relative; z-index: 1; background: var(--foa
   min-height: 460px;
   overflow: hidden;
   border-radius: var(--radius);
+  /* Clip transformed parallax images reliably, including Safari/WebKit. */
+  isolation: isolate;
+  clip-path: inset(0 round var(--radius));
 }
 .story-frame iframe {
   position: absolute;
