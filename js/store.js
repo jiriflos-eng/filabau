@@ -256,8 +256,14 @@ function saveStay(data, stay, persist = true) {
     status: stay.status || data.stays.find(s => s.id === stay.id)?.status || "confirmed",
   };
   const previous = data.stays.find(s => s.id === next.id);
-  if (previous) for (const key of ["requestId","email","phone","message","channel","createdAt","approvedAt"]) {
-    if (previous[key] !== undefined) next[key] = previous[key];
+  // Preserve existing private metadata on inline edits; accept optional
+  // contact fields from the authenticated admin creation form.
+  for (const key of ["requestId","email","phone","message","channel","createdAt","approvedAt"]) {
+    const value = previous?.[key] ?? stay[key];
+    if (value !== undefined && value !== "") next[key] = value;
+  }
+  for (const [key, max, label] of [["email",254,"E-mail"],["phone",60,"Telefon"],["message",5000,"Popisek"]]) {
+    if (next[key] !== undefined && (typeof next[key] !== "string" || next[key].length > max)) return {ok:false,error:label + ": neplatná nebo příliš dlouhá hodnota."};
   }
   if (!STUDIOS.some((s) => s.id === next.studio)) return { ok: false, error: "Vyberte studio." };
   const clash = findOverlap(data, next, stay.id);

@@ -128,7 +128,7 @@ function bookingDetailValues(stay) {
     email: stay.email || "—",
     phone: stay.phone || "—",
     message: stay.message || "Bez poznámky",
-    channel: ({email:"E-mail",whatsapp:"WhatsApp"})[stay.channel] || "Neuvedeno",
+    channel: ({email:"E-mail",whatsapp:"WhatsApp",admin:"Ruční zadání správcem"})[stay.channel] || "Neuvedeno",
     createdAt: detailDateTime(stay.createdAt),
     approvedAt: detailDateTime(stay.approvedAt),
     requestId: stay.requestId || "—",
@@ -241,12 +241,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       name: document.getElementById("new-name").value,
       arrival: newArrival.value,
       departure: newDeparture.value,
+      email: document.getElementById("new-email").value.trim(),
+      phone: document.getElementById("new-phone").value.trim(),
+      message: document.getElementById("new-message").value.trim(),
+      channel: "admin",
+      createdAt: new Date().toISOString(),
     };
     const r = saveNewStay(DATA, stay);
     if (!r.ok) return toast(r.error, true);
     if (!await persistAdmin(previous)) return;
     YEAR = Number(r.stay.arrival.slice(0, 4));
-    document.getElementById("new-name").value = "";
+    for (const id of ["new-name","new-email","new-phone","new-message"]) document.getElementById(id).value = "";
     newArrival.value = "";
     newDeparture.value = "";
     syncDepartureDate(newArrival, newDeparture);

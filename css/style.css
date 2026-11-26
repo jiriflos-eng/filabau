@@ -1053,7 +1053,7 @@ select, input, textarea {
 .err { background: #fde8e4; color: #8a2d1a; padding: 10px 12px; border-radius: 12px; font-size: .95rem; font-weight: 650; }
 .new-stay {
   display: grid;
-  grid-template-columns: minmax(165px, auto) minmax(0, 1fr) 160px 160px auto;
+  grid-template-columns: minmax(155px, .9fr) minmax(0, 2fr) minmax(145px, .85fr) minmax(145px, .85fr);
   gap: 10px;
   align-items: end;
   background: var(--white);
@@ -1061,7 +1061,12 @@ select, input, textarea {
   border-radius: 20px;
   margin: 18px 0;
 }
-.new-stay label { display: grid; gap: 6px; font-size: .85rem; font-weight: 650; }
+.new-stay label { display: block; min-width: 0; font-size: .85rem; font-weight: 650; }
+.new-stay label > input, .new-stay label > select, .new-stay label > textarea { display: block; width: 100%; margin-top: 6px; }
+.new-stay-extra { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .85fr) minmax(0, 1.6fr) auto; align-items: end; gap: 10px; padding-top: 12px; border-top: 1px solid rgba(18,58,70,.10); }
+.new-stay .optional-label { font-size: .72rem; font-weight: 400; color: var(--muted); }
+.new-stay-extra textarea { resize: vertical; min-height: 48px; }
+.new-stay-extra .btn { white-space: nowrap; }
 .table-wrap { overflow-x: auto; background: var(--white); border-radius: 20px; }
 .stay-table { width: 100%; border-collapse: collapse; }
 .stay-table th, .stay-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid rgba(18,58,70,.08); vertical-align: middle; }
@@ -1076,7 +1081,12 @@ select, input, textarea {
 .stay-table input[type="date"] { min-width: 135px; }
 .stay-table tr.row-error { background: #fde8e4; }
 @media (max-width: 900px) {
-  .new-stay { grid-template-columns: 1fr 1fr; }
+  .new-stay { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+  .new-stay-extra { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+}
+@media (max-width: 480px) {
+  .new-stay, .new-stay-extra { grid-template-columns: minmax(0,1fr); }
+  .new-stay-extra .btn { width: 100%; }
 }
 
 @media (max-width: 1100px) {
