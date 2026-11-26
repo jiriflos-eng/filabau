@@ -28,7 +28,7 @@
         <p class="eyebrow">Jen pro hostitele</p>
         <h2 id="gate-title">PIN</h2>
         <p class="muted" id="gate-help"></p>
-        <label>PIN <input id="pin" type="password" inputmode="numeric" autocomplete="current-password" required /></label>
+        <label><span id="pin-label">PIN</span> <input id="pin" type="password" inputmode="numeric" autocomplete="current-password" required /></label>
         <p id="gate-err" style="color:var(--terra)"></p>
         <button class="btn btn-sea" style="margin-top:12px">Vstoupit</button>
       </form>
@@ -37,7 +37,8 @@
     <div class="wrap hidden" id="app">
       <p class="eyebrow">Rezervace</p>
       <h1 class="serif" style="font-size:clamp(2rem,4vw,3rem);margin:8px 0">Jedna rezervace = jeden řádek.</h1>
-      <p class="muted">Vyplňte studio, jméno, příjezd a odjezd. Volba Filemon + Baucis uloží dva samostatné pobyty najednou, pouze pokud jsou obě studia volná. V den odjezdu může přijet další host: odjezd zabírá levou polovinu políčka dne, příjezd pravou. Překrytí obsazených nocí ve stejném studiu nelze uložit. Klientský kalendář se aktualizuje sám na tomto počítači.</p>
+      <p class="muted">Vyplňte studio, jméno, příjezd a odjezd. Volba Filemon + Baucis uloží dva samostatné pobyty najednou, pouze pokud jsou obě studia volná. V den odjezdu může přijet další host: odjezd zabírá levou polovinu políčka dne, příjezd pravou. Překrytí obsazených nocí ve stejném studiu nelze uložit. Žluté řádky čekají na schválení, zelené jsou schválené.</p>
+      <p class="booking-status-note" id="storage-mode"></p>
       <p class="muted" id="date-help">Po výběru příjezdu se prázdný nebo příliš brzký odjezd předvyplní na následující den. Termín si upravte podle délky pobytu; již zvolený pozdější odjezd zůstane zachován.</p>
       <p id="flash" class="flash hidden"></p>
       <p id="err" class="err hidden"></p>
@@ -91,6 +92,7 @@
 
   <script src="js/i18n.js?v=pending-1"></script>
   <script src="js/site.js?v=pending-1"></script>
+  <script src="js/booking-api.js?v=pending-1"></script>
   <script src="js/store.js?v=pending-1"></script>
   <script src="js/admin.js?v=pending-1"></script>
 </body>

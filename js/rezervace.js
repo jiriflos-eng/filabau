@@ -271,13 +271,13 @@ function updateDeliveryUi() {
   const identity = inquiryIdentity(channel, payload);
   const accepted = deliveryReceipt?.identity === identity && Boolean(identity);
   const button = document.getElementById("send");
-  button.disabled = deliveryPending || !inquiryValid || accepted;
+  button.disabled = deliveryPending || !inquiryValid || accepted || (centralBookings() && !bookingCaptchaToken);
   button.textContent = t(deliveryPending ? "send_pending" : accepted ? "send_done" : direct ? "send_direct" : channel === "whatsapp" ? "send_wa" : "send_mail");
   document.getElementById("delivery-hint").textContent = t(
     direct ? (channel === "email" ? "delivery_email" : "delivery_wa") : (channel === "email" ? "delivery_mail_manual" : "delivery_wa_manual"),
     { phone: `+${INQUIRY_DELIVERY.whatsapp.phone}` }
   );
-  if (!deliveryPending && deliveryNotice && deliveryNotice.identity !== identity) {
+  if (!deliveryPending && deliveryNotice && deliveryNotice.identity !== identity && !deliveryNotice.payload.centralSaved) {
     deliveryNotice = null;
     document.getElementById("delivery-status").hidden = true;
   }
@@ -304,6 +304,37 @@ function setDeliveryPending(pending) {
   updateDeliveryUi();
 }
 
+async function submitCentralInquiry(channel,payload,identity) {
+  if(!bookingCaptchaToken) return;
+  const requestId=deliveryAttempt?.identity===identity ? deliveryAttempt.requestId : inquiryRequestId();
+  deliveryAttempt={identity,requestId};
+  const snapshot={...payload,requestId};
+  const captcha=bookingCaptchaToken;
+  setDeliveryPending(true);
+  showDeliveryNotice("pending","delivery_pending",snapshot,identity);
+  let key="booking_save_failed",kind="error";
+  try {
+    const result=await bookingCall("/pending","POST",{requestId,channel,stays:payload.stays,name:payload.name,email:payload.email,phone:payload.phone,message:payload.message,token:captcha});
+    if(!result.saved) throw Error("Unconfirmed save");
+    snapshot.centralSaved=true;
+    DATA=ensureStays(result.calendar);
+    picks={baucis:[],filemon:[]};
+    paint();
+    if(channel==="whatsapp" && deliveryMode(channel)!=="direct"){
+      key="booking_wa";kind="manual";
+    }else{
+      try{await sendInquiry(channel,snapshot);key="booking_saved";kind="success";}
+      catch(_){key="booking_notice_failed";kind="error";}
+    }
+  }catch(_){
+    try{DATA=await loadBookings();paint();}catch(_){}
+  }finally{
+    resetBookingCaptcha();
+    setDeliveryPending(false);
+    showDeliveryNotice(kind,key,snapshot,identity);
+    document.getElementById("delivery-status").focus({preventScroll:true});
+  }
+}
 async function submitInquiry(e) {
   e.preventDefault();
   if (deliveryPending || !INQUIRY_DELIVERY) return;
@@ -315,6 +346,7 @@ async function submitInquiry(e) {
   if (payload.botcheck || (channel === "email" && deliveryMode(channel) !== "direct")) return;
   const identity = inquiryIdentity(channel, payload);
   if (deliveryReceipt?.identity === identity) return;
+  if (centralBookings()) return submitCentralInquiry(channel,payload,identity);
 
   if (deliveryMode(channel) !== "direct") {
     showDeliveryNotice("manual", channel === "whatsapp" ? "delivery_wa_opened" : "delivery_mail_opened", payload, identity);
@@ -345,8 +377,16 @@ async function submitInquiry(e) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const [bookings] = await Promise.all([loadBookings(), loadInquiryConfig()]);
-  DATA = bookings;
+  try {
+    const [bookings] = await Promise.all([loadBookings(), loadInquiryConfig()]);
+    DATA = bookings;
+  } catch(e) {
+    document.getElementById("delivery-hint").textContent=t("delivery_config_error");
+    document.getElementById("send").disabled=true;
+    console.error("Calendar unavailable",e);
+    return;
+  }
+  document.getElementById("booking-legend").hidden=!centralBookings() && !DATA.stays.some(s=>s.status==="pending");
   YEAR = seasonYear();
   if (INQUIRY_DELIVERY) {
     const phone = document.getElementById("delivery-phone");
@@ -375,6 +415,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   form.addEventListener("input", updateDeliveryUi);
   form.addEventListener("change", updateDeliveryUi);
   form.addEventListener("submit", submitInquiry);
+  initBookingCaptcha(updateDeliveryUi);
   paint();
   jumpToRelevantMonth(document.getElementById("cal"));
+  if(centralBookings()) {
+    const refresh=async()=>{
+      if(document.hidden||deliveryPending||Object.values(picks).some(p=>p.length)) return;
+      try{DATA=await loadBookings();paint();}catch(e){console.error("Calendar refresh",e);}
+    };
+    setInterval(refresh,30000);
+    document.addEventListener("visibilitychange",refresh);
+  }
 });

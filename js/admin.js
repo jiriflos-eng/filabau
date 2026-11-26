@@ -1,4 +1,16 @@
 let DATA = null;
+let adminBusy = false;
+async function persistAdmin(previous) {
+  if (!centralBookings()) return true;
+  adminBusy = true;
+  try { DATA = ensureStays(await writeCentralAdmin(DATA)); return true; }
+  catch (e) {
+    DATA = previous;
+    try { const latest=await readCentralAdmin(); if(latest) DATA=ensureStays(latest); } catch (_) {}
+    paint(); toast("Centrální uložení nebylo potvrzeno: " + e.message,true); return false;
+  } finally { adminBusy=false; }
+}
+function copyAdminData() { return JSON.parse(JSON.stringify(DATA)); }
 let YEAR = typeof seasonYear === "function" ? seasonYear() : new Date().getFullYear();
 
 function toast(msg, isError) {
@@ -111,6 +123,13 @@ function readRow(tr) {
 }
 
 async function gate() {
+  if (centralBookings()) {
+    document.getElementById("gate-title").textContent="Přístup správce";
+    document.getElementById("gate-help").textContent="Zadejte serverové heslo správce. Místní PIN již nepoužíváme.";
+    document.getElementById("pin").removeAttribute("inputmode");
+    document.getElementById("pin-label").textContent="Heslo správce";
+    return;
+  }
   const saved = localStorage.getItem(PIN_KEY);
   document.getElementById("app").classList.add("hidden");
   document.getElementById("gate").classList.remove("hidden");
@@ -123,6 +142,20 @@ async function gate() {
 }
 
 async function unlock(pin) {
+  if (centralBookings()) {
+    if(adminBusy) return;
+    adminBusy=true; bookingAdminToken=pin;
+    try {
+      let remote=await readCentralAdmin();
+      if(!remote){
+        if(!confirm("Centrální úložiště je prázdné. Chcete ho založit z dat tohoto prohlížeče (nebo z původního JSONu, pokud zde nejsou)? Nejprve si ověřte, že máte správnou zálohu.")) {bookingAdminToken="";return;}
+        remote=await writeCentralAdmin(await loadLegacyBookings());
+      }
+      DATA=ensureStays(remote);document.getElementById("pin").value="";enter();
+    } catch(e) {bookingAdminToken="";document.getElementById("gate-err").textContent="Přihlášení nebo načtení se nezdařilo: "+e.message;}
+    finally{adminBusy=false;}
+    return;
+  }
   const saved = localStorage.getItem(PIN_KEY);
   const h = await hashPin(pin);
   if (!saved) {
@@ -145,7 +178,12 @@ function enter() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  DATA = await loadBookings();
+  try {
+    await loadBookingSettings();
+    if (!centralBookings()) DATA = await loadLegacyBookings();
+  } catch(e) {document.getElementById("gate-err").textContent="Nelze načíst konfiguraci: "+e.message;return;}
+  document.getElementById("storage-mode").textContent=centralBookings()?"Centrální úložiště – změny platí pro všechny návštěvníky.":"Místní režim – změny zatím vidí pouze tento prohlížeč. Centrální úložiště není připojené.";
+  document.getElementById("reset").textContent=centralBookings()?"Načíst ze serveru":"Obnovit z webu";
   YEAR = seasonYear();
   await gate();
   const newArrival = document.getElementById("new-from");
@@ -160,8 +198,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     YEAR = Number(e.target.value);
     paint();
   });
-  document.getElementById("new-form").addEventListener("submit", (e) => {
+  document.getElementById("new-form").addEventListener("submit", async (e) => {
     e.preventDefault();
+    if(adminBusy) return;
+    const previous=copyAdminData();
     const dateError = stayDateError(newArrival, newDeparture);
     if (dateError) return toast(dateError, true);
     const stay = {
@@ -172,6 +212,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
     const r = saveNewStay(DATA, stay);
     if (!r.ok) return toast(r.error, true);
+    if (!await persistAdmin(previous)) return;
     YEAR = Number(r.stay.arrival.slice(0, 4));
     document.getElementById("new-name").value = "";
     newArrival.value = "";
@@ -181,13 +222,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     toast(`Přidáno: ${label} · ${r.stay.name} · ${fmtDate(r.stay.arrival)} – ${fmtDate(r.stay.departure)}`);
     paint();
   });
-  document.getElementById("rows").addEventListener("click", (e) => {
+  document.getElementById("rows").addEventListener("click", async (e) => {
+    if(adminBusy) return;
+    const previous=copyAdminData();
     const save = e.target.closest(".save");
     const del = e.target.closest(".del");
     const approve = e.target.closest(".approve");
     if (approve) {
       const r = approveStay(DATA, approve.closest("tr").dataset.id);
       if (!r.ok) return toast(r.error,true);
+      if(!await persistAdmin(previous)) return;
       toast("Rezervace schválena.");
       paint();
       return;
@@ -208,6 +252,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return toast(r.error, true);
       }
       tr.classList.remove("row-error");
+      if(!await persistAdmin(previous)) return;
       toast(`Uloženo: ${r.stay.name}`);
       paint();
     }
@@ -216,6 +261,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const s = readRow(tr);
       if (!confirm(`Smazat rezervaci ${s.name || ""} (${s.arrival} – ${s.departure})?`)) return;
       deleteStay(DATA, s.id);
+      if(!await persistAdmin(previous)) return;
       toast("Rezervace smazána.");
       paint();
     }
@@ -223,14 +269,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("download").addEventListener("click", () => exportData(DATA));
   document.getElementById("upload").addEventListener("change", async (e) => {
     const file = e.target.files[0];
-    if (!file) return;
-    DATA = ensureStays(JSON.parse(await file.text()));
-    saveBookings(DATA);
-    YEAR = yearsOf(DATA).at(-1);
-    toast("Záloha nahraná.");
-    paint();
+    if (!file || adminBusy) return;
+    if(centralBookings() && !confirm("Nahrání zálohy nahradí celý centrální kalendář včetně čekajících poptávek. Pokračovat?")) {e.target.value="";return;}
+    const previous=copyAdminData();
+    try {
+      DATA=ensureStays(JSON.parse(await file.text()));
+      saveBookings(DATA);
+      if(!await persistAdmin(previous)) return;
+      YEAR=yearsOf(DATA).at(-1);toast("Záloha nahraná.");paint();
+    } catch(error){DATA=previous;toast("Zálohu nelze načíst: "+error.message,true);}
+    finally{e.target.value="";}
   });
   document.getElementById("reset").addEventListener("click", async () => {
+    if(adminBusy) return;
+    if(centralBookings()){
+      adminBusy=true;
+      try{DATA=ensureStays(await readCentralAdmin());paint();toast("Načteno ze serveru.");}
+      catch(e){toast("Načtení selhalo: "+e.message,true);}
+      finally{adminBusy=false;}
+      return;
+    }
     if (!confirm("Vrátit rezervace k verzi z webu? Místní úpravy na tomto počítači se smažou.")) return;
     localStorage.removeItem(STORE_KEY);
     DATA = await loadBookings();

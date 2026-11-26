@@ -71,6 +71,14 @@ function ensureStays(data) {
 }
 
 async function loadBookings() {
+  if (typeof loadBookingSettings === "function") {
+    await loadBookingSettings();
+    if (centralBookings()) return ensureStays(await bookingCall("/calendar"));
+  }
+  return loadLegacyBookings();
+}
+
+async function loadLegacyBookings() {
   const local = localStorage.getItem(STORE_KEY);
   if (local) {
     try {
@@ -83,7 +91,7 @@ async function loadBookings() {
 
 function saveBookings(data) {
   data.updatedAt = new Date().toISOString();
-  localStorage.setItem(STORE_KEY, JSON.stringify(data));
+  if (typeof centralBookings !== "function" || !centralBookings()) localStorage.setItem(STORE_KEY, JSON.stringify(data));
   return data;
 }
 

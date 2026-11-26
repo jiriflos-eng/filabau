@@ -46,7 +46,7 @@
       <div class="legend">
         <span><i class="swatch" style="background:#d7eed9"></i><span data-i18n="free">volno</span></span>
         <span><i class="swatch" style="background:#e8a090"></i><span data-i18n="busy">obsazeno - jméno je v pásku</span></span>
-        <span><i class="swatch" style="background:#f3cb61"></i><span data-i18n="booking_pending">Čeká na schválení</span></span>
+        <span id="booking-legend" hidden><i class="swatch" style="background:#f3cb61"></i><span data-i18n="booking_pending">Čeká na schválení</span></span>
         <span><i class="swatch swatch-arrive" aria-hidden="true"></i><span data-i18n="arrive">Příjezd</span></span>
         <span><i class="swatch swatch-depart" aria-hidden="true"></i><span data-i18n="depart">Odjezd</span></span>
       </div>
@@ -73,6 +73,7 @@
           <label class="via"><input type="radio" name="via" value="wa" checked /> WhatsApp</label>
           <label class="via"><input type="radio" name="via" value="mail" /> E-mail</label>
         </div>
+        <div id="booking-captcha" hidden aria-label="Ověření proti robotům"></div>
         <p class="delivery-hint" id="delivery-hint" aria-live="polite"></p>
         <button class="btn btn-terra" id="send" type="submit" disabled aria-describedby="delivery-hint">Otevřít WhatsApp a dokončit odeslání</button>
         <div class="delivery-status" id="delivery-status" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden>
@@ -95,6 +96,7 @@
   </footer>
   <script src="js/i18n.js?v=pending-1"></script>
   <script src="js/site.js?v=pending-1"></script>
+  <script src="js/booking-api.js?v=pending-1"></script>
   <script src="js/store.js?v=pending-1"></script>
   <script src="js/calendar.js?v=pending-1"></script>
   <script src="js/delivery-config.js?v=pending-1"></script>

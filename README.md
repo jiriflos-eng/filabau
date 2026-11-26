@@ -62,3 +62,17 @@ Viditelný průvodce vede hosta od kliknutí na příjezd ke kliknutí na odjezd
 ## Ceny
 
 Ceník na původním Google Sites je v obrázku. Do dema čísla nehádáme - hosté se zeptají v poptávce. Klimatizace 4 €/den a transfer 40 / 80 € jsou z původního webu.
+
+## Centrální poptávky a schvalování (Cloudflare)
+
+Backend drží celý kalendář jako soukromý JSON v transakčním SQLite Durable Objectu. Veřejné GET /calendar vrací termíny, studio a stav bez jmen a kontaktů; admin GET/PUT /admin vyžaduje serverové heslo a kontroluje revizi. POST /pending ověřuje Turnstile a obsazenost atomicky. Čekající poptávka blokuje noci do schválení nebo smazání. Při WhatsAppu vzniká poptávka před otevřením odkazu, skutečné odeslání WhatsAppu nelze ověřit. Notifikace Web3Forms následuje po uložení; při její chybě zůstává poptávka v administraci. Schválení mění stav, automatický potvrzovací e-mail hostovi se neposílá.
+
+### Aktivace
+
+1. Stáhněte zálohu ze současné administrace na počítači s aktuálními rezervacemi. Původní data nemažte.
+2. Na Cloudflare vytvořte Turnstile widget pro hostname jiriflos-eng.github.io. Získejte veřejný site key a soukromý secret.
+3. V terminálu v klonu repozitáře spusťte `cd backend`, `npx wrangler login`, `npx wrangler deploy`. Pak `npx wrangler secret put ADMIN_TOKEN` (náhodné heslo, např. výstup `openssl rand -hex 32`) a `npx wrangler secret put TURNSTILE_SECRET`. Tajné hodnoty nikdy necommitujte. URL Workeru je ve výstupu deploy.
+4. Do data/config.json na GitHubu zapište bookingApi.url a bookingApi.turnstileSiteKey. Po nasazení se přihlaste do admin.html serverovým heslem a odsouhlaste inicializaci ze správného prohlížeče nebo nahrajte zálohu. Dokud není centrální JSON inicializovaný, veřejný kalendář se nezobrazí jako volný. Ověřte počty, termíny a schvalování.
+5. Proveďte zkušební poptávku z jiného prohlížeče, ověřte žlutý stav, konflikt a schválení. V administraci pravidelně stahujte zálohu (obsahuje soukromé kontakty). Ponechte data/bookings.json jako původní zálohu; nové kontakty nepatří do veřejného GitHubu.
+
+Prázdné bookingApi.url znamená starý lokální režim; funkční Web3Forms zůstává, ale automatický žlutý blok pro všechny návštěvníky ještě není aktivní. Nikdy neukládejte soukromé heslo ani Turnstile secret v data/config.json.
