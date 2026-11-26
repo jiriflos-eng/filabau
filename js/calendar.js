@@ -154,6 +154,20 @@ function guestStayDescription(data,stay){
   const status=stay.status==="pending"?t("booking_pending"):t("occupied");
   return label===status?status:label+" · "+status;
 }
+// Even-numbered half-slot boundaries are midnight, not arrival/departure noon.
+function guestDayDividers(startSlot, endSlot, status) {
+  if (status === "pending") return "";
+  const count = endSlot - startSlot;
+  const dividers = [];
+  for (let boundary = startSlot + 1; boundary < endSlot; boundary++) {
+    if (boundary % 2 !== 0) continue;
+    const fraction = (boundary - startSlot) / count;
+    // Correct for the existing outer margins, so the line stays on the
+    // actual day grid even in partial or continued bands.
+    dividers.push(`<span class="gday-divider" style="left:calc(${fraction * 100}% - var(--band-margin-left) * ${1-fraction} + var(--band-margin-right) * ${fraction})" aria-hidden="true"></span>`);
+  }
+  return dividers.join("");
+}
 function guestTrackHtml(data, year, st, week, dates, selected, getHint) {
   const items = [];
   // Each date has two slots. A stay owns arrival afternoon through departure morning.
@@ -212,6 +226,7 @@ function guestTrackHtml(data, year, st, week, dates, selected, getHint) {
       count <= 4 ? "short" : "", count === 1 ? "edge-only" : ""].filter(Boolean).join(" ");
     const name = guestStayLabel(data,stay);
     items.push(`<div class="${classes}" style="grid-column:${slot + 1} / ${end + 1}" data-stay="${escapeCalendarHtml(stay.id || "")}" aria-hidden="true">
+      ${guestDayDividers(slot, end, stay.status)}
       <span class="gname">${escapeCalendarHtml(name)}</span>
       ${starts ? `<span class="gtag gtag-in">${escapeCalendarHtml(t("arrive"))}</span>` : ""}
       ${ends ? `<span class="gtag gtag-out">${escapeCalendarHtml(t("depart"))}</span>` : ""}

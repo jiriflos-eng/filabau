@@ -759,9 +759,13 @@ select, input, textarea {
   --band-out: 0px;
   --band-left: none;
   --band-right: none;
+  --band-margin-left: 0px;
+  --band-margin-right: 0px;
+  margin-left: var(--band-margin-left);
+  margin-right: var(--band-margin-right);
 }
-.gband.continues-in { margin-left: calc(var(--day-gap) / 2); }
-.gband.continues-out { margin-right: calc(var(--day-gap) / 2); }
+.gband.continues-in { --band-margin-left: calc(var(--day-gap) / 2); }
+.gband.continues-out { --band-margin-right: calc(var(--day-gap) / 2); }
 .guest-week.is-top .gband { border-radius: 7px 7px 0 0; }
 .guest-week.is-bot .gband { border-radius: 0 0 7px 7px; }
 /* Arrival: upper left chamfer, then a vertical lower edge.
@@ -797,8 +801,19 @@ select, input, textarea {
 }
 /* One pixel on each side of noon creates a 2px visual separator.
    Only adjacent, distinct reservations get this spacing. */
-.gband.handover-in { margin-left: 1px; }
-.gband.handover-out { margin-right: 1px; }
+.gband.handover-in { --band-margin-left: 1px; }
+.gband.handover-out { --band-margin-right: 1px; }
+/* Subtle midnight markers above the continuous fill, below guest labels. */
+.gband .gday-divider {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  width: 0;
+  border-left: 1px dashed rgba(255,255,255,.78);
+  transform: translateX(-.5px);
+  z-index: 0;
+  pointer-events: none;
+}
 @media (max-width: 800px) {
   .gband.starts { --band-in: min(26px, var(--band-limit, 58%)); }
   .gband.ends { --band-out: min(26px, var(--band-limit, 58%)); }
