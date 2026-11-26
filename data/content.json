@@ -163,7 +163,8 @@
     "cms_crossroad_lead": "Vše, co potřebujete vědět před cestou na Korfu.",
     "fact_beach_value": "650 m",
     "fact_size_value": "23 m²",
-    "fact_tavern_value": "80 m"
+    "fact_tavern_value": "80 m",
+    "fact_price_value": "45–55 €"
   },
   "en": {
     "ac": "Air conditioning 4 € / day.",
@@ -329,7 +330,8 @@
     "cms_crossroad_lead": "Everything you need to know before travelling to Corfu.",
     "fact_beach_value": "650 m",
     "fact_size_value": "23 m²",
-    "fact_tavern_value": "80 m"
+    "fact_tavern_value": "80 m",
+    "fact_price_value": "45–55 €"
   },
   "de": {
     "ac": "Klimaanlage 4 € / Tag.",
@@ -495,7 +497,8 @@
     "cms_crossroad_lead": "Alles Wissenswerte vor Ihrer Reise nach Korfu.",
     "fact_beach_value": "650 m",
     "fact_size_value": "23 m²",
-    "fact_tavern_value": "80 m"
+    "fact_tavern_value": "80 m",
+    "fact_price_value": "45–55 €"
   },
   "fr": {
     "ac": "Climatisation 4 € / jour.",
@@ -661,7 +664,8 @@
     "cms_crossroad_lead": "Tout ce qu’il faut savoir avant votre voyage à Corfou.",
     "fact_beach_value": "650 m",
     "fact_size_value": "23 m²",
-    "fact_tavern_value": "80 m"
+    "fact_tavern_value": "80 m",
+    "fact_price_value": "45–55 €"
   },
   "it": {
     "ac": "Aria condizionata 4 € / giorno.",
@@ -827,7 +831,8 @@
     "cms_crossroad_lead": "Tutto ciò che occorre sapere prima di partire per Corfù.",
     "fact_beach_value": "650 m",
     "fact_size_value": "23 m²",
-    "fact_tavern_value": "80 m"
+    "fact_tavern_value": "80 m",
+    "fact_price_value": "45–55 €"
   },
   "es": {
     "ac": "Aire acondicionado 4 € / día.",
@@ -993,7 +998,8 @@
     "cms_crossroad_lead": "Todo lo que necesita saber antes de viajar a Corfú.",
     "fact_beach_value": "650 m",
     "fact_size_value": "23 m²",
-    "fact_tavern_value": "80 m"
+    "fact_tavern_value": "80 m",
+    "fact_price_value": "45–55 €"
   },
   "pl": {
     "ac": "Klimatyzacja 4 € / dzień.",
@@ -1159,7 +1165,8 @@
     "cms_crossroad_lead": "Wszystko, co warto wiedzieć przed podróżą na Korfu.",
     "fact_beach_value": "650 m",
     "fact_size_value": "23 m²",
-    "fact_tavern_value": "80 m"
+    "fact_tavern_value": "80 m",
+    "fact_price_value": "45–55 €"
   },
   "prices": {
     "may": 45,

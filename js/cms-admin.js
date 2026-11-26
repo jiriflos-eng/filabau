@@ -5,8 +5,8 @@ const ALBUMS={unas:"U nás",pobliz:"Poblíž",opodal:"Opodál",ruzne:"Různé",f
 const PRICE_MONTHS={may:"Květen",jun:"Červen",jul:"Červenec",aug:"Srpen",sep:"Září",oct:"Říjen"};
 const priceKey=k=>typeof k==="string"&&k.startsWith("price:")&&Object.hasOwn(PRICE_MONTHS,k.slice(6));
 const editableKey=k=>draft&&(priceKey(k)?Object.hasOwn(draft.content.prices||{},k.slice(6)):Object.hasOwn(draft.content.cs,k));
-const nodeKey=el=>el.hasAttribute("data-cms-price-range")?"price:may":el.dataset.cmsPrice?"price:"+el.dataset.cmsPrice:el.dataset.i18n||el.dataset.albumTitle||el.dataset.albumLead;
-const editorSelector="[data-i18n],[data-album-title],[data-album-lead],[data-cms-price],[data-cms-price-range]";
+const nodeKey=el=>el.dataset.cmsPrice?"price:"+el.dataset.cmsPrice:el.dataset.i18n||el.dataset.albumTitle||el.dataset.albumLead;
+const editorSelector="[data-i18n],[data-album-title],[data-album-lead],[data-cms-price]";
 let api="",password="",draft=null,uploads=new Map(),dirty=false,busy=false,selectedKey="",textDirty=false,photoBusy=false;
 const clone=x=>JSON.parse(JSON.stringify(x));
 const selectOptions=(el,values)=>{el.replaceChildren(...Object.entries(values).map(([v,l])=>new Option(l,v)));};
@@ -45,7 +45,7 @@ document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{if(busy)return
 function discardText(){if(!textDirty)return true;if(!confirm("Zahodit dosud nepoužitou úpravu textu?"))return false;textDirty=false;sync();return true;}
 let page=$("cms-page").value;
 $("cms-page").onchange=()=>{if(!discardText()){$("cms-page").value=page;return;}page=$("cms-page").value;selectedKey="";$("cms-value").disabled=true;$("cms-value").value="";resetPriceEditor();sync();loadPreview();};
-function loadPreview(){$("cms-preview").src=page+"?cms=prices-2";}
+function loadPreview(){$("cms-preview").src=page+"?cms=prices-3";}
 function previewApply(){
   const w=$("cms-preview").contentWindow;if(!w||!draft)return;
   try{w.cmsPreview?.(draft.content,$("cms-lang").value);}catch(e){console.warn("Preview",e);}
@@ -55,7 +55,7 @@ function pageKeys(doc){
   return [...new Set(nodes.map(nodeKey).filter(editableKey))];
 }
 function updateKeys(doc){
-  const keys=pageKeys(doc);if(doc.querySelector("[data-cms-price-range]"))for(const m of Object.keys(PRICE_MONTHS))if(editableKey("price:"+m)&&!keys.includes("price:"+m))keys.push("price:"+m);const current=selectedKey||$("cms-key").value;
+  const keys=pageKeys(doc);const current=selectedKey||$("cms-key").value;
   $("cms-key").replaceChildren(new Option("Vyberte text v náhledu",""),...keys.map(k=>new Option(priceKey(k)?PRICE_MONTHS[k.slice(6)]+" · cena za noc":(draft.content.cs[k]||k).slice(0,75)+" · "+k,k)));
   if(keys.includes(current))$("cms-key").value=current;
 }
@@ -99,7 +99,7 @@ function loadText(){
     $("cms-text-lang-label").hidden=true;$("cms-value-label").hidden=true;
     $("cms-price-label").hidden=false;$("cms-price-value").disabled=false;
     $("cms-price-value").value=draft.content.prices[selectedKey.slice(6)];
-    $("cms-key-note").textContent=PRICE_MONTHS[selectedKey.slice(6)]+" · stejná cena pro všechny jazyky. Rozpětí na úvodní stránce se počítá ze všech měsíčních cen.";
+    $("cms-key-note").textContent=PRICE_MONTHS[selectedKey.slice(6)]+" · stejná cena pro všechny jazyky.";
   }else{
     $("cms-value").value=selectedKey?draft.content[textLang][selectedKey]||"":"";
     $("cms-key-note").textContent=selectedKey?"Klíč: "+selectedKey:"";

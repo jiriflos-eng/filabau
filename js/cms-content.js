@@ -4,7 +4,7 @@ let cmsPreviewLanguage = null;
 const cmsOriginalT = t;
 t = function(key, vars) {
   const lang = cmsPreviewLanguage || getLang();
-  let value = cmsPublicContent?.[lang]?.[key] ?? I18N[lang]?.[key] ?? I18N.cs[key] ?? ({fact_beach_value:'650 m',fact_size_value:'23 m²',fact_tavern_value:'80 m'})[key];
+  let value = cmsPublicContent?.[lang]?.[key] ?? I18N[lang]?.[key] ?? I18N.cs[key] ?? ({fact_beach_value:'650 m',fact_size_value:'23 m²',fact_tavern_value:'80 m',fact_price_value:'45–55 €'})[key];
   if (typeof value !== "string") return cmsOriginalT(key, vars);
   if(vars) for(const [k,v] of Object.entries(vars)) value=value.replaceAll("{"+k+"}",String(v));
   return value;
@@ -27,10 +27,6 @@ function cmsApplyPrices(){
   document.querySelectorAll("[data-cms-price]").forEach(el=>{
     const value=prices[el.dataset.cmsPrice];
     if(value!==undefined)el.textContent=fmt.format(value);
-  });
-  const min=Math.min(...Object.values(prices)),max=Math.max(...Object.values(prices));
-  document.querySelectorAll("[data-cms-price-range]").forEach(el=>{
-    el.textContent=(min===max?fmt.format(min):fmt.format(min)+"–"+fmt.format(max))+" €";
   });
 }
 function cmsApplyContent(){
