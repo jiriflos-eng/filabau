@@ -166,7 +166,7 @@ function guestTrackHtml(data, year, st, week, dates, selected, getHint) {
     const part = selectedDayPart(data, year, st.id, date, selected?.[st.id]);
     const canPick = season && !past && !full;
     const describe = (stay, available) => stay
-      ? `${stay.note || t("occupied")} (${fmtDate(stay.start)} – ${fmtDate(stay.end)})`
+      ? `${stay.status === "pending" ? t("booking_pending") : stay.note || t("occupied")} (${fmtDate(stay.start)} – ${fmtDate(stay.end)})`
       : t(available);
     const title = !season ? t("off_season") : occupied
       ? `${t("morning")}: ${describe(state.morningStay, "available_departure")} · ${t("afternoon")}: ${describe(state.afternoonStay, "available_arrival")}`
@@ -197,11 +197,11 @@ function guestTrackHtml(data, year, st, week, dates, selected, getHint) {
     const starts = slot % 2 === 1 && dates[Math.floor(slot / 2)] === stay.start;
     const ends = end % 2 === 1 && dates[Math.floor((end - 1) / 2)] === stay.end;
     const count = end - slot;
-    const classes = ["gband", starts ? "starts" : "continues-in", ends ? "ends" : "continues-out",
+    const classes = ["gband", stay.status === "pending" ? "is-pending" : "", starts ? "starts" : "continues-in", ends ? "ends" : "continues-out",
       starts && halves[slot - 1] ? "handover-in" : "",
       ends && halves[end] ? "handover-out" : "",
       count <= 4 ? "short" : "", count === 1 ? "edge-only" : ""].filter(Boolean).join(" ");
-    const name = stay.note || t("occupied");
+    const name = stay.status === "pending" ? t("booking_pending") : stay.note || t("occupied");
     items.push(`<div class="${classes}" style="grid-column:${slot + 1} / ${end + 1}" data-stay="${escapeCalendarHtml(stay.id || "")}" aria-hidden="true">
       <span class="gname">${escapeCalendarHtml(name)}</span>
       ${starts ? `<span class="gtag gtag-in">${escapeCalendarHtml(t("arrive"))}</span>` : ""}

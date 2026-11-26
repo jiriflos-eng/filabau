@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,480;9..144,600&family=Outfit:wght@360;500;650&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=pending-1" />
 </head>
 <body>
   <header class="nav solid">
@@ -46,6 +46,7 @@
       <div class="legend">
         <span><i class="swatch" style="background:#d7eed9"></i><span data-i18n="free">volno</span></span>
         <span><i class="swatch" style="background:#e8a090"></i><span data-i18n="busy">obsazeno - jméno je v pásku</span></span>
+        <span><i class="swatch" style="background:#f3cb61"></i><span data-i18n="booking_pending">Čeká na schválení</span></span>
         <span><i class="swatch swatch-arrive" aria-hidden="true"></i><span data-i18n="arrive">Příjezd</span></span>
         <span><i class="swatch swatch-depart" aria-hidden="true"></i><span data-i18n="depart">Odjezd</span></span>
       </div>
@@ -79,9 +80,8 @@
           <small id="delivery-reference" hidden></small>
           <div class="delivery-contact" id="delivery-contact" hidden>
             <p data-i18n="delivery_contact">Kontakt pro ověření nebo dokončení poptávky:</p>
-            <p><a id="delivery-phone"></a> · <a id="delivery-email"></a></p>
+            <p><a id="delivery-phone"></a></p>
             <a id="fallback-wa" target="_blank" rel="noopener noreferrer" data-i18n="delivery_fallback_wa">Otevřít poptávku ve WhatsAppu</a>
-            <a id="fallback-mail" hidden data-i18n="delivery_fallback_mail">Otevřít poptávku v e-mailu</a>
           </div>
         </div>
       </form>
@@ -93,12 +93,12 @@
       <div><a href="admin.html" data-i18n="admin_link">Administrace kalendáře</a></div>
     </div>
   </footer>
-  <script src="js/i18n.js"></script>
-  <script src="js/site.js"></script>
-  <script src="js/store.js"></script>
-  <script src="js/calendar.js"></script>
-  <script src="js/delivery-config.js?v=web3forms-1"></script>
-  <script src="js/delivery.js?v=web3forms-1"></script>
-  <script src="js/rezervace.js?v=web3forms-1"></script>
+  <script src="js/i18n.js?v=pending-1"></script>
+  <script src="js/site.js?v=pending-1"></script>
+  <script src="js/store.js?v=pending-1"></script>
+  <script src="js/calendar.js?v=pending-1"></script>
+  <script src="js/delivery-config.js?v=pending-1"></script>
+  <script src="js/delivery.js?v=pending-1"></script>
+  <script src="js/rezervace.js?v=pending-1"></script>
 </body>
 </html>

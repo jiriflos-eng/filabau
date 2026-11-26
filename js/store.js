@@ -205,6 +205,7 @@ function staysInYear(data, year, studio) {
       start: s.arrival,
       end: s.departure,
       note: s.name || "",
+      status: s.status === "pending" ? "pending" : "confirmed",
       studio: s.studio,
     }))
     .sort((a, b) => a.start.localeCompare(b.start));
@@ -239,7 +240,12 @@ function saveStay(data, stay, persist = true) {
     name: (stay.name || "").trim(),
     arrival: a,
     departure: b,
+    status: stay.status || data.stays.find(s => s.id === stay.id)?.status || "confirmed",
   };
+  const previous = data.stays.find(s => s.id === next.id);
+  if (previous) for (const key of ["requestId","email","phone","message","channel","createdAt","approvedAt"]) {
+    if (previous[key] !== undefined) next[key] = previous[key];
+  }
   if (!STUDIOS.some((s) => s.id === next.studio)) return { ok: false, error: "Vyberte studio." };
   const clash = findOverlap(data, next, stay.id);
   if (clash) {
@@ -281,6 +287,17 @@ function saveNewStay(data, stay) {
   }
   Object.assign(data, staged);
   return { ok: true, stay: created[0], stays: created };
+}
+
+function approveStay(data, id) {
+  const stay = data.stays.find(s => s.id === id);
+  if (!stay || stay.status !== "pending") return {ok:false,error:"Poptávka již nečeká na schválení."};
+  stay.status = "confirmed";
+  stay.approvedAt = new Date().toISOString();
+  data.history = data.history || [];
+  data.history.unshift({at: stay.approvedAt, action:"approve", detail:"Schváleno " + stay.studio + " " + stay.arrival + " – " + stay.departure});
+  saveBookings(data);
+  return {ok:true,stay};
 }
 
 function deleteStay(data, id) {

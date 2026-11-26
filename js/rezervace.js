@@ -256,10 +256,7 @@ function showDeliveryNotice(kind, textKey, payload, identity) {
   reference.hidden = !payload.requestId;
   const contact = document.getElementById("delivery-contact");
   contact.hidden = !["error", "manual"].includes(kind);
-  const text = payload.text + (payload.requestId ? `\n\n${t("delivery_reference", { id: payload.requestId })}` : "");
   document.getElementById("fallback-wa").href = whatsappLink(payload.whatsappText + (payload.requestId ? `\n\n${t("delivery_reference", { id: payload.requestId })}` : ""));
-  document.getElementById("fallback-mail").href = mailLink(payload.subject, text);
-  document.getElementById("fallback-mail").hidden = true;
 }
 
 function updateDeliveryUi() {
@@ -278,7 +275,7 @@ function updateDeliveryUi() {
   button.textContent = t(deliveryPending ? "send_pending" : accepted ? "send_done" : direct ? "send_direct" : channel === "whatsapp" ? "send_wa" : "send_mail");
   document.getElementById("delivery-hint").textContent = t(
     direct ? (channel === "email" ? "delivery_email" : "delivery_wa") : (channel === "email" ? "delivery_mail_manual" : "delivery_wa_manual"),
-    { email: INQUIRY_DELIVERY.email.address, phone: `+${INQUIRY_DELIVERY.whatsapp.phone}` }
+    { phone: `+${INQUIRY_DELIVERY.whatsapp.phone}` }
   );
   if (!deliveryPending && deliveryNotice && deliveryNotice.identity !== identity) {
     deliveryNotice = null;
@@ -353,11 +350,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   YEAR = seasonYear();
   if (INQUIRY_DELIVERY) {
     const phone = document.getElementById("delivery-phone");
-    const email = document.getElementById("delivery-email");
     phone.textContent = "+" + INQUIRY_DELIVERY.whatsapp.phone;
     phone.href = "tel:+" + INQUIRY_DELIVERY.whatsapp.phone;
-    email.textContent = INQUIRY_DELIVERY.email.address;
-    email.href = "mailto:" + INQUIRY_DELIVERY.email.address;
   }
   document.getElementById("guide-reset")?.addEventListener("click", (e) => clearPick(e.currentTarget.dataset.studio));
   document.getElementById("guide-form")?.addEventListener("click", (e) => {

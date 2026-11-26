@@ -26,7 +26,7 @@
     <p>NASTAVENÍ PRO PROVOZOVATELE</p>
     <h1>Test přímého odesílání e-mailu</h1>
     <p>Služba: <strong>Web3Forms</strong></p>
-    <p>Očekávaná cílová schránka dle JSON: <strong id="recipient">—</strong>.</p>
+    <p>Cílová schránka: nastavuje se v administraci Web3Forms.</p>
     <p class="notice">Skutečného příjemce určuje nastavení formuláře Web3Forms a jeho veřejný access key. Ověřte adresu v dashboardu. Tento test nevytváří rezervaci a nemění kalendář.</p>
     <p>Odešlete jednu technickou zprávu. Po potvrzení přijetí službou zkontrolujte schránku, spam a případně karty Hromadné či Aktualizace. Teprve po skutečném doručení nastavte <code>email.activated</code> v <code>data/config.json</code> na <code>true</code>.</p>
     <form id="test-form" method="POST">
@@ -39,8 +39,8 @@
     </form>
     <p><a href="https://web3forms.com/">Web3Forms</a> · <a href="https://docs.web3forms.com/getting-started/troubleshooting">Nápověda k doručení</a> · <a href="rezervace.html">Rezervační stránka</a></p>
   </main>
-  <script src="js/delivery-config.js?v=web3forms-1"></script>
-  <script src="js/delivery.js?v=web3forms-1"></script>
+  <script src="js/delivery-config.js?v=pending-1"></script>
+  <script src="js/delivery.js?v=pending-1"></script>
   <script>
     const form = document.getElementById("test-form");
     const button = form.querySelector("button");
@@ -70,8 +70,6 @@
         status.textContent = "Konfiguraci nelze načíst: " + (inquiryConfigError?.message || "neznámá chyba");
         return;
       }
-      document.getElementById("recipient").textContent = config.email.address;
-      form.elements.email.value = config.email.address;
       status.textContent = "Připraveno k testu.";
       button.disabled = false;
     });

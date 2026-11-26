@@ -141,6 +141,4 @@ function whatsappLink(text) {
   return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
 }
 
-function mailLink(subject, text) {
-  return `mailto:${INQUIRY_DELIVERY.email.address}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
-}
+

@@ -30,7 +30,7 @@ GitHub Pages poskytuje statický web. JavaScript může odeslat požadavek exter
 
 ### E-mail – Web3Forms
 
-Přímé AJAX odesílání bez poštovního klienta používá Web3Forms. Veřejný identifikátor `email.accessKey` a očekávaná adresa `email.address` jsou v `data/config.json`. Skutečného příjemce určuje nastavení formuláře na Web3Forms; změna adresy v JSON sama o sobě doručení nepřesměruje. Při změně příjemce ověřte správný klíč a adresu v dashboardu.
+Přímé AJAX odesílání bez poštovního klienta používá Web3Forms. Veřejný identifikátor `email.accessKey` je v `data/config.json`. Cílová adresa se nastavuje výhradně v administraci Web3Forms a v JSON již není. Při změně příjemce ověřte správný klíč a adresu v dashboardu.
 
 1. Otevřete `aktivace_emailu.html` a odešlete test.
 2. Ověřte skutečné doručení zprávy v cílové schránce.

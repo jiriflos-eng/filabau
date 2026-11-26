@@ -1079,3 +1079,16 @@ select, input, textarea {
   .admin-shell { grid-template-columns: 1fr; }
   .side { position: static; }
 }
+
+/* Pending requests use the same rounded half-day shape. */
+.gband.is-pending { --band-color: linear-gradient(180deg,#ffecaa,#f3cb61); }
+.gband.is-pending .gname { color:#604613; -webkit-text-stroke:0; }
+.gband.is-pending .gtag { color:#604613; }
+.gband.is-pending.starts { --band-left: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2048%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%2248%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20stop-color%3D%22%23ffecaa%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23f3cb61%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cg%3E%3Cpath%20fill%3D%22url(%23g)%22%20d%3D%22M24%200%20H21%20Q18%200%2015%203%20L3%2021%20Q0%2024%200%2028%20V42%20Q0%2048%206%2048%20H24%20Z%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23b99743%22%20stroke-opacity%3D%22.75%22%20stroke-width%3D%221%22%20vector-effect%3D%22non-scaling-stroke%22%20d%3D%22M21%20.5%20Q18%20.5%2015.5%203.5%20L3.5%2021.5%20Q.5%2024.5%20.5%2028%20V42%20Q.5%2047.5%206%2047.5%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"); }
+.gband.is-pending.ends { --band-right: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2048%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%2248%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20stop-color%3D%22%23ffecaa%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23f3cb61%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cg%20transform%3D%22translate(24%200)%20scale(-1%201)%22%3E%3Cpath%20fill%3D%22url(%23g)%22%20d%3D%22M24%200%20H21%20Q18%200%2015%203%20L3%2021%20Q0%2024%200%2028%20V42%20Q0%2048%206%2048%20H24%20Z%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23b99743%22%20stroke-opacity%3D%22.75%22%20stroke-width%3D%221%22%20vector-effect%3D%22non-scaling-stroke%22%20d%3D%22M21%20.5%20Q18%20.5%2015.5%203.5%20L3.5%2021.5%20Q.5%2024.5%20.5%2028%20V42%20Q.5%2047.5%206%2047.5%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"); }
+.stay-table tr.stay-pending { background:#fff0bf; }
+.stay-table tr.stay-confirmed { background:#e1f1df; }
+.stay-table .status-text { font-weight:650; white-space:nowrap; }
+.stay-table .approve { background:#38754c; color:white; }
+.stay-table tr.row-error { background:#fde8e4; }
+.booking-status-note { padding:10px 12px; border-radius:10px; background:#fff0bf; }

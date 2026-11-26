@@ -56,6 +56,9 @@ function stayDateError(arrival, departure) {
   return "";
 }
 
+function adminEscape(value) {
+  return String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
 function paint() {
   const years = [...new Set([...yearsOf(DATA), ...seasonYears()])].sort((a, b) => a - b);
   if (!years.includes(YEAR)) YEAR = seasonYear();
@@ -67,25 +70,28 @@ function paint() {
   body.innerHTML = rows.length
     ? rows
         .map(
-          (s) => `<tr data-id="${s.id}">
+          (s) => `<tr data-id="${adminEscape(s.id)}" class="${s.status === "pending" ? "stay-pending" : "stay-confirmed"}">
       <td>
         <select data-f="studio">
           <option value="filemon" ${s.studio === "filemon" ? "selected" : ""}>Filemon</option>
           <option value="baucis" ${s.studio === "baucis" ? "selected" : ""}>Baucis</option>
         </select>
       </td>
-      <td><input data-f="name" value="${(s.name || "").replace(/"/g, "&quot;")}" /></td>
+      <td><input data-f="name" value="${adminEscape(s.name)}" /></td>
       <td><input data-f="arrival" type="date" value="${s.arrival}" required /></td>
       <td><input data-f="departure" type="date" value="${s.departure}" required /></td>
       <td class="nights">${nightsBetween(s.arrival, s.departure)}</td>
+      <td class="status-text">${s.status === "pending" ? "Čeká na schválení" : "Schváleno"}
+        ${s.email ? `<small style="display:block;white-space:normal">${adminEscape(s.email)} · ${adminEscape(s.phone)}<br>${adminEscape(s.message)}<br>${adminEscape(s.requestId)}</small>` : ""}</td>
       <td class="acts">
-        <button type="button" class="btn btn-sea save" data-id="${s.id}">Uložit</button>
-        <button type="button" class="btn btn-ghost del" data-id="${s.id}">Smazat</button>
+        ${s.status === "pending" ? '<button type="button" class="btn approve">Schválit</button>' : ""}
+        <button type="button" class="btn btn-sea save">Uložit</button>
+        <button type="button" class="btn btn-ghost del">Smazat</button>
       </td>
     </tr>`
         )
         .join("")
-    : `<tr><td colspan="6" class="muted">V roce ${YEAR} zatím žádné rezervace.</td></tr>`;
+    : `<tr><td colspan="7" class="muted">V roce ${YEAR} zatím žádné rezervace.</td></tr>`;
   body.querySelectorAll("tr[data-id]").forEach((tr) => {
     bindStayDateInputs(tr.querySelector('[data-f="arrival"]'), tr.querySelector('[data-f="departure"]'));
   });
@@ -178,6 +184,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("rows").addEventListener("click", (e) => {
     const save = e.target.closest(".save");
     const del = e.target.closest(".del");
+    const approve = e.target.closest(".approve");
+    if (approve) {
+      const r = approveStay(DATA, approve.closest("tr").dataset.id);
+      if (!r.ok) return toast(r.error,true);
+      toast("Rezervace schválena.");
+      paint();
+      return;
+    }
     if (save) {
       const tr = save.closest("tr");
       const dateError = stayDateError(
