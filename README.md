@@ -63,16 +63,19 @@ Viditelný průvodce vede hosta od kliknutí na příjezd ke kliknutí na odjezd
 
 Ceník na původním Google Sites je v obrázku. Do dema čísla nehádáme - hosté se zeptají v poptávce. Klimatizace 4 €/den a transfer 40 / 80 € jsou z původního webu.
 
-## Centrální poptávky a schvalování (Cloudflare)
+## Centrální rezervace na GitHubu
 
-Backend drží celý kalendář jako soukromý JSON v transakčním SQLite Durable Objectu. Veřejné GET /calendar vrací termíny, studio a stav bez jmen a kontaktů; admin GET/PUT /admin vyžaduje serverové heslo a kontroluje revizi. POST /pending ověřuje Turnstile a obsazenost atomicky. Čekající poptávka blokuje noci do schválení nebo smazání. Při WhatsAppu vzniká poptávka před otevřením odkazu, skutečné odeslání WhatsAppu nelze ověřit. Notifikace Web3Forms následuje po uložení; při její chybě zůstává poptávka v administraci. Schválení mění stav, automatický potvrzovací e-mail hostovi se neposílá.
+Zdroj pravdy je `data/bookings.json` v hlavní větvi GitHubu. Worker je pouze autorizovaná zapisovací brána, žádná další databáze. Jeden commit obsahuje veřejnou obsazenost (studio, příjezd, odjezd, stav) a šifrovanou část `privateData` s úplnými údaji pro správce (AES-256-GCM, náhodné IV). Jména, telefony, e-maily a historie nových pobytů se nezapisují otevřeně. Starší veřejné commity mohou stále obsahovat dříve publikované údaje. Klíč je mimo GitHub; jeho ztráta znamená ztrátu přístupu k šifrované části. Uchovejte jej v bezpečné záloze, ne v repozitáři. Při kompromitaci klíče mohou být ohroženy i historické šifrované commity.
 
-### Aktivace
+Veřejný kalendář čte API bez cache; správce zapisuje po ověření serverového hesla. Worker načte SHA aktuálního souboru a GitHub při zápisu kontroluje jeho shodu. Při souběžné poptávce znovu načte data a ověří obsazenost; úprava správcem se při konfliktu odmítne a načtou se novější data. Poptávka je žlutá až do schválení či smazání. Potvrzené pobyty jsou lososové v kalendáři a zelené v administraci. Při WhatsAppu se termín uloží před odesláním zprávy; návštěvník musí dokončit odeslání v aplikaci. Web3Forms oznamuje poptávku až po úspěšném zápisu. Pokud oznámení selže, termín zůstane v administraci. Schválení neodesílá automatický potvrzovací e-mail hostovi.
 
-1. Stáhněte zálohu ze současné administrace na počítači s aktuálními rezervacemi. Původní data nemažte.
-2. Na Cloudflare vytvořte Turnstile widget pro hostname jiriflos-eng.github.io. Získejte veřejný site key a soukromý secret.
-3. V terminálu v klonu repozitáře spusťte `cd backend`, `npx wrangler login`, `npx wrangler deploy`. Pak `npx wrangler secret put ADMIN_TOKEN` (náhodné heslo, např. výstup `openssl rand -hex 32`) a `npx wrangler secret put TURNSTILE_SECRET`. Tajné hodnoty nikdy necommitujte. URL Workeru je ve výstupu deploy.
-4. Do data/config.json na GitHubu zapište bookingApi.url a bookingApi.turnstileSiteKey. Po nasazení se přihlaste do admin.html serverovým heslem a odsouhlaste inicializaci ze správného prohlížeče nebo nahrajte zálohu. Dokud není centrální JSON inicializovaný, veřejný kalendář se nezobrazí jako volný. Ověřte počty, termíny a schvalování.
-5. Proveďte zkušební poptávku z jiného prohlížeče, ověřte žlutý stav, konflikt a schválení. V administraci pravidelně stahujte zálohu (obsahuje soukromé kontakty). Ponechte data/bookings.json jako původní zálohu; nové kontakty nepatří do veřejného GitHubu.
+### Aktivace (jednorázově)
 
-Prázdné bookingApi.url znamená starý lokální režim; funkční Web3Forms zůstává, ale automatický žlutý blok pro všechny návštěvníky ještě není aktivní. Nikdy neukládejte soukromé heslo ani Turnstile secret v data/config.json.
+1. Stáhněte zálohu z administrace na počítači s aktuálními rezervacemi. Neodstraňujte lokální data. Nejdříve porovnejte zálohu s dosavadním JSONem.
+2. V GitHub Settings → Developer settings → Fine-grained personal access tokens vytvořte token jen pro repozitář filabau s oprávněním Contents: Read and write (Metadata: Read). Nastavte expiraci a naplánujte obnovu. Nikdy jej nevkládejte do souborů webu.
+3. Na Cloudflare vytvořte Turnstile widget pro hostname jiriflos-eng.github.io. Získejte veřejný site key a soukromý secret.
+4. V klonu repozitáře spusťte `cd backend`, `npx wrangler login`, `npx wrangler deploy`. Dále nastavte Worker secrets: `npx wrangler secret put GITHUB_TOKEN`, `npx wrangler secret put ADMIN_TOKEN` (dlouhé náhodné heslo správce), `npx wrangler secret put BOOKING_DATA_KEY` (64 hex znaků, např. výstup `openssl rand -hex 32`), `npx wrangler secret put TURNSTILE_SECRET`. ADMIN_TOKEN i BOOKING_DATA_KEY vygenerujte nezávisle. Tajné hodnoty si bezpečně zálohujte.
+5. Inicializujte kalendář z ověřené zálohy **před** aktivací veřejné stránky. Použijte `node backend/import-backup.mjs URL_WORKERU cesta-k-zaloze.json` z kořene repozitáře a zadejte ADMIN_TOKEN do skrytého terminálového vstupu (viz návod v souboru). Import pracuje s aktuálním SHA a vyžaduje výslovné potvrzení; odmítne přepsat již inicializovaný kalendář. Ověřte počty, termíny a správnost dat.
+6. Nastavte veřejné `bookingApi.url` a `bookingApi.turnstileSiteKey` v `data/config.json` a nasaďte web. Přihlaste se do admin.html serverovým heslem. Ověřte poptávku z jiného prohlížeče, žlutý stav, konflikt a schválení. Stahujte pravidelné soukromé zálohy.
+
+Do aktivace Workeru veřejný web čte publikovaný GitHub JSON (nikoli localStorage); administrace dočasně pracuje s lokálními daty a výslovně na to upozorňuje. Automatické žluté blokace nejsou do aktivace dostupné. Nikdy neukládejte tajné hodnoty do veřejné konfigurace. Web může mít po commitu zpoždění nasazení GitHub Pages, aktivní API však čte přímo hlavní větev.

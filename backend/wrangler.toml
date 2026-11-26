@@ -4,9 +4,5 @@ compatibility_date = "2026-11-26"
 [vars]
 ALLOWED_ORIGIN = "https://jiriflos-eng.github.io"
 TURNSTILE_HOSTNAME = "jiriflos-eng.github.io"
-[[durable_objects.bindings]]
-name = "BOOKINGS"
-class_name = "Bookings"
-[[migrations]]
-tag = "v1"
-new_sqlite_classes = ["Bookings"]
+GITHUB_REPOSITORY = "jiriflos-eng/filabau"
+GITHUB_BRANCH = "main"

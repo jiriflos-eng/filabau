@@ -182,7 +182,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadBookingSettings();
     if (!centralBookings()) DATA = await loadLegacyBookings();
   } catch(e) {document.getElementById("gate-err").textContent="Nelze načíst konfiguraci: "+e.message;return;}
-  document.getElementById("storage-mode").textContent=centralBookings()?"Centrální úložiště – změny platí pro všechny návštěvníky.":"Místní režim – změny zatím vidí pouze tento prohlížeč. Centrální úložiště není připojené.";
+  document.getElementById("storage-mode").textContent=centralBookings()?"GitHub – centrální bookings.json; změny platí pro všechny návštěvníky.":"Místní režim – změny nejsou zveřejněné. Stáhněte zálohu; centrální zápis na GitHub ještě není připojený.";
   document.getElementById("reset").textContent=centralBookings()?"Načíst ze serveru":"Obnovit z webu";
   YEAR = seasonYear();
   await gate();

@@ -75,7 +75,13 @@ async function loadBookings() {
     await loadBookingSettings();
     if (centralBookings()) return ensureStays(await bookingCall("/calendar"));
   }
-  return loadLegacyBookings();
+  return loadPublishedBookings();
+}
+
+async function loadPublishedBookings() {
+  const res = await fetch("data/bookings.json", {cache:"no-store"});
+  if (!res.ok) throw Error("Kalendář nelze načíst.");
+  return ensureStays(await res.json());
 }
 
 async function loadLegacyBookings() {
@@ -85,8 +91,7 @@ async function loadLegacyBookings() {
       return ensureStays(JSON.parse(local));
     } catch (_) {}
   }
-  const res = await fetch("data/bookings.json", { cache: "no-store" });
-  return ensureStays(await res.json());
+  return loadPublishedBookings();
 }
 
 function saveBookings(data) {

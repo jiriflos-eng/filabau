@@ -1,4 +1,4 @@
-// Private, strongly consistent JSON calendar. No guest contact data in public responses.
+// GitHub is the authoritative store; encrypted admin data and public availability commit atomically.
 const STUDIOS=["filemon","baucis"];
 const json=(data,status=200)=>Response.json(data,{status,headers:{"Cache-Control":"no-store"}});
 const fail=(error,status=400)=>json({error},status);
@@ -53,46 +53,102 @@ async function verifyCaptcha(p,env){
   const r=await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify",{method:"POST",body:new URLSearchParams({secret:env.TURNSTILE_SECRET,response:p.token})});
   const result=await r.json();return result.success===true&&result.hostname===env.TURNSTILE_HOSTNAME&&result.action==="booking";
 }
+
+// One GitHub Contents API file: public availability plus authenticated encrypted admin data.
+// The private key NEVER enters the repository. The blob SHA is an optimistic concurrency token.
+const enc=new TextEncoder(),dec=new TextDecoder();
+function toB64(bytes){let s="";for(let i=0;i<bytes.length;i+=8192)s+=String.fromCharCode(...bytes.subarray(i,i+8192));return btoa(s);}
+function fromB64(s){return Uint8Array.from(atob(s.replace(/\s/g,"")),c=>c.charCodeAt(0));}
+async function dataKey(env){
+  const key=env.BOOKING_DATA_KEY||"";
+  if(!/^[a-f0-9]{64}$/i.test(key))throw Error("BOOKING_DATA_KEY must be 32 random bytes in hex");
+  return crypto.subtle.importKey("raw",Uint8Array.from(key.match(/../g),x=>parseInt(x,16)),{name:"AES-GCM"},false,["encrypt","decrypt"]);
+}
+const aad=enc.encode("filabau-bookings-v1");
+async function seal(d,env){
+  const iv=crypto.getRandomValues(new Uint8Array(12));
+  const ciphertext=await crypto.subtle.encrypt({name:"AES-GCM",iv,additionalData:aad},await dataKey(env),enc.encode(JSON.stringify(d)));
+  return {version:1,iv:toB64(iv),ciphertext:toB64(new Uint8Array(ciphertext))};
+}
+async function unseal(blob,env){
+  if(blob?.version!==1||typeof blob.iv!=="string"||typeof blob.ciphertext!=="string")throw Error("Invalid encrypted data");
+  const iv=fromB64(blob.iv);if(iv.length!==12)throw Error("Invalid IV");
+  const clear=await crypto.subtle.decrypt({name:"AES-GCM",iv,additionalData:aad},await dataKey(env),fromB64(blob.ciphertext));
+  const d=JSON.parse(dec.decode(clear));if(!validData(d))throw Error("Invalid stored calendar");return d;
+}
+function gitEndpoint(env){
+  if(!/^[\w.-]+\/[\w.-]+$/.test(env.GITHUB_REPOSITORY||"")||!env.GITHUB_TOKEN||!env.GITHUB_BRANCH)throw Error("GitHub is not configured");
+  return "https://api.github.com/repos/"+env.GITHUB_REPOSITORY+"/contents/data/bookings.json";
+}
+async function gitRequest(env,method="GET",body){
+  const url=gitEndpoint(env)+(method==="GET"?"?ref="+encodeURIComponent(env.GITHUB_BRANCH):"");
+  return fetch(url,{method,headers:{Authorization:"Bearer "+env.GITHUB_TOKEN,Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28","User-Agent":"filabau-bookings","Content-Type":"application/json"},...(body===undefined?{}:{body:JSON.stringify(body)})});
+}
+async function readGit(env){
+  const r=await gitRequest(env);
+  if(!r.ok)throw Error("GitHub read HTTP "+r.status);
+  const f=await r.json();
+  if(f.type!=="file"||f.encoding!=="base64"||typeof f.sha!=="string"||typeof f.content!=="string")throw Error("Unexpected GitHub response");
+  const stored=JSON.parse(dec.decode(fromB64(f.content)));
+  if(!stored.privateData)return {revision:f.sha,data:null}; // Explicit admin migration; don't silently overwrite legacy data.
+  const d=await unseal(stored.privateData,env);
+  return {revision:f.sha,data:d};
+}
+async function writeGit(env,revision,d){
+  if(!validData(d))throw Error("Invalid data");
+  const stored={...publicData(d),privateData:await seal(d,env)};
+  const bytes=enc.encode(JSON.stringify(stored,null,2)+"\n");
+  if(bytes.length>850000)throw Error("Calendar exceeds GitHub JSON size limit; archive old stays");
+  const r=await gitRequest(env,"PUT",{message:"Update booking calendar",content:toB64(bytes),sha:revision,branch:env.GITHUB_BRANCH});
+  if(r.status===409||r.status===422){
+    // A changed SHA is retryable; other validation failures are not.
+    const latest=await readGit(env);if(latest.revision!==revision)return {conflict:true};
+  }
+  if(!r.ok)throw Error("GitHub write HTTP "+r.status);
+  const result=await r.json();
+  if(typeof result.content?.sha!=="string")throw Error("GitHub did not confirm blob SHA");
+  return {revision:result.content.sha,data:d};
+}
+async function handle(req,env){
+  const path=new URL(req.url).pathname;
+  if(path==="/calendar"&&req.method==="GET"){
+    const r=await readGit(env);return r.data?json(publicData(r.data)):fail("Calendar not initialized",503);
+  }
+  if(path==="/admin"){
+    if(!await adminAllowed(req,env))return fail("Unauthorized",401);
+    if(req.method==="GET")return json(await readGit(env));
+    if(req.method!=="PUT")return fail("Method",405);
+    const p=await body(req),r=await readGit(env);
+    if(p?.revision!==r.revision)return fail("Calendar changed; reload before saving",409);
+    if(!validData(p.data))return fail("Invalid calendar or overlapping stays",400);
+    p.data.updatedAt=new Date().toISOString();
+    const written=await writeGit(env,r.revision,p.data);
+    return written.conflict?fail("Calendar changed; reload before saving",409):json(written);
+  }
+  if(path==="/pending"&&req.method==="POST"){
+    const p=await body(req);
+    if(!await verifyCaptcha(p,env))return fail("Captcha verification failed",403);
+    delete p.token;
+    // Revalidate each retry against the latest GitHub file. Both studios are committed together.
+    for(let attempt=0;attempt<4;attempt++){
+      const r=await readGit(env);
+      if(!r.data)return fail("Calendar not initialized",503);
+      const result=addPending(r.data,p);
+      if(result.error)return fail(result.error,result.status);
+      if(result.existing)return json({saved:true,calendar:publicData(r.data)});
+      const written=await writeGit(env,r.revision,r.data);
+      if(!written.conflict)return json({saved:true,calendar:publicData(written.data)});
+    }
+    return fail("Calendar changed repeatedly; retry",409);
+  }
+  return fail("Not found",404);
+}
 export default {async fetch(req,env){
-  const origin=req.headers.get("Origin"),url=new URL(req.url);
+  const origin=req.headers.get("Origin");
   const cors={"Access-Control-Allow-Origin":env.ALLOWED_ORIGIN,"Access-Control-Allow-Methods":"GET, POST, PUT, OPTIONS","Access-Control-Allow-Headers":"Content-Type, Authorization","Vary":"Origin","Cache-Control":"no-store"};
   const wrap=r=>new Response(r.body,{status:r.status,headers:{...Object.fromEntries(r.headers),...cors}});
   if(origin&&origin!==env.ALLOWED_ORIGIN)return fail("Origin denied",403);
   if(req.method==="OPTIONS")return new Response(null,{status:204,headers:cors});
-  try{
-    const path=url.pathname;
-    if(path==="/admin"){if(!await adminAllowed(req,env))return wrap(fail("Unauthorized",401));if(!["GET","PUT"].includes(req.method))return wrap(fail("Method",405));}
-    else if(path==="/pending"&&req.method==="POST"){
-      const p=await body(req);if(!await verifyCaptcha(p,env))return wrap(fail("Captcha verification failed",403));delete p.token;
-      return wrap(await env.BOOKINGS.get(env.BOOKINGS.idFromName("calendar")).fetch("https://internal/pending",{method:"POST",body:JSON.stringify(p)}));
-    }else if(path!=="/calendar"||req.method!=="GET")return wrap(fail("Not found",404));
-    const opts={method:req.method};
-    if(req.method==="PUT")opts.body=JSON.stringify(await body(req));
-    return wrap(await env.BOOKINGS.get(env.BOOKINGS.idFromName("calendar")).fetch("https://internal"+path,opts));
-  }catch(e){console.error("Booking API error",e.message);return wrap(fail("Request failed",500));}
+  try{return wrap(await handle(req,env));}
+  catch(e){console.error("Booking API error",e.message);return wrap(fail("Request failed; storage unavailable",503));}
 }};
-export class Bookings{
-  constructor(ctx){this.ctx=ctx;this.sql=ctx.storage.sql;this.sql.exec("CREATE TABLE IF NOT EXISTS state (id INTEGER PRIMARY KEY, revision INTEGER NOT NULL, data TEXT NOT NULL)");}
-  read(){const row=this.sql.exec("SELECT revision,data FROM state WHERE id=1").toArray()[0];return row?{revision:row.revision,data:JSON.parse(row.data)}:{revision:0,data:null};}
-  write(revision,data){this.sql.exec("INSERT INTO state(id,revision,data) VALUES(1,?,?) ON CONFLICT(id) DO UPDATE SET revision=excluded.revision,data=excluded.data",revision,JSON.stringify(data));}
-  async fetch(req){
-    const path=new URL(req.url).pathname;
-    if(req.method==="GET"){const r=this.read();return path==="/admin"?json(r):r.data?json(publicData(r.data)):fail("Calendar not initialized",503);}
-    const p=await body(req);
-    return this.ctx.storage.transactionSync(()=>{
-      const r=this.read();
-      if(path==="/admin"&&req.method==="PUT"){
-        if(p.revision!==r.revision)return fail("Calendar changed; reload before saving",409);
-        if(!validData(p.data))return fail("Invalid calendar or overlapping stays",400);
-        p.data.updatedAt=new Date().toISOString();this.write(r.revision+1,p.data);return json({revision:r.revision+1,data:p.data});
-      }
-      if(path==="/pending"&&req.method==="POST"){
-        if(!r.data)return fail("Calendar not initialized",503);
-        const result=addPending(r.data,p);if(result.error)return fail(result.error,result.status);
-        if(!result.existing)this.write(r.revision+1,r.data);
-        return json({saved:true,calendar:publicData(r.data)});
-      }
-      return fail("Not found",404);
-    });
-  }
-}
