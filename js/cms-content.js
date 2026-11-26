@@ -4,7 +4,7 @@ let cmsPreviewLanguage = null;
 const cmsOriginalT = t;
 t = function(key, vars) {
   const lang = cmsPreviewLanguage || getLang();
-  let value = cmsPublicContent?.[lang]?.[key] ?? I18N[lang]?.[key] ?? I18N.cs[key];
+  let value = cmsPublicContent?.[lang]?.[key] ?? I18N[lang]?.[key] ?? I18N.cs[key] ?? ({fact_beach_value:'650 m',fact_size_value:'23 m²',fact_tavern_value:'80 m'})[key];
   if (typeof value !== "string") return cmsOriginalT(key, vars);
   if(vars) for(const [k,v] of Object.entries(vars)) value=value.replaceAll("{"+k+"}",String(v));
   return value;
@@ -15,7 +15,7 @@ const cmsContentReady = fetch("data/content.json",{cache:"no-store"}).then(r=>{
 }).then(data=>{cmsPublicContent=data;}).catch(e=>console.warn("CMS content fallback",e));
 window.cmsContentReady=cmsContentReady;
 function cmsPriceValues(data) {
-  const defaults={may:40,jun:45,jul:50,aug:50,sep:45,oct:40};
+  const defaults={may:45,jun:50,jul:55,aug:55,sep:50,oct:45};
   return Object.fromEntries(Object.entries(defaults).map(([key,fallback])=>{
     const v=data?.prices?.[key];
     return [key,typeof v==="number"&&Number.isFinite(v)&&v>0&&v<=10000?v:fallback];

@@ -160,7 +160,10 @@
     "where": "Kde jsme",
     "where_p": "Jih Korfu, kousek od pláže Marathias / Santa Barbara. Na hlavní pláž je to pěšky 650 metrů.",
     "cms_crossroad_title": "Objevte Filemon a Baucis",
-    "cms_crossroad_lead": "Vše, co potřebujete vědět před cestou na Korfu."
+    "cms_crossroad_lead": "Vše, co potřebujete vědět před cestou na Korfu.",
+    "fact_beach_value": "650 m",
+    "fact_size_value": "23 m²",
+    "fact_tavern_value": "80 m"
   },
   "en": {
     "ac": "Air conditioning 4 € / day.",
@@ -323,7 +326,10 @@
     "where": "Where we are",
     "where_p": "Southern Corfu, near Marathias / Santa Barbara beach. The main beach is a 650-metre walk.",
     "cms_crossroad_title": "Discover Filemon and Baucis",
-    "cms_crossroad_lead": "Everything you need to know before travelling to Corfu."
+    "cms_crossroad_lead": "Everything you need to know before travelling to Corfu.",
+    "fact_beach_value": "650 m",
+    "fact_size_value": "23 m²",
+    "fact_tavern_value": "80 m"
   },
   "de": {
     "ac": "Klimaanlage 4 € / Tag.",
@@ -486,7 +492,10 @@
     "where": "Wo wir sind",
     "where_p": "Süd-Korfu, nahe dem Strand Marathias / Santa Barbara. 650 Meter zu Fuß zum Hauptstrand.",
     "cms_crossroad_title": "Entdecken Sie Filemon und Baucis",
-    "cms_crossroad_lead": "Alles Wissenswerte vor Ihrer Reise nach Korfu."
+    "cms_crossroad_lead": "Alles Wissenswerte vor Ihrer Reise nach Korfu.",
+    "fact_beach_value": "650 m",
+    "fact_size_value": "23 m²",
+    "fact_tavern_value": "80 m"
   },
   "fr": {
     "ac": "Climatisation 4 € / jour.",
@@ -649,7 +658,10 @@
     "where": "Où nous sommes",
     "where_p": "Sud de Corfou, près de Marathias / Santa Barbara. 650 m à pied jusqu’à la plage.",
     "cms_crossroad_title": "Découvrez Filemon et Baucis",
-    "cms_crossroad_lead": "Tout ce qu’il faut savoir avant votre voyage à Corfou."
+    "cms_crossroad_lead": "Tout ce qu’il faut savoir avant votre voyage à Corfou.",
+    "fact_beach_value": "650 m",
+    "fact_size_value": "23 m²",
+    "fact_tavern_value": "80 m"
   },
   "it": {
     "ac": "Aria condizionata 4 € / giorno.",
@@ -812,7 +824,10 @@
     "where": "Dove siamo",
     "where_p": "Sud di Corfù, vicino a Marathias / Santa Barbara. 650 m a piedi fino alla spiaggia.",
     "cms_crossroad_title": "Scoprite Filemon e Baucis",
-    "cms_crossroad_lead": "Tutto ciò che occorre sapere prima di partire per Corfù."
+    "cms_crossroad_lead": "Tutto ciò che occorre sapere prima di partire per Corfù.",
+    "fact_beach_value": "650 m",
+    "fact_size_value": "23 m²",
+    "fact_tavern_value": "80 m"
   },
   "es": {
     "ac": "Aire acondicionado 4 € / día.",
@@ -975,7 +990,10 @@
     "where": "Dónde estamos",
     "where_p": "Sur de Corfú, cerca de Marathias / Santa Barbara. 650 m andando hasta la playa.",
     "cms_crossroad_title": "Descubra Filemon y Baucis",
-    "cms_crossroad_lead": "Todo lo que necesita saber antes de viajar a Corfú."
+    "cms_crossroad_lead": "Todo lo que necesita saber antes de viajar a Corfú.",
+    "fact_beach_value": "650 m",
+    "fact_size_value": "23 m²",
+    "fact_tavern_value": "80 m"
   },
   "pl": {
     "ac": "Klimatyzacja 4 € / dzień.",
@@ -1138,14 +1156,17 @@
     "where": "Gdzie jesteśmy",
     "where_p": "Południe Korfu, przy plaży Marathias / Santa Barbara. 650 m pieszo na plażę.",
     "cms_crossroad_title": "Odkryj Filemon i Baucis",
-    "cms_crossroad_lead": "Wszystko, co warto wiedzieć przed podróżą na Korfu."
+    "cms_crossroad_lead": "Wszystko, co warto wiedzieć przed podróżą na Korfu.",
+    "fact_beach_value": "650 m",
+    "fact_size_value": "23 m²",
+    "fact_tavern_value": "80 m"
   },
   "prices": {
-    "may": 40,
-    "jun": 45,
-    "jul": 50,
-    "aug": 50,
-    "sep": 45,
-    "oct": 40
+    "may": 45,
+    "jun": 50,
+    "jul": 55,
+    "aug": 55,
+    "sep": 50,
+    "oct": 45
   }
 }
