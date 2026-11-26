@@ -11,7 +11,8 @@ function normalizePhotos(files,folder) {
   return (Array.isArray(files)?files:[]).map(f=>{
     const p=typeof f==="string"?{file:f}:f;
     const path=p.path||("img/"+folder+"/"+p.file);
-    const caption=p.captions?.[getLang()] ?? p.caption ?? "";
+    const lang=typeof cmsPreviewLanguage!=="undefined"&&cmsPreviewLanguage?cmsPreviewLanguage:getLang();
+    const caption=p.captions?.[lang] ?? p.caption ?? "";
     return {src:path,caption:String(caption),hidden:p.hidden===true};
   }).filter(p=>!p.hidden&&/^img\/(?:unas|pobliz|opodal|ruzne|filemon|baucis)\/[A-Za-z0-9_.-]+\.(?:jpe?g|png|webp|avif)$/i.test(p.src));
 }

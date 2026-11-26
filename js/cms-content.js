@@ -13,6 +13,7 @@ const cmsContentReady = fetch("data/content.json",{cache:"no-store"}).then(r=>{
   if(!r.ok) throw Error("Content unavailable");
   return r.json();
 }).then(data=>{cmsPublicContent=data;}).catch(e=>console.warn("CMS content fallback",e));
+window.cmsContentReady=cmsContentReady;
 function cmsApplyContent(){
   applyI18n();
   if(cmsPreviewLanguage) document.documentElement.lang=cmsPreviewLanguage;
@@ -25,5 +26,7 @@ window.cmsPreview = function(data,lang){
   cmsApplyContent();
   // Gallery titles are built asynchronously; update their existing text nodes.
   document.querySelectorAll("[data-album-title],[data-album-lead]").forEach(el=>{el.textContent=t(el.dataset.albumTitle||el.dataset.albumLead);});
+  const navKeys={"index.html":"nav_home","studia.html":"nav_studios","cenik.html":"nav_prices","jak-k-nam.html":"nav_howto","info.html":"nav_info","galerie.html":"nav_gallery","rezervace.html":"nav_book"};
+  document.querySelectorAll("[data-nav] a").forEach(a=>{const k=navKeys[a.getAttribute("href")];if(k)a.textContent=t(k);});
 };
 document.addEventListener("DOMContentLoaded",()=>{cmsContentReady.then(cmsApplyContent);});

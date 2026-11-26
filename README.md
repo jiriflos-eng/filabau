@@ -81,3 +81,12 @@ Do aktivace Workeru veřejný web čte publikovaný GitHub JSON (nikoli localSto
 ### Prezentace rezervací ve veřejném kalendáři
 
 V `data/config.json` nastavte `"calendar": {"displayMode": "name"}` pro zobrazení křestního jména (první slovo jména, bezpečný textový formát) v páscích potvrzených i čekajících rezervací. Hodnota `"status"` zobrazuje jen stav (Obsazeno / Čeká na schválení). Výchozí režim při chybě konfigurace nebo neznámé hodnotě je status. Stav je v obou režimech patrný z barvy a tooltipu. Worker čte nastavení z GitHubu, nikoli z parametru požadavku. Do veřejného JSONu se jména nikdy neukládají; v režimu name je první jméno veřejně dostupné přes API, proto tento režim používejte pouze pokud je zveřejnění hostům oznámeno a máte k němu odpovídající oprávnění. Plné jméno, telefon, e-mail a poznámky zůstávají v šifrované části a v administraci.
+
+## Redakční systém webu
+
+Otevřete `redakce.html` (odkaz v administraci rezervací). Přihlášení používá stávající serverové heslo ADMIN_TOKEN, které se drží pouze v paměti redakční stránky. Nevyžaduje další token ani hosting.
+
+- **Texty stránek:** vyberte stránku a jazyk, klikněte na zvýrazněný text v živém náhledu, upravte jej a zvolte Použít v náhledu. Překlady se editují jednotlivě, automatický překlad není v této verzi součástí. Editovatelné klíče vycházejí z původních překladů. Rezervační formulář, navigace, pevně zakódované ceny a strukturální prvky nejsou součástí editoru.
+- **Fotogalerie:** všech šest původních alb. Přidání, přesun, změna pořadí (přetažením nebo šipkami), skrytí, nahrazení a odebrání fotografie z alba, popisky v sedmi jazycích. Pokud překlad popisku chybí, použije se český. Nahrávání JPEG, PNG, WebP, AVIF; nové fotografie se v prohlížeči převedou na JPEG, omezí rozměry a zbaví původních metadat. Nejvýše šest nových souborů na jednu publikaci. Odebrání odstraní položku z galerie, nikoliv fyzický soubor z GitHubu, protože může být použit jinde.
+- **Publikace:** koncept je pouze v paměti do kliknutí na Publikovat změny. Worker ověřuje správce, povolené klíče a cesty, konflikt revizí a zapíše data/content.json, data/photos.json a nové JPEG jedním Git commitem. Soubory rezervací, konfigurace a programový kód CMS zapisovat nesmí. Veřejná změna se zobrazí po nasazení GitHub Pages. Pokud mezitím nastane jiná úprava obsahu, editor vyžádá nové načtení.
+- **Návrat:** obnovujte jednotlivé soubory obsahu podle historie GitHubu; nevracejte celou větev, protože byste mohli přepsat novější rezervace. Záloha před CMS je v zaloha/pred-cms-2026-11-26.

@@ -12,6 +12,8 @@ function sync(){
   $("cms-reload").disabled=busy||photoBusy;$("cms-logout").disabled=busy||photoBusy;
   $("cms-add-photo").disabled=busy||photoBusy;$("cms-apply-text").disabled=!selectedKey||busy||!textDirty;
   $("cms-app").setAttribute("aria-busy",String(busy||photoBusy));
+  $("cms-texts").inert=busy;
+  $("cms-gallery").inert=busy||photoBusy;
 }
 function changed(){dirty=true;status("Nezveřejněné změny. Po dokončení klikněte na Publikovat změny.");sync();}
 async function call(method="GET",data){
@@ -23,7 +25,7 @@ async function init(){
   const r=await fetch("data/config.json",{cache:"no-store"});if(!r.ok)throw Error("Konfigurace nedostupná.");
   const c=await r.json();const u=new URL(c.bookingApi?.url);if(u.protocol!=="https:"||u.username||u.password||u.search||u.hash)throw Error("Neplatná adresa API.");api=u.href.replace(/\/+$/,"");
 }
-function clearDraft(next){draft=clone(next);uploads.clear();dirty=false;textDirty=false;selectedKey="";$("cms-value").value="";$("cms-value").disabled=true;status("Načtena aktuální verze z GitHubu.");sync();}
+function clearDraft(next){draft=clone(next);uploads.clear();dirty=false;textDirty=false;selectedKey="";$("cms-key").value="";$("cms-value").value="";$("cms-value").disabled=true;status("Načtena aktuální verze z GitHubu.");sync();}
 $("cms-login-form").addEventListener("submit",async e=>{
   e.preventDefault();if(busy)return;busy=true;const button=e.target.querySelector("button");button.disabled=true;$("cms-login-error").textContent="Ověřuji přístup…";
   try{if(!api)await init();password=$("cms-password").value.trim();const data=await call();clearDraft(data);$("cms-password").value="";$("cms-login").hidden=true;$("cms-app").hidden=false;loadPreview();renderGallery();}
@@ -48,14 +50,14 @@ function pageKeys(doc){
   return [...new Set(nodes.map(el=>el.dataset.i18n||el.dataset.albumTitle||el.dataset.albumLead).filter(k=>Object.hasOwn(draft.content.cs,k)))];
 }
 function updateKeys(doc){
-  const keys=pageKeys(doc);const current=$("cms-key").value;
+  const keys=pageKeys(doc);const current=selectedKey||$("cms-key").value;
   $("cms-key").replaceChildren(new Option("Vyberte text v náhledu",""),...keys.map(k=>new Option((draft.content.cs[k]||k).slice(0,75)+" · "+k,k)));
   if(keys.includes(current))$("cms-key").value=current;
 }
 $("cms-preview").addEventListener("load",async()=>{
   if(!draft)return;
-  const w=$("cms-preview").contentWindow,doc=w.document;
-  try{if(w.cmsContentReady)await w.cmsContentReady;}catch(_){}
+  let w,doc;
+  try{w=$("cms-preview").contentWindow;doc=w.document;if(w.cmsContentReady)await w.cmsContentReady;}catch(_){return;}
   if(doc!==$("cms-preview").contentDocument||!draft)return;
   const style=doc.createElement("style");style.textContent=".cms-preview-edit [data-cms-editable]{outline:1px dashed #2f8f96;outline-offset:3px;cursor:text!important}.cms-preview-edit [data-cms-editable]:hover{outline:2px solid #2f8f96;background:rgba(47,143,150,.07)}";doc.head.append(style);
   const mark=()=>{if(!draft)return;doc.querySelectorAll("[data-i18n],[data-album-title],[data-album-lead]").forEach(el=>{const k=el.dataset.i18n||el.dataset.albumTitle||el.dataset.albumLead;if(Object.hasOwn(draft.content.cs,k)&&!["META","TITLE"].includes(el.tagName))el.dataset.cmsEditable=k;});updateKeys(doc);doc.documentElement.classList.toggle("cms-preview-edit",$("cms-edit-mode").checked);previewApply();};
