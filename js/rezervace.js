@@ -392,7 +392,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
   document.getElementById("booking-legend").hidden=!centralBookings() && !DATA.stays.some(s=>s.status==="pending");
-  YEAR = seasonYear();
+  YEAR = publicCalendarYears(DATA)[0] ?? seasonYear();
   if (INQUIRY_DELIVERY) {
     const phone = document.getElementById("delivery-phone");
     phone.textContent = "+" + INQUIRY_DELIVERY.whatsapp.phone;

@@ -17,9 +17,9 @@ function bookingCalendarWindows(settings,today=bookingToday()){
   const year=Number(today.slice(0,4)),windows=[];
   for(let y=year;y<=year+2&&windows.length<settings.seasonsToShow;y++){
     const start=y+"-"+settings.seasonStart,end=y+"-"+settings.seasonEnd;
-    if(settings.hidePastDays&&end<=today)continue;
+    if(settings.hidePastDays&&end<today)continue;
     const from=settings.hidePastDays&&start<today?today:start;
-    if(from<end)windows.push({year:y,from,to:end});
+    if(from<=end)windows.push({year:y,from,to:end});
   }
   return windows;
 }
