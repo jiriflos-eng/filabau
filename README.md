@@ -86,7 +86,11 @@ V `data/config.json` nastavte `"calendar": {"displayMode": "name"}` pro zobrazen
 
 Otevřete `redakce.html` (odkaz v administraci rezervací). Přihlášení používá stávající serverové heslo ADMIN_TOKEN, které se drží pouze v paměti redakční stránky. Nevyžaduje další token ani hosting.
 
-- **Texty stránek:** vyberte stránku a jazyk, klikněte na zvýrazněný text v živém náhledu, upravte jej a zvolte Použít v náhledu. Překlady se editují jednotlivě, automatický překlad není v této verzi součástí. Editovatelné klíče vycházejí z původních překladů. Rezervační formulář, navigace, pevně zakódované ceny a strukturální prvky nejsou součástí editoru.
+- **Texty stránek:** vyberte stránku a jazyk, klikněte na zvýrazněný text v živém náhledu, upravte jej a zvolte Použít v náhledu. Překlady se editují jednotlivě, automatický překlad není v této verzi součástí. Editovatelné klíče vycházejí z původních překladů. Rezervační formulář, navigace, strukturální prvky nejsou součástí editoru.
 - **Fotogalerie:** všech šest původních alb. Přidání, přesun, změna pořadí (přetažením nebo šipkami), skrytí, nahrazení a odebrání fotografie z alba, popisky v sedmi jazycích. Pokud překlad popisku chybí, použije se český. Nahrávání JPEG, PNG, WebP, AVIF; nové fotografie se v prohlížeči převedou na JPEG, omezí rozměry a zbaví původních metadat. Nejvýše šest nových souborů na jednu publikaci. Odebrání odstraní položku z galerie, nikoliv fyzický soubor z GitHubu, protože může být použit jinde.
 - **Publikace:** koncept je pouze v paměti do kliknutí na Publikovat změny. Worker ověřuje správce, povolené klíče a cesty, konflikt revizí a zapíše data/content.json, data/photos.json a nové JPEG jedním Git commitem. Soubory rezervací, konfigurace a programový kód CMS zapisovat nesmí. Veřejná změna se zobrazí po nasazení GitHub Pages. Pokud mezitím nastane jiná úprava obsahu, editor vyžádá nové načtení.
 - **Návrat:** obnovujte jednotlivé soubory obsahu podle historie GitHubu; nevracejte celou větev, protože byste mohli přepsat novější rezervace. Záloha před CMS je v zaloha/pred-cms-2026-11-26.
+
+### Úprava cen ubytování
+
+V redakci vyberte Ceník a klikněte na číselnou částku příslušného měsíce. Cena se zadává v eurech za studio a noc, s nejvýše dvěma desetinnými místy, a platí pro všechny jazyky. Po použití v náhledu a publikaci se uloží do společného objektu `prices` v `data/content.json`. Rozpětí cen na úvodní stránce se automaticky odvodí z minima a maxima. Ceny klimatizace a transferů zatím zůstávají v textových popiscích. Tato změna nezasahuje do rezervačního systému.

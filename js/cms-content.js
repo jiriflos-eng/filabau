@@ -14,8 +14,28 @@ const cmsContentReady = fetch("data/content.json",{cache:"no-store"}).then(r=>{
   return r.json();
 }).then(data=>{cmsPublicContent=data;}).catch(e=>console.warn("CMS content fallback",e));
 window.cmsContentReady=cmsContentReady;
+function cmsPriceValues(data) {
+  const defaults={may:40,jun:45,jul:50,aug:50,sep:45,oct:40};
+  return Object.fromEntries(Object.entries(defaults).map(([key,fallback])=>{
+    const v=data?.prices?.[key];
+    return [key,typeof v==="number"&&Number.isFinite(v)&&v>0&&v<=10000?v:fallback];
+  }));
+}
+function cmsApplyPrices(){
+  const prices=cmsPriceValues(cmsPublicContent);
+  const fmt=new Intl.NumberFormat(cmsPreviewLanguage||getLang(),{maximumFractionDigits:2});
+  document.querySelectorAll("[data-cms-price]").forEach(el=>{
+    const value=prices[el.dataset.cmsPrice];
+    if(value!==undefined)el.textContent=fmt.format(value);
+  });
+  const min=Math.min(...Object.values(prices)),max=Math.max(...Object.values(prices));
+  document.querySelectorAll("[data-cms-price-range]").forEach(el=>{
+    el.textContent=(min===max?fmt.format(min):fmt.format(min)+"–"+fmt.format(max))+" €";
+  });
+}
 function cmsApplyContent(){
   applyI18n();
+  cmsApplyPrices();
   if(cmsPreviewLanguage) document.documentElement.lang=cmsPreviewLanguage;
   document.querySelectorAll("[data-cms-key]").forEach(el=>{el.textContent=t(el.dataset.cmsKey);});
   document.querySelectorAll("[data-cms-meta]").forEach(el=>{el.content=t(el.dataset.cmsMeta);});

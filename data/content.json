@@ -1139,5 +1139,13 @@
     "where_p": "Południe Korfu, przy plaży Marathias / Santa Barbara. 650 m pieszo na plażę.",
     "cms_crossroad_title": "Odkryj Filemon i Baucis",
     "cms_crossroad_lead": "Wszystko, co warto wiedzieć przed podróżą na Korfu."
+  },
+  "prices": {
+    "may": 40,
+    "jun": 45,
+    "jul": 50,
+    "aug": 50,
+    "sep": 45,
+    "oct": 40
   }
 }

@@ -29,8 +29,15 @@ function normalizedPhotos(data){
   })]));
 }
 function validContent(next,old){
-  if(!sameKeys(next,LANGS))return false;
+  // Shared numeric prices are part of the same revision as translations.
+  const priceKeys=["may","jun","jul","aug","sep","oct"];
+  const hasPrices=Object.hasOwn(old,"prices");
+  if(!sameKeys(next,hasPrices?[...LANGS,"prices"]:LANGS))return false;
   for(const l of LANGS){if(!sameKeys(next[l],Object.keys(old[l])))return false;for(const v of Object.values(next[l]))if(!str(v,10000))return false;}
+  if(hasPrices){
+    if(!sameKeys(next.prices,priceKeys))return false;
+    for(const v of Object.values(next.prices))if(typeof v!=="number"||!Number.isFinite(v)||v<=0||v>10000||Math.abs(v*100-Math.round(v*100))>1e-7)return false;
+  }
   return true;
 }
 function validatePhotos(next,uploads,existing){
