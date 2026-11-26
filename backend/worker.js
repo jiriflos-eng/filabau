@@ -82,7 +82,7 @@ function gitEndpoint(env){
 }
 async function gitRequest(env,method="GET",body){
   const url=gitEndpoint(env)+(method==="GET"?"?ref="+encodeURIComponent(env.GITHUB_BRANCH):"");
-  return fetch(url,{method,headers:{Authorization:"Bearer "+env.GITHUB_TOKEN,Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28","User-Agent":"filabau-bookings","Content-Type":"application/json"},...(body===undefined?{}:{body:JSON.stringify(body)})});
+  return fetch(url,{method,headers:{Authorization:"Bearer "+env.GITHUB_TOKEN,Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28","User-Agent":"filabau-bookings","Content-Type":"application/json","Cache-Control":"no-cache"},...(body===undefined?{}:{body:JSON.stringify(body)})});
 }
 async function readGit(env){
   const r=await gitRequest(env);

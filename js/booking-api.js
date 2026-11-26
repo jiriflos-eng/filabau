@@ -1,5 +1,5 @@
 // Empty endpoint = legacy local mode. Never store the admin password in localStorage.
-let bookingSettings=null, bookingSettingsPromise, bookingAdminToken="", bookingRevision=0;
+let bookingSettings=null, bookingSettingsPromise, bookingAdminToken="", bookingRevision=null;
 let bookingCaptchaToken="", bookingWidget=null;
 function loadBookingSettings(){
   if(!bookingSettingsPromise) bookingSettingsPromise=(async()=>{

@@ -6,13 +6,11 @@ Moderní web studií na Korfu. Demo běží zdarma na GitHub Pages.
 
 Otevřete `admin.html`.
 
-1. Při prvním spuštění si nastavíte PIN (zůstane v prohlížeči na tom počítači).
+1. V centrálním režimu zadejte serverové heslo správce; místní PIN funguje jen v přechodném lokálním režimu.
 2. Vyplňte studio, jméno hosta, příjezd a odjezd a zvolte **Přidat rezervaci**.
-3. Existující rezervace upravíte v příslušném řádku tlačítkem **Uložit**, případně odstraníte tlačítkem **Smazat**. Rok přepnete nad tabulkou.
-4. Pobyty i seznam úprav se ukládají v tomto prohlížeči.
-5. **Stáhnout zálohu** / **Nahrát zálohu** - JSON soubor, kdybyste měnili počítač.
-
-Veřejný kalendář na webu čte `data/bookings.json`. Úpravy v administraci platí hned na stejném počítači. Aby je viděli hosté na internetu, nahrajte staženou zálohu jako `data/bookings.json` (nebo to později napojíme na živé úložiště).
+3. Existující rezervace upravíte tlačítkem **Uložit**, odstraníte tlačítkem **Smazat**. Žluté poptávky potvrďte tlačítkem **Schválit**.
+4. V centrálním režimu každá změna aktualizuje `data/bookings.json` na GitHubu. Veřejný kalendář načítá společná data. V místním režimu změny zůstávají pouze v prohlížeči a administrace na to upozorňuje.
+5. **Stáhnout zálohu** / **Nahrát zálohu**: soukromý JSON obsahující kontakty, uložte bezpečně. Nenahrávejte nešifrovanou zálohu do veřejného repozitáře.
 
 Po změně příjezdu se prázdný nebo příliš brzký odjezd předvyplní na následující den. Vybraný pozdější odjezd se zachová. Vyplněná hodnota poskytne nativnímu kalendáři výchozí měsíc a rok; nejbližší povolený odjezd je den po příjezdu. Pravidlo platí pro nový pobyt i úpravu řádku. Administrace umožňuje pobyt od jedné noci. Konkrétní vzhled a ovládání kalendáře určuje prohlížeč a operační systém.
 

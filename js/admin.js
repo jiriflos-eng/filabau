@@ -147,10 +147,7 @@ async function unlock(pin) {
     adminBusy=true; bookingAdminToken=pin;
     try {
       let remote=await readCentralAdmin();
-      if(!remote){
-        if(!confirm("Centrální úložiště je prázdné. Chcete ho založit z dat tohoto prohlížeče (nebo z původního JSONu, pokud zde nejsou)? Nejprve si ověřte, že máte správnou zálohu.")) {bookingAdminToken="";return;}
-        remote=await writeCentralAdmin(await loadLegacyBookings());
-      }
+      if(!remote) throw Error("GitHub kalendář ještě není inicializován. Nejprve použijte bezpečný import zálohy podle README.");
       DATA=ensureStays(remote);document.getElementById("pin").value="";enter();
     } catch(e) {bookingAdminToken="";document.getElementById("gate-err").textContent="Přihlášení nebo načtení se nezdařilo: "+e.message;}
     finally{adminBusy=false;}
