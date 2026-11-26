@@ -14,7 +14,7 @@
   },
   "timeoutMs": 20000,
   "bookingApi": {
-    "url": "",
+    "url": "https://filabau-bookings.jiri-flos.workers.dev",
     "turnstileSiteKey": "0x4AAAAAAGTwxIIOABzThDmO"
   }
 }
