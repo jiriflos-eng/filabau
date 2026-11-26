@@ -77,3 +77,7 @@ Veřejný kalendář čte API bez cache; správce zapisuje po ověření servero
 6. Nastavte veřejné `bookingApi.url` a `bookingApi.turnstileSiteKey` v `data/config.json` a nasaďte web. Přihlaste se do admin.html serverovým heslem. Ověřte poptávku z jiného prohlížeče, žlutý stav, konflikt a schválení. Stahujte pravidelné soukromé zálohy.
 
 Do aktivace Workeru veřejný web čte publikovaný GitHub JSON (nikoli localStorage); administrace dočasně pracuje s lokálními daty a výslovně na to upozorňuje. Automatické žluté blokace nejsou do aktivace dostupné. Nikdy neukládejte tajné hodnoty do veřejné konfigurace. Web může mít po commitu zpoždění nasazení GitHub Pages, aktivní API však čte přímo hlavní větev.
+
+### Prezentace rezervací ve veřejném kalendáři
+
+V `data/config.json` nastavte `"calendar": {"displayMode": "name"}` pro zobrazení křestního jména (první slovo jména, bezpečný textový formát) v páscích potvrzených i čekajících rezervací. Hodnota `"status"` zobrazuje jen stav (Obsazeno / Čeká na schválení). Výchozí režim při chybě konfigurace nebo neznámé hodnotě je status. Stav je v obou režimech patrný z barvy a tooltipu. Worker čte nastavení z GitHubu, nikoli z parametru požadavku. Do veřejného JSONu se jména nikdy neukládají; v režimu name je první jméno veřejně dostupné přes API, proto tento režim používejte pouze pokud je zveřejnění hostům oznámeno a máte k němu odpovídající oprávnění. Plné jméno, telefon, e-mail a poznámky zůstávají v šifrované části a v administraci.

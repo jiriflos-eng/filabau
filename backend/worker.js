@@ -16,8 +16,29 @@ function validData(d){
   for(const studio of STUDIOS){const sorted=d.stays.filter(s=>s.studio===studio).sort((a,b)=>a.arrival.localeCompare(b.arrival));for(let i=1;i<sorted.length;i++)if(overlap(sorted[i-1],sorted[i]))return false;}
   return true;
 }
-function publicData(d){
-  return {updatedAt:d.updatedAt,minNights:d.minNights,season:d.season,years:Object.fromEntries(Object.keys(d.years).filter(y=>/^\d{4}$/.test(y)).map(y=>[y,{filemon:{},baucis:{}}])),stays:d.stays.map(s=>({id:s.id,studio:s.studio,arrival:s.arrival,departure:s.departure,status:s.status==="pending"?"pending":"confirmed",name:""}))};
+// The stored public projection ALWAYS omits names. Only the live API may
+// expose a short first-name label, based on trusted repository configuration.
+function publicGuestName(s){
+  const first=typeof s.name==="string"?s.name.trim().split(/\s+/u)[0]||"":"";
+  return /^[\p{L}\p{M}][\p{L}\p{M}'’.-]{0,39}$/u.test(first)?first:"";
+}
+function publicData(d,displayMode="status"){
+  return {updatedAt:d.updatedAt,minNights:d.minNights,season:d.season,years:Object.fromEntries(Object.keys(d.years).filter(y=>/^\d{4}$/.test(y)).map(y=>[y,{filemon:{},baucis:{}}])),stays:d.stays.map(s=>({id:s.id,studio:s.studio,arrival:s.arrival,departure:s.departure,status:s.status==="pending"?"pending":"confirmed",name:displayMode==="name"?publicGuestName(s):""}))};
+}
+async function calendarDisplayMode(env){
+  try{
+    const url=gitEndpoint(env).replace(/bookings\.json$/,"config.json")+"?ref="+encodeURIComponent(env.GITHUB_BRANCH);
+    const r=await fetch(url,{headers:{Authorization:"Bearer "+env.GITHUB_TOKEN,Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28","User-Agent":"filabau-bookings","Cache-Control":"no-cache"}});
+    if(!r.ok)return "status";
+    const file=await r.json();
+    if(file.type!=="file"||file.encoding!=="base64"||typeof file.content!=="string")return "status";
+    const config=JSON.parse(dec.decode(fromB64(file.content)));
+    return config.calendar?.displayMode==="name"?"name":"status";
+  }catch(_){return "status";}
+}
+async function calendarView(d,env){
+  const mode=await calendarDisplayMode(env);
+  return {...publicData(d,mode),displayMode:mode};
 }
 function inSeason(s,season){
   const y=s.arrival.slice(0,4),md=(m,d)=>String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0");
@@ -112,7 +133,7 @@ async function writeGit(env,revision,d){
 async function handle(req,env){
   const path=new URL(req.url).pathname;
   if(path==="/calendar"&&req.method==="GET"){
-    const r=await readGit(env);return r.data?json(publicData(r.data)):fail("Calendar not initialized",503);
+    const r=await readGit(env);return r.data?json(await calendarView(r.data,env)):fail("Calendar not initialized",503);
   }
   if(path==="/admin"){
     if(!await adminAllowed(req,env))return fail("Unauthorized",401);
@@ -135,9 +156,9 @@ async function handle(req,env){
       if(!r.data)return fail("Calendar not initialized",503);
       const result=addPending(r.data,p);
       if(result.error)return fail(result.error,result.status);
-      if(result.existing)return json({saved:true,calendar:publicData(r.data)});
+      if(result.existing)return json({saved:true,calendar:await calendarView(r.data,env)});
       const written=await writeGit(env,r.revision,r.data);
-      if(!written.conflict)return json({saved:true,calendar:publicData(written.data)});
+      if(!written.conflict)return json({saved:true,calendar:await calendarView(written.data,env)});
     }
     return fail("Calendar changed repeatedly; retry",409);
   }

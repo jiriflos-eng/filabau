@@ -145,6 +145,15 @@ function selectedDayPart(data, year, studio, date, pick) {
   return "both";
 }
 
+function guestStayLabel(data,stay) {
+  const status=stay.status==="pending"?t("booking_pending"):t("occupied");
+  return data.displayMode==="status"?status:stay.note||status;
+}
+function guestStayDescription(data,stay){
+  const label=guestStayLabel(data,stay);
+  const status=stay.status==="pending"?t("booking_pending"):t("occupied");
+  return label===status?status:label+" · "+status;
+}
 function guestTrackHtml(data, year, st, week, dates, selected, getHint) {
   const items = [];
   // Each date has two slots. A stay owns arrival afternoon through departure morning.
@@ -166,7 +175,7 @@ function guestTrackHtml(data, year, st, week, dates, selected, getHint) {
     const part = selectedDayPart(data, year, st.id, date, selected?.[st.id]);
     const canPick = season && !past && !full;
     const describe = (stay, available) => stay
-      ? `${stay.status === "pending" ? t("booking_pending") : stay.note || t("occupied")} (${fmtDate(stay.start)} – ${fmtDate(stay.end)})`
+      ? `${guestStayDescription(data,stay)} (${fmtDate(stay.start)} – ${fmtDate(stay.end)})`
       : t(available);
     const title = !season ? t("off_season") : occupied
       ? `${t("morning")}: ${describe(state.morningStay, "available_departure")} · ${t("afternoon")}: ${describe(state.afternoonStay, "available_arrival")}`
@@ -201,7 +210,7 @@ function guestTrackHtml(data, year, st, week, dates, selected, getHint) {
       starts && halves[slot - 1] ? "handover-in" : "",
       ends && halves[end] ? "handover-out" : "",
       count <= 4 ? "short" : "", count === 1 ? "edge-only" : ""].filter(Boolean).join(" ");
-    const name = stay.status === "pending" ? t("booking_pending") : stay.note || t("occupied");
+    const name = guestStayLabel(data,stay);
     items.push(`<div class="${classes}" style="grid-column:${slot + 1} / ${end + 1}" data-stay="${escapeCalendarHtml(stay.id || "")}" aria-hidden="true">
       <span class="gname">${escapeCalendarHtml(name)}</span>
       ${starts ? `<span class="gtag gtag-in">${escapeCalendarHtml(t("arrive"))}</span>` : ""}
