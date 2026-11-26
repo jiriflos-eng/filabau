@@ -15,6 +15,6 @@
   "timeoutMs": 20000,
   "bookingApi": {
     "url": "",
-    "turnstileSiteKey": ""
+    "turnstileSiteKey": "0x4AAAAAAGTwxIIOABzThDmO"
   }
 }
