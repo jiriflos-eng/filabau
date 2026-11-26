@@ -1,0 +1,56 @@
+{
+  "index-1": {
+    "path": "img/pobliz/05.jpg",
+    "alt": "Klidná část ostrova",
+    "fit": "cover",
+    "position": "50% 50%"
+  },
+  "index-2": {
+    "path": "img/unas/17.jpg",
+    "alt": "Santa Barbara - průzračná voda",
+    "fit": "cover",
+    "position": "50% 50%"
+  },
+  "index-3": {
+    "path": "img/filemon/06.jpg",
+    "alt": "Studio Filemon",
+    "fit": "cover",
+    "position": "50% 50%"
+  },
+  "index-4": {
+    "path": "img/baucis/02.jpg",
+    "alt": "Studio Baucis",
+    "fit": "cover",
+    "position": "50% 50%"
+  },
+  "hero-poster": {
+    "path": "img/hero-poster.jpg",
+    "alt": "",
+    "fit": "cover",
+    "position": "50% 50%"
+  },
+  "studia-1": {
+    "path": "img/filemon/06.jpg",
+    "alt": "Studio Filemon",
+    "fit": "cover",
+    "position": "50% 50%"
+  },
+  "studia-2": {
+    "path": "img/baucis/02.jpg",
+    "alt": "Studio Baucis",
+    "fit": "cover",
+    "position": "50% 50%"
+  },
+  "cenik-1": {
+    "path": "img/filemon/06.jpg",
+    "alt": "Studio Filemon",
+    "fit": "cover",
+    "position": "50% 50%"
+  },
+  "info-1": {
+    "path": "img/unas/02.jpg",
+    "alt": "Taverna Maltas",
+    "fit": "cover",
+    "position": "50% 50%"
+  }
+}

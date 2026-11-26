@@ -13,7 +13,20 @@ const cmsContentReady = fetch("data/content.json",{cache:"no-store"}).then(r=>{
   if(!r.ok) throw Error("Content unavailable");
   return r.json();
 }).then(data=>{cmsPublicContent=data;}).catch(e=>console.warn("CMS content fallback",e));
-window.cmsContentReady=cmsContentReady;
+let cmsImages={},cmsImageUploads={};
+const cmsImagesReady=fetch("data/images.json",{cache:"no-store"}).then(r=>r.ok?r.json():{}).then(d=>{cmsImages=d;}).catch(()=>{});
+window.cmsContentReady=Promise.all([cmsContentReady,cmsImagesReady]);
+function cmsApplyImages(){
+ document.querySelectorAll("[data-cms-image]").forEach(el=>{
+  const p=cmsImages[el.dataset.cmsImage];if(!p)return;
+  const src=cmsImageUploads[p.path]?"data:image/jpeg;base64,"+cmsImageUploads[p.path]:p.path;
+  const attr=el.tagName==="VIDEO"?"poster":"src";if(el.getAttribute(attr)!==src)el.setAttribute(attr,src);
+  if(el.tagName==="IMG")el.alt=p.alt;
+  el.style.objectFit=p.fit;el.style.objectPosition=p.position;
+ });
+}
+window.cmsPreviewImages=(images,uploads)=>{cmsImages=images;cmsImageUploads=uploads;cmsApplyImages();};
+
 function cmsPriceValues(data) {
   const defaults={may:45,jun:50,jul:55,aug:55,sep:50,oct:45};
   return Object.fromEntries(Object.entries(defaults).map(([key,fallback])=>{
@@ -32,6 +45,7 @@ function cmsApplyPrices(){
 function cmsApplyContent(){
   applyI18n();
   cmsApplyPrices();
+  cmsApplyImages();
   if(cmsPreviewLanguage) document.documentElement.lang=cmsPreviewLanguage;
   document.querySelectorAll("[data-cms-key]").forEach(el=>{el.textContent=t(el.dataset.cmsKey);});
   document.querySelectorAll("[data-cms-meta]").forEach(el=>{el.content=t(el.dataset.cmsMeta);});
@@ -45,4 +59,4 @@ window.cmsPreview = function(data,lang){
   const navKeys={"index.html":"nav_home","studia.html":"nav_studios","cenik.html":"nav_prices","jak-k-nam.html":"nav_howto","info.html":"nav_info","galerie.html":"nav_gallery","rezervace.html":"nav_book"};
   document.querySelectorAll("[data-nav] a").forEach(a=>{const k=navKeys[a.getAttribute("href")];if(k)a.textContent=t(k);});
 };
-document.addEventListener("DOMContentLoaded",()=>{cmsContentReady.then(cmsApplyContent);});
+document.addEventListener("DOMContentLoaded",()=>{window.cmsContentReady.then(cmsApplyContent);});

@@ -1,7 +1,7 @@
 // CMS writes only allowlisted content, gallery metadata and new JPEGs.
 const ALBUMS=["unas","pobliz","opodal","ruzne","filemon","baucis"], LANGS=["cs","en","de","fr","it","es","pl"];
-const SAFE_IMG=/^img\/(?:unas|pobliz|opodal|ruzne|filemon|baucis)\/[A-Za-z0-9_.-]+\.(?:jpe?g|png|webp|avif)$/i;
-const NEW_IMG=/^img\/(?:unas|pobliz|opodal|ruzne|filemon|baucis)\/cms-[a-f0-9-]{36}\.jpg$/;
+const SAFE_IMG=/^img\/(?:unas|pobliz|opodal|ruzne|filemon|baucis|pages)\/[A-Za-z0-9_.-]+\.(?:jpe?g|png|webp|avif)$/i;
+const NEW_IMG=/^img\/(?:unas|pobliz|opodal|ruzne|filemon|baucis|pages)\/cms-[a-f0-9-]{36}\.jpg$/;
 const out=(d,status=200)=>Response.json(d,{status,headers:{"Cache-Control":"no-store"}});
 const fail=(s,status=400)=>out({error:s},status);
 const str=(s,n)=>typeof s==="string"&&s.length<=n;
@@ -19,8 +19,8 @@ async function fileAt(env,path,ref){
 async function snapshot(env){
   const ref=await gh(env,"/git/ref/heads/"+encodeURIComponent(env.GITHUB_BRANCH));
   const head=ref.object.sha;
-  const [commit,content,photos]=await Promise.all([gh(env,"/git/commits/"+head),fileAt(env,"data/content.json",head),fileAt(env,"data/photos.json",head)]);
-  return {head,tree:commit.tree.sha,content,photos};
+  const [commit,content,photos,images]=await Promise.all([gh(env,"/git/commits/"+head),fileAt(env,"data/content.json",head),fileAt(env,"data/photos.json",head),fileAt(env,"data/images.json",head)]);
+  return {head,tree:commit.tree.sha,content,photos,images};
 }
 function normalizedPhotos(data){
   return Object.fromEntries(ALBUMS.map(k=>[k,(data[k]||[]).map(x=>{
@@ -40,7 +40,7 @@ function validContent(next,old){
   }
   return true;
 }
-function validatePhotos(next,uploads,existing){
+function validatePhotos(next,uploads,existing,images){
   if(!sameKeys(next,ALBUMS)||!Array.isArray(uploads)||uploads.length>6)return "Neplatná struktura galerie nebo příliš mnoho nových fotek.";
   const added=new Set();
   for(const u of uploads){
@@ -49,7 +49,7 @@ function validatePhotos(next,uploads,existing){
     if(b.length<4||b.length>420000||b.charCodeAt(0)!==255||b.charCodeAt(1)!==216||b.charCodeAt(b.length-2)!==255||b.charCodeAt(b.length-1)!==217)return "Povoleny jsou optimalizované JPEG fotografie do 420 kB.";
     added.add(u.path);
   }
-  let count=0;const used=new Set();
+  let count=0;const used=new Set(Object.values(images).map(p=>p.path));
   for(const album of ALBUMS){
     if(!Array.isArray(next[album]))return "Neplatné album.";
     const seen=new Set();
@@ -66,27 +66,29 @@ async function publish(env,p){
   if(!p||!p.revision||!Array.isArray(p.uploads))return fail("Neplatný požadavek.");
   for(let attempt=0;attempt<4;attempt++){
     const s=await snapshot(env);
-    if(p.revision.content!==s.content.sha||p.revision.photos!==s.photos.sha)return fail("Obsah mezitím změnil jiný správce. Načtěte aktuální verzi.",409);
+    if(p.revision.content!==s.content.sha||p.revision.photos!==s.photos.sha||p.revision.images!==s.images.sha)return fail("Obsah mezitím změnil jiný správce. Načtěte aktuální verzi.",409);
     if(!validContent(p.content,s.content.data))return fail("Neplatné texty nebo překlady.");
     const tr=await gh(env,"/git/trees/"+s.tree+"?recursive=1");
     if(tr.truncated)throw Error("Repository tree too large");
     const existing=new Set(tr.tree.filter(x=>x.type==="blob"&&SAFE_IMG.test(x.path)).map(x=>x.path));
-    const err=validatePhotos(p.photos,p.uploads,existing);if(err)return fail(err);
-    const entries=[{path:"data/content.json",mode:"100644",type:"blob",content:JSON.stringify(p.content,null,2)+"\n"},{path:"data/photos.json",mode:"100644",type:"blob",content:JSON.stringify(p.photos,null,2)+"\n"}];
+    existing.add("img/hero-poster.jpg");
+    if(!sameKeys(p.images,Object.keys(s.images.data))||Object.values(p.images).some(x=>!sameKeys(x,["path","alt","fit","position"])||!str(x.alt,500)||!["cover","contain"].includes(x.fit)||!["50% 50%","50% 0%","50% 100%","0% 50%","100% 50%"].includes(x.position)||(!existing.has(x.path)&&!(SAFE_IMG.test(x.path)&&p.uploads.some(u=>u.path===x.path)))))return fail("Neplatné fotografie stránek.");
+    const err=validatePhotos(p.photos,p.uploads,existing,p.images);if(err)return fail(err);
+    const entries=[{path:"data/images.json",mode:"100644",type:"blob",content:JSON.stringify(p.images,null,2)+"\n"},{path:"data/content.json",mode:"100644",type:"blob",content:JSON.stringify(p.content,null,2)+"\n"},{path:"data/photos.json",mode:"100644",type:"blob",content:JSON.stringify(p.photos,null,2)+"\n"}];
     for(const u of p.uploads){const blob=await gh(env,"/git/blobs","POST",{content:u.base64,encoding:"base64"});entries.push({path:u.path,mode:"100644",type:"blob",sha:blob.sha});}
     const tree=await gh(env,"/git/trees","POST",{base_tree:s.tree,tree:entries});
     const commit=await gh(env,"/git/commits","POST",{message:"Publish editorial content and gallery",tree:tree.sha,parents:[s.head]});
     try{await gh(env,"/git/refs/heads/"+encodeURIComponent(env.GITHUB_BRANCH),"PATCH",{sha:commit.sha,force:false});}
     catch(e){if([409,422].includes(e.status))continue;throw e;}
     const fresh=await snapshot(env);
-    if(JSON.stringify(fresh.content.data)!==JSON.stringify(p.content)||JSON.stringify(normalizedPhotos(fresh.photos.data))!==JSON.stringify(p.photos))return fail("Publikováno, ale následovala další změna. Načtěte znovu.",409);
-    return out({published:true,commit:commit.sha,revision:{content:fresh.content.sha,photos:fresh.photos.sha}});
+    if(JSON.stringify(fresh.images.data)!==JSON.stringify(p.images)||JSON.stringify(fresh.content.data)!==JSON.stringify(p.content)||JSON.stringify(normalizedPhotos(fresh.photos.data))!==JSON.stringify(p.photos))return fail("Publikováno, ale následovala další změna. Načtěte znovu.",409);
+    return out({published:true,commit:commit.sha,revision:{content:fresh.content.sha,photos:fresh.photos.sha,images:fresh.images.sha}});
   }
   return fail("Repozitář se opakovaně mění. Zkuste publikaci znovu.",409);
 }
 export async function handleCMS(req,env,adminAllowed){
   if(!await adminAllowed(req,env))return fail("Unauthorized",401);
-  if(req.method==="GET"){const s=await snapshot(env);return out({content:s.content.data,photos:normalizedPhotos(s.photos.data),revision:{content:s.content.sha,photos:s.photos.sha}});}
+  if(req.method==="GET"){const s=await snapshot(env);return out({content:s.content.data,photos:normalizedPhotos(s.photos.data),images:s.images.data,revision:{content:s.content.sha,photos:s.photos.sha,images:s.images.sha}});}
   if(req.method==="PUT"){
     const raw=await req.text();if(raw.length>4500000)return fail("Příliš velká dávka změn.",413);
     let p;try{p=JSON.parse(raw);}catch(_){return fail("Neplatný JSON.");}

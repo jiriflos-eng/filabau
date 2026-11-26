@@ -30,7 +30,7 @@ async function init(){
   const r=await fetch("data/config.json",{cache:"no-store"});if(!r.ok)throw Error("Konfigurace nedostupná.");
   const c=await r.json();const u=new URL(c.bookingApi?.url);if(u.protocol!=="https:"||u.username||u.password||u.search||u.hash)throw Error("Neplatná adresa API.");api=u.href.replace(/\/+$/,"");
 }
-function clearDraft(next){draft=clone(next);uploads.clear();dirty=false;textDirty=false;selectedKey="";$("cms-key").value="";$("cms-value").value="";$("cms-value").disabled=true;resetPriceEditor();status("Načtena aktuální verze z GitHubu.");sync();}
+function clearDraft(next){closeImage();draft=clone(next);uploads.clear();dirty=false;textDirty=false;selectedKey="";$("cms-key").value="";$("cms-value").value="";$("cms-value").disabled=true;resetPriceEditor();status("Načtena aktuální verze z GitHubu.");sync();}
 $("cms-login-form").addEventListener("submit",async e=>{
   e.preventDefault();if(busy)return;busy=true;const button=e.target.querySelector("button");button.disabled=true;$("cms-login-error").textContent="Ověřuji přístup…";
   try{if(!api)await init();password=$("cms-password").value.trim();const data=await call();clearDraft(data);$("cms-password").value="";$("cms-login").hidden=true;$("cms-app").hidden=false;loadPreview();renderGallery();}
@@ -43,12 +43,41 @@ $("cms-logout").onclick=()=>{if(!confirmDiscard())return;password="";draft=null;
 window.addEventListener("beforeunload",e=>{if(dirty||textDirty){e.preventDefault();e.returnValue="";}});
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{if(busy)return;document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("on",x===b));$("cms-texts").hidden=b.dataset.tab!=="texts";$("cms-gallery").hidden=b.dataset.tab!=="gallery";if(b.dataset.tab==="gallery")renderGallery();});
 function discardText(){if(!textDirty)return true;if(!confirm("Zahodit dosud nepoužitou úpravu textu?"))return false;textDirty=false;sync();return true;}
+const IMAGE_DEFAULTS={"index-1":{"path":"img/pobliz/05.jpg","alt":"Klidná část ostrova","fit":"cover","position":"50% 50%"},"index-2":{"path":"img/unas/17.jpg","alt":"Santa Barbara - průzračná voda","fit":"cover","position":"50% 50%"},"index-3":{"path":"img/filemon/06.jpg","alt":"Studio Filemon","fit":"cover","position":"50% 50%"},"index-4":{"path":"img/baucis/02.jpg","alt":"Studio Baucis","fit":"cover","position":"50% 50%"},"hero-poster":{"path":"img/hero-poster.jpg","alt":"","fit":"cover","position":"50% 50%"},"studia-1":{"path":"img/filemon/06.jpg","alt":"Studio Filemon","fit":"cover","position":"50% 50%"},"studia-2":{"path":"img/baucis/02.jpg","alt":"Studio Baucis","fit":"cover","position":"50% 50%"},"cenik-1":{"path":"img/filemon/06.jpg","alt":"Studio Filemon","fit":"cover","position":"50% 50%"},"info-1":{"path":"img/unas/02.jpg","alt":"Taverna Maltas","fit":"cover","position":"50% 50%"}};
+let selectedImage="";
+function closeImage(){selectedImage="";$("cms-image-panel").hidden=true;$("cms-text-panel").hidden=false;}
+function showImage(k){
+ if(!draft.images||!draft.images[k]||busy||photoBusy||!discardText())return;
+ selectedImage=k;$("cms-image-panel").hidden=false;$("cms-text-panel").hidden=true;
+ const p=draft.images[k];$("cms-image-preview").src=uploads.has(p.path)?"data:image/jpeg;base64,"+uploads.get(p.path):p.path;
+ $("cms-image-alt").value=p.alt;$("cms-image-fit").value=p.fit;$("cms-image-position").value=p.position;
+ const choices=[...new Set([p.path,...Object.values(draft.photos).flat().map(x=>x.path)])];
+ $("cms-image-existing").replaceChildren(...choices.map(path=>new Option(path,path)));$("cms-image-existing").value=p.path;
+}
+function updateImage(patch){if(!selectedImage||busy||photoBusy)return;Object.assign(draft.images[selectedImage],patch);pruneUploads();changed();previewApply();showImage(selectedImage);}
+$("cms-image-existing").onchange=e=>updateImage({path:e.target.value});
+$("cms-image-alt").onchange=e=>updateImage({alt:e.target.value});
+$("cms-image-fit").onchange=e=>updateImage({fit:e.target.value});
+$("cms-image-position").onchange=e=>updateImage({position:e.target.value});
+$("cms-image-reset").onclick=()=>updateImage(IMAGE_DEFAULTS[selectedImage]);
+$("cms-image-back").onclick=closeImage;
+$("cms-image-upload").onclick=()=>$("cms-image-file").click();
+async function uploadPageImage(file){
+ if(!file||!selectedImage||busy||photoBusy)return;
+ if(uploads.size>=6){status("Nejvýše 6 nových fotografií na publikaci.");return;}
+ const k=selectedImage;photoBusy=true;sync();
+ try{const base64=await optimize(file),path="img/pages/cms-"+crypto.randomUUID()+".jpg";uploads.set(path,base64);draft.images[k].path=path;pruneUploads();changed();previewApply();}
+ catch(e){status(e.message);}finally{photoBusy=false;sync();if(selectedImage===k)showImage(k);}
+}
+$("cms-image-file").onchange=e=>{const file=e.target.files[0];e.target.value="";uploadPageImage(file);};
+$("cms-image-drop").ondragover=e=>e.preventDefault();
+$("cms-image-drop").ondrop=e=>{e.preventDefault();uploadPageImage(e.dataTransfer.files[0]);};
 let page=$("cms-page").value;
-$("cms-page").onchange=()=>{if(!discardText()){$("cms-page").value=page;return;}page=$("cms-page").value;selectedKey="";$("cms-value").disabled=true;$("cms-value").value="";resetPriceEditor();sync();loadPreview();};
-function loadPreview(){$("cms-preview").src=page+"?cms=prices-3";}
+$("cms-page").onchange=()=>{if(!discardText()){$("cms-page").value=page;return;}page=$("cms-page").value;closeImage();selectedKey="";$("cms-value").disabled=true;$("cms-value").value="";resetPriceEditor();sync();loadPreview();};
+function loadPreview(){$("cms-preview").src=page+"?cms=images-1";}
 function previewApply(){
   const w=$("cms-preview").contentWindow;if(!w||!draft)return;
-  try{w.cmsPreview?.(draft.content,$("cms-lang").value);}catch(e){console.warn("Preview",e);}
+  try{w.cmsPreview?.(draft.content,$("cms-lang").value);if(draft.images)w.cmsPreviewImages?.(draft.images,Object.fromEntries(uploads));}catch(e){console.warn("Preview",e);}
 }
 function pageKeys(doc){
   const nodes=[...doc.querySelectorAll(editorSelector)];
@@ -64,12 +93,13 @@ $("cms-preview").addEventListener("load",async()=>{
   let w,doc;
   try{w=$("cms-preview").contentWindow;doc=w.document;if(w.cmsContentReady)await w.cmsContentReady;}catch(_){return;}
   if(doc!==$("cms-preview").contentDocument||!draft)return;
-  const style=doc.createElement("style");style.textContent=".cms-preview-edit [data-cms-editable]{outline:1px dashed #2f8f96;outline-offset:3px;cursor:text!important}.cms-preview-edit [data-cms-editable]:hover{outline:2px solid #2f8f96;background:rgba(47,143,150,.07)}";doc.head.append(style);
+  const style=doc.createElement("style");style.textContent=".cms-preview-edit [data-cms-editable]{outline:1px dashed #2f8f96;outline-offset:3px;cursor:text!important}.cms-preview-edit [data-cms-editable]:hover{outline:2px solid #2f8f96;background:rgba(47,143,150,.07)}";style.textContent+=".cms-preview-edit [data-cms-image]{outline:2px dashed #c79a38;outline-offset:-3px;cursor:pointer!important}.cms-preview-edit [data-cms-image]:hover{outline:3px solid #c79a38}";doc.head.append(style);
   const mark=()=>{if(!draft)return;doc.querySelectorAll(editorSelector).forEach(el=>{const k=nodeKey(el);if(editableKey(k)&&!["META","TITLE"].includes(el.tagName))el.dataset.cmsEditable=k;});updateKeys(doc);doc.documentElement.classList.toggle("cms-preview-edit",$("cms-edit-mode").checked);previewApply();};
   mark();
   const observer=new MutationObserver(mutations=>{if(mutations.some(m=>[...m.addedNodes].some(n=>n.nodeType===1&&(n.matches?.(".album-block")||n.querySelector?.("[data-album-title]")))))mark();});
   observer.observe(doc.body,{childList:true,subtree:true});
   doc.addEventListener("click",e=>{
+    const image=e.target.closest("[data-cms-image]");if($("cms-edit-mode").checked&&image&&draft.images?.[image.dataset.cmsImage]){e.preventDefault();e.stopImmediatePropagation();showImage(image.dataset.cmsImage);return;}
     const el=e.target.closest("[data-cms-editable]");
     if($("cms-edit-mode").checked&&el){e.preventDefault();e.stopImmediatePropagation();chooseKey(el.dataset.cmsEditable);return;}
     const link=e.target.closest("a");if(link){e.preventDefault();e.stopImmediatePropagation();}
@@ -80,7 +110,7 @@ $("cms-lang").onchange=()=>{previewApply();};
 function chooseKey(k){
   if(!editableKey(k))return;
   if(!discardText()){$("cms-key").value=selectedKey;return;}
-  selectedKey=k;$("cms-key").value=k;$("cms-text-lang").value=$("cms-lang").value;loadText();$(priceKey(k)?"cms-price-value":"cms-value").focus();
+  closeImage();selectedKey=k;$("cms-key").value=k;$("cms-text-lang").value=$("cms-lang").value;loadText();$(priceKey(k)?"cms-price-value":"cms-value").focus();
 }
 $("cms-key").onchange=()=>{if($("cms-key").value)chooseKey($("cms-key").value);else $("cms-key").value=selectedKey;};
 let textLang="cs";
@@ -143,7 +173,7 @@ function renderGallery(){
   const moveSelect=element("select");moveSelect.append(new Option("Přesunout do alba…",""),...Object.entries(ALBUMS).filter(([k])=>k!==album).map(([k,l])=>new Option(l,k)));moveSelect.onchange=()=>{const dest=moveSelect.value;if(!dest||busy||photoBusy)return;if(draft.photos[dest].some(x=>x.path===p.path)){alert("Tato fotografie již v cílovém albu existuje.");moveSelect.value="";return;}draft.photos[dest].push(items.splice(index,1)[0]);changed();renderGallery();};body.append(moveSelect);card.append(body);grid.append(card);
  });
 }
-function pruneUploads(){const used=new Set(Object.values(draft.photos).flat().map(p=>p.path));for(const k of uploads.keys())if(!used.has(k))uploads.delete(k);}
+function pruneUploads(){const used=new Set([...Object.values(draft.photos).flat().map(p=>p.path),...Object.values(draft.images||{}).map(p=>p.path)]);for(const k of uploads.keys())if(!used.has(k))uploads.delete(k);}
 $("cms-album").onchange=renderGallery;$("cms-caption-lang").onchange=renderGallery;
 $("cms-add-photo").onclick=()=>$("cms-files").click();$("cms-drop").onclick=()=>$("cms-files").click();$("cms-drop").onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$("cms-files").click();}};
 $("cms-files").onchange=e=>{const files=[...e.target.files];e.target.value="";addFiles(files,$("cms-album").value);};
@@ -173,7 +203,7 @@ $("cms-publish").onclick=async()=>{
  if(!dirty||busy||photoBusy||textDirty)return;
  if(!confirm("Publikovat všechny připravené změny textů, cen a galerie na GitHub?"))return;
  busy=true;sync();status("Publikuji změny…");
- try{const result=await call("PUT",{revision:draft.revision,content:draft.content,photos:draft.photos,uploads:[...uploads].map(([path,base64])=>({path,base64}))});if(!result.published)throw Error("Zápis nebyl potvrzen.");draft.revision=result.revision;dirty=false;uploads.clear();status("Publikováno na GitHubu ("+result.commit.slice(0,7)+"). Veřejný web se aktualizuje po nasazení GitHub Pages.");renderGallery();}
+ try{const result=await call("PUT",{revision:draft.revision,content:draft.content,photos:draft.photos,...(draft.images?{images:draft.images}:{}),uploads:[...uploads].map(([path,base64])=>({path,base64}))});if(!result.published)throw Error("Zápis nebyl potvrzen.");draft.revision=result.revision;dirty=false;uploads.clear();status("Publikováno na GitHubu ("+result.commit.slice(0,7)+"). Veřejný web se aktualizuje po nasazení GitHub Pages.");renderGallery();previewApply();}
  catch(e){status("Publikace nebyla potvrzena: "+e.message+" Koncept ponechán.");}
  finally{busy=false;sync();}
 };
