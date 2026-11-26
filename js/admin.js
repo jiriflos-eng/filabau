@@ -93,13 +93,13 @@ function paint() {
       <td><input data-f="arrival" type="date" value="${s.arrival}" required /></td>
       <td><input data-f="departure" type="date" value="${s.departure}" required /></td>
       <td class="nights">${nightsBetween(s.arrival, s.departure)}</td>
-      <td class="status-text">${s.status === "pending" ? "Čeká na schválení" : "Schváleno"}
-        ${s.email ? `<small style="display:block;white-space:normal">${adminEscape(s.email)} · ${adminEscape(s.phone)}<br>${adminEscape(s.message)}<br>${adminEscape(s.requestId)}</small>` : ""}</td>
-      <td class="acts">
+      <td class="status-text">${s.status === "pending" ? "Čeká na schválení" : "Schváleno"}</td>
+      <td class="acts"><div class="stay-actions">
+        <button type="button" class="btn btn-ghost detail" aria-label="Detail rezervace" aria-haspopup="dialog">Detail</button>
         ${s.status === "pending" ? '<button type="button" class="btn approve">Schválit</button>' : ""}
         <button type="button" class="btn btn-sea save">Uložit</button>
         <button type="button" class="btn btn-ghost del">Smazat</button>
-      </td>
+      </div></td>
     </tr>`
         )
         .join("")
@@ -112,6 +112,41 @@ function paint() {
     : "";
 }
 
+function detailDateTime(value) {
+  if (!value) return "—";
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? "—" : d.toLocaleString("cs-CZ", {dateStyle:"medium", timeStyle:"short"});
+}
+function bookingDetailValues(stay) {
+  return {
+    name: stay.name || "Bez jména",
+    studio: STUDIOS.find(s => s.id === stay.studio)?.label || stay.studio || "—",
+    status: stay.status === "pending" ? "Čeká na schválení" : "Schváleno",
+    arrival: fmtDate(stay.arrival),
+    departure: fmtDate(stay.departure),
+    nights: String(nightsBetween(stay.arrival, stay.departure)),
+    email: stay.email || "—",
+    phone: stay.phone || "—",
+    message: stay.message || "Bez poznámky",
+    channel: ({email:"E-mail",whatsapp:"WhatsApp"})[stay.channel] || "Neuvedeno",
+    createdAt: detailDateTime(stay.createdAt),
+    approvedAt: detailDateTime(stay.approvedAt),
+    requestId: stay.requestId || "—",
+    id: stay.id || "—"
+  };
+}
+function openBookingDetail(id) {
+  const stay = DATA?.stays.find(s => s.id === id);
+  if (!stay) return toast("Rezervaci se nepodařilo najít.", true);
+  const dialog = document.getElementById("booking-detail");
+  const values = bookingDetailValues(stay);
+  dialog.querySelectorAll("[data-detail]").forEach(el => {
+    // Guest-provided contact data and notes must never be interpreted as HTML.
+    el.textContent = values[el.dataset.detail] ?? "—";
+  });
+  dialog.dataset.status = stay.status === "pending" ? "pending" : "confirmed";
+  if (!dialog.open) dialog.showModal();
+}
 function readRow(tr) {
   return {
     id: tr.dataset.id,
@@ -221,6 +256,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
   document.getElementById("rows").addEventListener("click", async (e) => {
     if(adminBusy) return;
+    const detail = e.target.closest(".detail");
+    if (detail) {
+      openBookingDetail(detail.closest("tr").dataset.id);
+      return;
+    }
     const previous=copyAdminData();
     const save = e.target.closest(".save");
     const del = e.target.closest(".del");
