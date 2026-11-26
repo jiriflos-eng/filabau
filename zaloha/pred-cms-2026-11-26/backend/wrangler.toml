@@ -1,0 +1,8 @@
+name = "filabau-bookings"
+main = "worker.js"
+compatibility_date = "2026-11-26"
+[vars]
+ALLOWED_ORIGIN = "https://jiriflos-eng.github.io"
+TURNSTILE_HOSTNAME = "jiriflos-eng.github.io"
+GITHUB_REPOSITORY = "jiriflos-eng/filabau"
+GITHUB_BRANCH = "main"

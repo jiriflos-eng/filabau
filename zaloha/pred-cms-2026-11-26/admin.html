@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kalendář · administrace</title>
+  <link rel="icon" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,480;9..144,600&family=Outfit:wght@360;500;650&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=admin-actions-1" />
+</head>
+<body>
+  <header class="nav solid">
+    <a class="brand" href="index.html">
+      <img src="favicon.svg" width="34" height="34" alt="" />
+      <span>Filemon a Baucis<small>administrace</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html">Web</a>
+      <a href="rezervace.html">Náhled kalendáře</a>
+    </nav>
+  </header>
+
+  <main class="cal-page">
+    <div class="wrap pin-gate" id="gate">
+      <form class="pin-card" id="pin-form">
+        <p class="eyebrow">Jen pro hostitele</p>
+        <h2 id="gate-title">PIN</h2>
+        <p class="muted" id="gate-help"></p>
+        <label><span id="pin-label">PIN</span> <input id="pin" type="password" inputmode="numeric" autocomplete="current-password" required /></label>
+        <p id="gate-err" style="color:var(--terra)"></p>
+        <button class="btn btn-sea" style="margin-top:12px">Vstoupit</button>
+      </form>
+    </div>
+
+    <div class="wrap hidden" id="app">
+      <p class="eyebrow">Rezervace</p>
+      <h1 class="serif" style="font-size:clamp(2rem,4vw,3rem);margin:8px 0">Jedna rezervace = jeden řádek.</h1>
+      <p class="muted">Vyplňte studio, jméno, příjezd a odjezd. Volba Filemon + Baucis uloží dva samostatné pobyty najednou, pouze pokud jsou obě studia volná. V den odjezdu může přijet další host: odjezd zabírá levou polovinu políčka dne, příjezd pravou. Překrytí obsazených nocí ve stejném studiu nelze uložit. Žluté řádky čekají na schválení, zelené jsou schválené.</p>
+      <p class="booking-status-note" id="storage-mode"></p>
+      <p class="muted" id="date-help">Po výběru příjezdu se prázdný nebo příliš brzký odjezd předvyplní na následující den. Termín si upravte podle délky pobytu; již zvolený pozdější odjezd zůstane zachován.</p>
+      <p id="flash" class="flash hidden"></p>
+      <p id="err" class="err hidden"></p>
+
+      <form class="new-stay" id="new-form">
+        <label>Studio
+          <select id="new-studio">
+            <option value="filemon">Filemon</option>
+            <option value="baucis">Baucis</option>
+            <option value="both">Filemon + Baucis</option>
+          </select>
+        </label>
+        <label>Jméno
+          <input id="new-name" placeholder="např. Šárka" maxlength="150" required />
+        </label>
+        <label>Příjezd
+          <input id="new-from" type="date" required />
+        </label>
+        <label>Odjezd
+          <input id="new-to" type="date" aria-describedby="date-help" required />
+        </label>
+        <div class="new-stay-extra">
+          <label>E-mail <span class="optional-label">(nepovinné)</span>
+            <input id="new-email" type="email" autocomplete="email" maxlength="254" placeholder="host@example.cz" />
+          </label>
+          <label>Telefon <span class="optional-label">(nepovinné)</span>
+            <input id="new-phone" type="tel" autocomplete="tel" maxlength="60" placeholder="+420" />
+          </label>
+          <label>Popisek <span class="optional-label">(nepovinné)</span>
+            <textarea id="new-message" rows="2" maxlength="5000" placeholder="Poznámka k rezervaci…"></textarea>
+          </label>
+          <button class="btn btn-terra" type="submit">Přidat rezervaci</button>
+        </div>
+      </form>
+
+      <div class="admin-bar">
+        <label>Rok <select id="year"></select></label>
+        <button class="btn btn-ghost" id="download" type="button">Stáhnout zálohu</button>
+        <label class="btn btn-ghost">Nahrát zálohu<input id="upload" type="file" accept="application/json" hidden /></label>
+        <button class="btn btn-ghost" id="reset" type="button">Obnovit z webu</button>
+      </div>
+      <p id="updated" class="muted"></p>
+
+      <div class="table-wrap">
+        <table class="stay-table">
+          <thead>
+            <tr>
+              <th>Studio</th>
+              <th>Jméno</th>
+              <th>Příjezd</th>
+              <th>Odjezd</th>
+              <th>Nocí</th>
+              <th>Stav</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </div>
+    <dialog class="booking-detail" id="booking-detail" aria-labelledby="booking-detail-title">
+      <div class="booking-detail-content">
+        <header class="booking-detail-header">
+          <div>
+            <p class="eyebrow" id="booking-detail-title">Detail rezervace</p>
+            <h2 class="serif" data-detail="name"></h2>
+            <span class="booking-detail-status" data-detail="status"></span>
+          </div>
+          <form method="dialog"><button type="submit" class="booking-detail-close" aria-label="Zavřít detail" autofocus>×</button></form>
+        </header>
+        <section class="booking-detail-section">
+          <h3>Pobyt</h3>
+          <dl class="booking-detail-grid">
+            <div><dt>Studio</dt><dd data-detail="studio"></dd></div>
+            <div><dt>Počet nocí</dt><dd data-detail="nights"></dd></div>
+            <div><dt>Příjezd</dt><dd data-detail="arrival"></dd></div>
+            <div><dt>Odjezd</dt><dd data-detail="departure"></dd></div>
+          </dl>
+        </section>
+        <section class="booking-detail-section">
+          <h3>Kontakt na hosta</h3>
+          <dl class="booking-detail-grid">
+            <div><dt>E-mail</dt><dd data-detail="email"></dd></div>
+            <div><dt>Telefon</dt><dd data-detail="phone"></dd></div>
+          </dl>
+          <dl class="booking-detail-note"><dt>Popisek / poznámka</dt><dd data-detail="message"></dd></dl>
+        </section>
+        <section class="booking-detail-section booking-detail-meta">
+          <h3>Informace o poptávce</h3>
+          <dl class="booking-detail-grid">
+            <div><dt>Způsob odeslání</dt><dd data-detail="channel"></dd></div>
+            <div><dt>Vytvořeno</dt><dd data-detail="createdAt"></dd></div>
+            <div><dt>Schváleno dne</dt><dd data-detail="approvedAt"></dd></div>
+            <div class="booking-detail-wide"><dt>Číslo poptávky</dt><dd data-detail="requestId"></dd></div>
+            <div class="booking-detail-wide"><dt>ID rezervace</dt><dd data-detail="id"></dd></div>
+          </dl>
+        </section>
+        <form method="dialog" class="booking-detail-footer"><button type="submit" class="btn btn-sea">Zavřít</button></form>
+      </div>
+    </dialog>
+  </main>
+
+  <script src="js/i18n.js?v=github-bookings-2"></script>
+  <script src="js/site.js?v=github-bookings-2"></script>
+  <script src="js/booking-api.js?v=github-bookings-2"></script>
+  <script src="js/store.js?v=admin-fields-1"></script>
+  <script src="js/admin.js?v=admin-fields-1"></script>
+</body>
+</html>

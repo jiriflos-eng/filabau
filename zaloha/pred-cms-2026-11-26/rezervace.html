@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-i18n="title_book">Vybrat termín · Filemon a Baucis</title>
+  <meta name="description" data-i18n="desc_home" content="Dvě klidná studia na jihu Korfu, 650 m od písečné pláže Santa Barbara." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Filemon a Baucis" />
+  <meta property="og:title" data-i18n="title_book" content="Vybrat termín · Filemon a Baucis" />
+  <meta property="og:description" data-i18n="desc_home" content="Dvě klidná studia na jihu Korfu, 650 m od písečné pláže Santa Barbara." />
+  <meta property="og:image" content="https://jiriflos-eng.github.io/filabau/img/og.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://jiriflos-eng.github.io/filabau/rezervace.html" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://jiriflos-eng.github.io/filabau/rezervace.html" />
+  <link rel="icon" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,480;9..144,600&family=Outfit:wght@360;500;650&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=day-dividers-1" />
+</head>
+<body>
+  <header class="nav solid">
+    <a class="brand" href="index.html">
+      <img src="favicon.svg" width="34" height="34" alt="" />
+      <span>Filemon a Baucis<small data-i18n="brand_sub">Korfu · Řecko</small></span>
+    </a>
+    <button class="menu-btn" aria-label="Menu">☰</button>
+    <nav class="nav-links" data-nav></nav>
+  </header>
+
+  <main class="cal-page">
+    <div class="wrap">
+      <header class="page-head">
+        <p class="eyebrow"><span data-i18n="book_eye">Rezervace</span> <span class="season-year">2026</span></p>
+        <h1 data-i18n="book_h1">Vyberte studio a volné dny.</h1>
+        <p class="muted" data-i18n="book_lead">Vyberte příjezd a odjezd v řádku svého studia. Poptat můžete i obě studia. Minimum je 5 nocí.</p>
+      </header>
+      <div class="cal-toolbar">
+        <label><span data-i18n="year">Rok</span>
+          <select id="year"></select>
+        </label>
+      </div>
+      <div class="legend">
+        <span><i class="swatch" style="background:#d7eed9"></i><span data-i18n="free">volno</span></span>
+        <span><i class="swatch" style="background:#e8a090"></i><span data-i18n="busy">obsazeno - jméno je v pásku</span></span>
+        <span id="booking-legend" hidden><i class="swatch" style="background:#f3cb61"></i><span data-i18n="booking_pending">Čeká na schválení</span></span>
+        <span><i class="swatch swatch-arrive" aria-hidden="true"></i><span data-i18n="arrive">Příjezd</span></span>
+        <span><i class="swatch swatch-depart" aria-hidden="true"></i><span data-i18n="depart">Odjezd</span></span>
+      </div>
+      <div class="calendar-guide" id="calendar-guide" role="status" aria-live="polite" aria-atomic="true">
+        <span class="guide-step" id="guide-step" aria-hidden="true">1</span>
+        <div>
+          <strong id="guide-title" data-i18n="guide_arrival">Klikněte na den příjezdu.</strong>
+          <span id="guide-detail" data-i18n="guide_start_detail">Vyberte volný den v řádku Baucis nebo Filemon. Pak vyberete den odjezdu.</span>
+        </div>
+        <button type="button" class="guide-reset" id="guide-reset" hidden></button>
+        <a class="guide-form" id="guide-form" href="#form" data-i18n="guide_form" hidden>Pokračovat k formuláři</a>
+      </div>
+      <div id="cal" class="months"></div>
+
+      <form class="inquiry" id="form">
+        <div id="summary" class="pick-box muted" data-i18n="sum_empty" aria-live="polite">Klikněte v řádku Baucis a/nebo Filemon na příjezd a odjezd.</div>
+        <label><span data-i18n="form_name">Jméno</span> <input id="name" name="name" autocomplete="name" maxlength="150" required /></label>
+        <label><span data-i18n="form_phone">Telefon</span> <input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="60" required /></label>
+        <label><span data-i18n="form_email">E-mail</span> <input id="email" name="email" type="email" autocomplete="email" maxlength="254" required /></label>
+        <label><span data-i18n="form_msg">Zpráva</span> <textarea id="msg" name="message" rows="3" maxlength="5000" data-i18n-placeholder="form_ph" placeholder="Počet osob, transfer z letiště…"></textarea></label>
+        <input type="checkbox" id="inquiry-botcheck" name="botcheck" hidden tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none" />
+        <div class="via-row">
+          <span class="via-label" data-i18n="via">Odeslat přes</span>
+          <label class="via"><input type="radio" name="via" value="wa" checked /> WhatsApp</label>
+          <label class="via"><input type="radio" name="via" value="mail" /> E-mail</label>
+        </div>
+        <div id="booking-captcha" hidden aria-label="Ověření proti robotům"></div>
+        <p class="delivery-hint" id="delivery-hint" aria-live="polite"></p>
+        <button class="btn btn-terra" id="send" type="submit" disabled aria-describedby="delivery-hint">Otevřít WhatsApp a dokončit odeslání</button>
+        <div class="delivery-status" id="delivery-status" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden>
+          <p id="delivery-message"></p>
+          <small id="delivery-reference" hidden></small>
+          <div class="delivery-contact" id="delivery-contact" hidden>
+            <p data-i18n="delivery_contact">Kontakt pro ověření nebo dokončení poptávky:</p>
+            <p><a id="delivery-phone"></a></p>
+            <a id="fallback-wa" target="_blank" rel="noopener noreferrer" data-i18n="delivery_fallback_wa">Otevřít poptávku ve WhatsAppu</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </main>
+  <footer>
+    <div class="wrap">
+      <div data-i18n="footer">Filemon a Baucis · Korfu · studia pro klidnou dovolenou</div>
+      <div><a href="admin.html" data-i18n="admin_link">Administrace kalendáře</a></div>
+    </div>
+  </footer>
+  <script src="js/i18n.js?v=github-bookings-2"></script>
+  <script src="js/site.js?v=github-bookings-2"></script>
+  <script src="js/booking-api.js?v=github-bookings-2"></script>
+  <script src="js/store.js?v=github-bookings-2"></script>
+  <script src="js/calendar.js?v=day-dividers-2"></script>
+  <script src="js/delivery-config.js?v=github-bookings-2"></script>
+  <script src="js/delivery.js?v=github-bookings-2"></script>
+  <script src="js/rezervace.js?v=github-bookings-2"></script>
+</body>
+</html>

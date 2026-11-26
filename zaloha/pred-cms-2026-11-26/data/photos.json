@@ -1,0 +1,662 @@
+{
+  "unas": [
+    {
+      "file": "02.jpg",
+      "caption": "Taverna Maltas - první taverna cestou k pláži Santa Barbara"
+    },
+    {
+      "file": "03.jpg",
+      "caption": "Taverna Maltas - první taverna cestou k pláži Santa Barbara"
+    },
+    {
+      "file": "04.jpg",
+      "caption": "Taverna Maltas - první taverna cestou k pláži Santa Barbara"
+    },
+    {
+      "file": "05.jpg",
+      "caption": "Taverna Elia - druhá taverna cestou k pláži"
+    },
+    {
+      "file": "06.jpg",
+      "caption": "Taverna Elia - druhá taverna cestou k pláži"
+    },
+    {
+      "file": "07.jpg",
+      "caption": "Taverna Barbados - třetí taverna cestou k pláži"
+    },
+    {
+      "file": "08.jpg",
+      "caption": "taverny a bary na pláži"
+    },
+    {
+      "file": "09.jpg",
+      "caption": "pláž Marathias / Santa Barbara - organizovaná část pláže s lehátky, sprchou, bary a tavernami"
+    },
+    {
+      "file": "10.jpg",
+      "caption": "pláž Marathias / Santa Barbara - organizovaná část pláže s lehátky, sprchou, bary a tavernami"
+    },
+    {
+      "file": "11.jpg",
+      "caption": "pláž Santa Barbara - většina turistů využívá lehátka na hlavní pláži, ale kdo preferuje soukromí a klid, zamiluje si dlouhou liduprázdnou část podél útesu"
+    },
+    {
+      "file": "12.jpg",
+      "caption": "pláž Santa Barbara - většina turistů využívá lehátka na hlavní pláži, ale kdo preferuje soukromí a klid, zamiluje si dlouhou liduprázdnou část podél útesu"
+    },
+    {
+      "file": "13.jpg",
+      "caption": "pláž Santa Barbara - většina turistů využívá lehátka na hlavní pláži, ale kdo preferuje soukromí a klid, zamiluje si dlouhou liduprázdnou část podél útesu"
+    },
+    {
+      "file": "14.jpg",
+      "caption": "pláž je písčitá s pozvolným vstupem do moře"
+    },
+    {
+      "file": "15.jpg",
+      "caption": "pláž je písčitá s pozvolným vstupem do moře"
+    },
+    {
+      "file": "16.jpg",
+      "caption": "pláž je písčitá s pozvolným vstupem do moře"
+    },
+    {
+      "file": "17.jpg",
+      "caption": "voda je průzračná, moře obvykle klidné, ale umí se i zlobit"
+    },
+    {
+      "file": "18.jpg",
+      "caption": "voda je průzračná, moře obvykle klidné, ale umí se i zlobit"
+    },
+    {
+      "file": "19.jpg",
+      "caption": "voda je průzračná, moře obvykle klidné, ale umí se i zlobit"
+    },
+    {
+      "file": "20.jpg",
+      "caption": "voda je průzračná, moře obvykle klidné, ale umí se i zlobit"
+    }
+  ],
+  "pobliz": [
+    {
+      "file": "02.jpg",
+      "caption": "cesta na pláž přes útes"
+    },
+    {
+      "file": "03.jpg",
+      "caption": "cesta na pláž přes útes"
+    },
+    {
+      "file": "04.jpg",
+      "caption": "cesta na pláž přes útes"
+    },
+    {
+      "file": "05.jpg",
+      "caption": "jižní Agios Georgios - Agios Georgios je rušné letovisko, kde najdete spousty krámků, barů, taveren a půjčoven"
+    },
+    {
+      "file": "06.jpg",
+      "caption": "jižní Agios Georgios - Agios Georgios je rušné letovisko, kde najdete spousty krámků, barů, taveren a půjčoven"
+    },
+    {
+      "file": "07.jpg",
+      "caption": "jižní Agios Georgios - Agios Georgios je rušné letovisko, kde najdete spousty krámků, barů, taveren a půjčoven"
+    },
+    {
+      "file": "08.jpg",
+      "caption": "pláž Issos na okraji pouště vedle Agios Georgios"
+    },
+    {
+      "file": "09.jpg",
+      "caption": "pláž Issos na okraji pouště vedle Agios Georgios"
+    },
+    {
+      "file": "10.jpg",
+      "caption": "pláž Issos na okraji pouště vedle Agios Georgios"
+    },
+    {
+      "file": "11.jpg",
+      "caption": "Megas Choros"
+    },
+    {
+      "file": "12.jpg",
+      "caption": "Megas Choros"
+    },
+    {
+      "file": "13.jpg",
+      "caption": "Megas Choros"
+    },
+    {
+      "file": "14.jpg",
+      "caption": "pláž Notos a blízká rybářská vesnice Petriti"
+    },
+    {
+      "file": "15.jpg",
+      "caption": "pláž Notos a blízká rybářská vesnice Petriti"
+    },
+    {
+      "file": "16.jpg",
+      "caption": "Argirades"
+    },
+    {
+      "file": "17.jpg",
+      "caption": "Argirades"
+    },
+    {
+      "file": "18.jpg",
+      "caption": "Argirades"
+    },
+    {
+      "file": "19.jpg",
+      "caption": "přírodní rezervace Alikes"
+    },
+    {
+      "file": "20.jpg",
+      "caption": "přírodní rezervace Alikes"
+    },
+    {
+      "file": "21.jpg",
+      "caption": "přírodní rezervace Alikes"
+    },
+    {
+      "file": "22.jpg",
+      "caption": "pláž Kanoula"
+    },
+    {
+      "file": "23.jpg",
+      "caption": "pláž Kanoula"
+    },
+    {
+      "file": "24.jpg",
+      "caption": "pláž Kanoula"
+    },
+    {
+      "file": "25.jpg",
+      "caption": "Lefkimi"
+    },
+    {
+      "file": "26.jpg",
+      "caption": "Lefkimi"
+    },
+    {
+      "file": "27.jpg",
+      "caption": "Lefkimi"
+    },
+    {
+      "file": "28.jpg",
+      "caption": "Gardenos"
+    },
+    {
+      "file": "29.jpg",
+      "caption": "Gardenos"
+    },
+    {
+      "file": "30.jpg",
+      "caption": "Gardenos"
+    },
+    {
+      "file": "31.jpg",
+      "caption": "Chlomos"
+    },
+    {
+      "file": "32.jpg",
+      "caption": "Chlomos"
+    },
+    {
+      "file": "33.jpg",
+      "caption": "Chlomos"
+    }
+  ],
+  "opodal": [
+    {
+      "file": "02.jpg",
+      "caption": "Kerkyra - hlavní město ostrova"
+    },
+    {
+      "file": "03.jpg",
+      "caption": "Kerkyra - hlavní město ostrova"
+    },
+    {
+      "file": "04.jpg",
+      "caption": "Kerkyra - hlavní město ostrova"
+    },
+    {
+      "file": "05.jpg",
+      "caption": "Achillion - letní sídlo rakouské císařovny Sisi"
+    },
+    {
+      "file": "06.jpg",
+      "caption": "Achillion - letní sídlo rakouské císařovny Sisi"
+    },
+    {
+      "file": "07.jpg",
+      "caption": "Achillion - letní sídlo rakouské císařovny Sisi"
+    },
+    {
+      "file": "08.jpg",
+      "caption": "Achillion - letní sídlo rakouské císařovny Sisi"
+    },
+    {
+      "file": "09.jpg",
+      "caption": "Achillion - letní sídlo rakouské císařovny Sisi"
+    },
+    {
+      "file": "10.jpg",
+      "caption": "Achillion - letní sídlo rakouské císařovny Sisi"
+    },
+    {
+      "file": "11.jpg",
+      "caption": "Achillion - letní sídlo rakouské císařovny Sisi"
+    },
+    {
+      "file": "12.jpg",
+      "caption": "Achillion - letní sídlo rakouské císařovny Sisi"
+    },
+    {
+      "file": "13.jpg",
+      "caption": "Achillion - letní sídlo rakouské císařovny Sisi"
+    },
+    {
+      "file": "14.jpg",
+      "caption": "restaurace Archontiko"
+    },
+    {
+      "file": "15.jpg",
+      "caption": "restaurace Archontiko"
+    },
+    {
+      "file": "16.jpg",
+      "caption": "restaurace Archontiko"
+    },
+    {
+      "file": "17.jpg",
+      "caption": "restaurace Archontiko"
+    },
+    {
+      "file": "18.jpg",
+      "caption": "restaurace Archontiko"
+    },
+    {
+      "file": "19.jpg",
+      "caption": "restaurace Archontiko"
+    },
+    {
+      "file": "20.jpg",
+      "caption": "Moraitika - rušné jihovýchodní letovisko"
+    },
+    {
+      "file": "21.jpg",
+      "caption": "Moraitika - rušné jihovýchodní letovisko"
+    },
+    {
+      "file": "22.jpg",
+      "caption": "Moraitika - rušné jihovýchodní letovisko"
+    },
+    {
+      "file": "23.jpg",
+      "caption": "Paleokastritsa"
+    },
+    {
+      "file": "24.jpg",
+      "caption": "Paleokastritsa"
+    },
+    {
+      "file": "25.jpg",
+      "caption": "Paleokastritsa"
+    },
+    {
+      "file": "26.jpg",
+      "caption": "pláž Timoni"
+    },
+    {
+      "file": "27.jpg",
+      "caption": "pláž Timoni"
+    },
+    {
+      "file": "28.jpg",
+      "caption": "mys Drastis"
+    },
+    {
+      "file": "29.jpg",
+      "caption": "\"kanál lásky\" / Canal d'Amour"
+    },
+    {
+      "file": "30.jpg",
+      "caption": "Pantokrator - nejvyšší hora Korfu"
+    },
+    {
+      "file": "31.jpg",
+      "caption": "Pantokrator - nejvyšší hora Korfu"
+    },
+    {
+      "file": "32.jpg",
+      "caption": "Angelokastro"
+    },
+    {
+      "file": "33.jpg",
+      "caption": "Angelokastro"
+    },
+    {
+      "file": "34.jpg",
+      "caption": "Kaiser Throne"
+    },
+    {
+      "file": "35.jpg",
+      "caption": "Agios Simeon"
+    },
+    {
+      "file": "37.jpg",
+      "caption": "ostrov Paxos"
+    }
+  ],
+  "ruzne": [
+    {
+      "file": "02.jpg",
+      "caption": "Velikonoce - Týden před Velikonocemi se slaví Květná neděle procesím sv. Spyridona, patrona ostrova Korfu. Procesí doprovází všechny korfské dechové kapely ve svých pestrých uniformách."
+    },
+    {
+      "file": "03.jpg",
+      "caption": "Na Bílou sobotu se na Korfu dodržuje zvláštní tradice, kdy v 11 hodin dopoledne začínají lidé vyhazovat z oken keramické nádoby naplněné vodou. Slaví tak první vzkříšení Ježíše. Tento podivuhodný zvyk má snad vyjádřit rozhořčení lidí nad Jidášovou zradou, či je symbolicky očistit od hříchů, které jsou vyhozeny spolu s vodou ve džbánech. Ulice jsou plné střepů, jejichž úlomky si někteří schovávají pro štěstí po celý rok."
+    },
+    {
+      "file": "04.jpg",
+      "caption": "Na Bílou sobotu se na Korfu dodržuje zvláštní tradice, kdy v 11 hodin dopoledne začínají lidé vyhazovat z oken keramické nádoby naplněné vodou. Slaví tak první vzkříšení Ježíše. Tento podivuhodný zvyk má snad vyjádřit rozhořčení lidí nad Jidášovou zradou, či je symbolicky očistit od hříchů, které jsou vyhozeny spolu s vodou ve džbánech. Ulice jsou plné střepů, jejichž úlomky si někteří schovávají pro štěstí po celý rok."
+    },
+    {
+      "file": "05.jpg",
+      "caption": "Masopust v Lefkimmi"
+    },
+    {
+      "file": "06.jpg",
+      "caption": "Masopust v Lefkimmi"
+    },
+    {
+      "file": "07.jpg",
+      "caption": "Jaro a podzim na Korfu"
+    },
+    {
+      "file": "08.jpg",
+      "caption": "Jaro a podzim na Korfu"
+    },
+    {
+      "file": "09.jpg",
+      "caption": "Jaro a podzim na Korfu"
+    },
+    {
+      "file": "10.jpg",
+      "caption": "Jaro a podzim na Korfu"
+    },
+    {
+      "file": "11.jpg",
+      "caption": "Jaro a podzim na Korfu"
+    },
+    {
+      "file": "12.jpg",
+      "caption": "Jaro a podzim na Korfu"
+    },
+    {
+      "file": "13.jpg",
+      "caption": "Jaro a podzim na Korfu"
+    },
+    {
+      "file": "14.jpg",
+      "caption": "Jaro a podzim na Korfu"
+    },
+    {
+      "file": "15.jpg",
+      "caption": "Jaro a podzim na Korfu"
+    },
+    {
+      "file": "16.jpg",
+      "caption": "Jaro a podzim na Korfu"
+    },
+    {
+      "file": "17.jpg",
+      "caption": "Jaro a podzim na Korfu"
+    },
+    {
+      "file": "18.jpg",
+      "caption": "Jaro a podzim na Korfu"
+    },
+    {
+      "file": "19.jpg",
+      "caption": "Jaro a podzim na Korfu"
+    },
+    {
+      "file": "20.jpg",
+      "caption": "Jaro a podzim na Korfu"
+    },
+    {
+      "file": "21.jpg",
+      "caption": "Jaro a podzim na Korfu"
+    },
+    {
+      "file": "22.jpg",
+      "caption": "Jaro a podzim na Korfu"
+    },
+    {
+      "file": "23.jpg",
+      "caption": "Jaro a podzim na Korfu"
+    }
+  ],
+  "filemon": [
+    {
+      "file": "02.jpg",
+      "caption": ""
+    },
+    {
+      "file": "03.jpg",
+      "caption": ""
+    },
+    {
+      "file": "04.jpg",
+      "caption": ""
+    },
+    {
+      "file": "05.jpg",
+      "caption": ""
+    },
+    {
+      "file": "06.jpg",
+      "caption": ""
+    },
+    {
+      "file": "07.jpg",
+      "caption": ""
+    },
+    {
+      "file": "08.jpg",
+      "caption": ""
+    },
+    {
+      "file": "09.jpg",
+      "caption": ""
+    },
+    {
+      "file": "10.jpg",
+      "caption": ""
+    },
+    {
+      "file": "11.jpg",
+      "caption": ""
+    },
+    {
+      "file": "12.jpg",
+      "caption": ""
+    },
+    {
+      "file": "13.jpg",
+      "caption": ""
+    },
+    {
+      "file": "14.jpg",
+      "caption": ""
+    },
+    {
+      "file": "15.jpg",
+      "caption": ""
+    },
+    {
+      "file": "16.jpg",
+      "caption": ""
+    },
+    {
+      "file": "17.jpg",
+      "caption": ""
+    },
+    {
+      "file": "18.jpg",
+      "caption": ""
+    },
+    {
+      "file": "19.jpg",
+      "caption": ""
+    },
+    {
+      "file": "20.jpg",
+      "caption": ""
+    },
+    {
+      "file": "21.jpg",
+      "caption": ""
+    },
+    {
+      "file": "22.jpg",
+      "caption": ""
+    },
+    {
+      "file": "23.jpg",
+      "caption": ""
+    },
+    {
+      "file": "24.jpg",
+      "caption": ""
+    },
+    {
+      "file": "25.jpg",
+      "caption": ""
+    },
+    {
+      "file": "26.jpg",
+      "caption": ""
+    },
+    {
+      "file": "27.jpg",
+      "caption": ""
+    },
+    {
+      "file": "28.jpg",
+      "caption": ""
+    }
+  ],
+  "baucis": [
+    {
+      "file": "02.jpg",
+      "caption": ""
+    },
+    {
+      "file": "03.jpg",
+      "caption": ""
+    },
+    {
+      "file": "04.jpg",
+      "caption": ""
+    },
+    {
+      "file": "05.jpg",
+      "caption": ""
+    },
+    {
+      "file": "06.jpg",
+      "caption": ""
+    },
+    {
+      "file": "07.jpg",
+      "caption": ""
+    },
+    {
+      "file": "08.jpg",
+      "caption": ""
+    },
+    {
+      "file": "09.jpg",
+      "caption": ""
+    },
+    {
+      "file": "10.jpg",
+      "caption": ""
+    },
+    {
+      "file": "11.jpg",
+      "caption": ""
+    },
+    {
+      "file": "12.jpg",
+      "caption": ""
+    },
+    {
+      "file": "13.jpg",
+      "caption": ""
+    },
+    {
+      "file": "14.jpg",
+      "caption": ""
+    },
+    {
+      "file": "15.jpg",
+      "caption": ""
+    },
+    {
+      "file": "16.jpg",
+      "caption": ""
+    },
+    {
+      "file": "17.jpg",
+      "caption": ""
+    },
+    {
+      "file": "18.jpg",
+      "caption": ""
+    },
+    {
+      "file": "19.jpg",
+      "caption": ""
+    },
+    {
+      "file": "20.jpg",
+      "caption": ""
+    },
+    {
+      "file": "21.jpg",
+      "caption": ""
+    },
+    {
+      "file": "22.jpg",
+      "caption": ""
+    },
+    {
+      "file": "23.jpg",
+      "caption": ""
+    },
+    {
+      "file": "24.jpg",
+      "caption": ""
+    },
+    {
+      "file": "25.jpg",
+      "caption": ""
+    },
+    {
+      "file": "26.jpg",
+      "caption": ""
+    },
+    {
+      "file": "27.jpg",
+      "caption": ""
+    },
+    {
+      "file": "28.jpg",
+      "caption": ""
+    }
+  ]
+}

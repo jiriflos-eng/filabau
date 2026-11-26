@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Aktivace e-mailu · Filemon a Baucis</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; color: #123a46; background: #efe7d5; }
+    * { box-sizing: border-box; }
+    body { max-width: 760px; margin: 0 auto; padding: 32px 18px; line-height: 1.65; }
+    main { background: #fffdf8; border-radius: 22px; padding: clamp(22px, 5vw, 40px); }
+    h1 { font-size: clamp(1.6rem, 4vw, 2.1rem); line-height: 1.2; }
+    li { margin: 12px 0; }
+    label { display: grid; gap: 7px; font-weight: 650; }
+    input, button { padding: 13px; font: inherit; border-radius: 10px; border: 1px solid #a7b8b8; }
+    button { margin-top: 18px; background: #123a46; color: white; cursor: pointer; font-weight: 650; }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    code { background: #edf0eb; border-radius: 4px; padding: 2px 4px; overflow-wrap: anywhere; }
+    .notice { padding: 14px; background: #fff1cc; border-radius: 12px; }
+    a { color: #15566d; }
+  </style>
+</head>
+<body>
+  <main>
+    <p>NASTAVENÍ PRO PROVOZOVATELE</p>
+    <h1>Test přímého odesílání e-mailu</h1>
+    <p>Služba: <strong>Web3Forms</strong></p>
+    <p>Cílová schránka: nastavuje se v administraci Web3Forms.</p>
+    <p class="notice">Skutečného příjemce určuje nastavení formuláře Web3Forms a jeho veřejný access key. Ověřte adresu v dashboardu. Tento test nevytváří rezervaci a nemění kalendář.</p>
+    <p>Odešlete jednu technickou zprávu. Po potvrzení přijetí službou zkontrolujte schránku, spam a případně karty Hromadné či Aktualizace. Teprve po skutečném doručení nastavte <code>email.activated</code> v <code>data/config.json</code> na <code>true</code>.</p>
+    <form id="test-form" method="POST">
+      <label>Váš e-mail pro odpověď
+        <input type="email" name="email" autocomplete="email" required />
+      </label>
+      <input type="checkbox" name="botcheck" hidden tabindex="-1" autocomplete="off" style="display:none" />
+      <button type="submit" disabled>Odeslat testovací e-mail</button>
+      <p id="status" role="status" aria-live="polite">Načítám konfiguraci…</p>
+    </form>
+    <p><a href="https://web3forms.com/">Web3Forms</a> · <a href="https://docs.web3forms.com/getting-started/troubleshooting">Nápověda k doručení</a> · <a href="rezervace.html">Rezervační stránka</a></p>
+  </main>
+  <script src="js/delivery-config.js?v=pending-1"></script>
+  <script src="js/delivery.js?v=pending-1"></script>
+  <script>
+    const form = document.getElementById("test-form");
+    const button = form.querySelector("button");
+    const status = document.getElementById("status");
+    let pending = false;
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+      if (pending || !INQUIRY_DELIVERY || !form.reportValidity()) return;
+      pending = true; button.disabled = true;
+      const requestId = "FB-TEST-" + (globalThis.crypto?.randomUUID?.() || Date.now());
+      status.textContent = "Odesílám test… " + requestId;
+      try {
+        await sendInquiry("email", {
+          subject: "Filabau – test Web3Forms",
+          name: "Provozovatel – technický test",
+          email: form.elements.email.value.trim(),
+          phone: "", text: "Technická zkouška přímého odesílání. Toto není rezervace.",
+          requestId, botcheck: form.elements.botcheck.checked
+        }, {test:true});
+        status.textContent = "Web3Forms potvrdil přijetí. Zkontrolujte skutečné doručení. ID: " + requestId;
+      } catch (error) {
+        status.textContent = (error.code === "rejected" ? "Služba požadavek odmítla." : "Přijetí nelze potvrdit. Před opakováním zkontrolujte schránku.") + " ID: " + requestId;
+      } finally { pending = false; button.disabled = false; }
+    });
+    loadInquiryConfig().then(config => {
+      if (!config) {
+        status.textContent = "Konfiguraci nelze načíst: " + (inquiryConfigError?.message || "neznámá chyba");
+        return;
+      }
+      status.textContent = "Připraveno k testu.";
+      button.disabled = false;
+    });
+  </script>
+</body>
+</html>

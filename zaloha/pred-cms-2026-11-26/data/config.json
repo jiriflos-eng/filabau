@@ -1,0 +1,23 @@
+{
+  "email": {
+    "provider": "web3forms",
+    "accessKey": "66b366b5-8bb8-4a2a-a974-f36a7a1f527a",
+    "activated": true,
+    "subject": "Poptávka Filemon a Baucis"
+  },
+  "whatsapp": {
+    "phone": "00420725063507",
+    "endpoint": "",
+    "template": "*POPTÁVKA UBYTOVÁNÍ – FILEMON A BAUCIS*\n\nDobrý den,\nrád(a) bych poptal(a) následující termín:\n\n{stays}\n\n*KONTAKT*\nJméno: {name}\nTelefon: {phone}\nE-mail: {email}{messageBlock}",
+    "stayTemplate": "*Studio {studio}*\nPříjezd: {arrival}\nOdjezd: {departure}\nPočet nocí: {nights}",
+    "messageTemplate": "\n\n*DOPLŇUJÍCÍ INFORMACE*\n{message}"
+  },
+  "timeoutMs": 20000,
+  "bookingApi": {
+    "url": "https://filabau-bookings.jiri-flos.workers.dev",
+    "turnstileSiteKey": "0x4AAAAAAGTwxIIOABzThDmO"
+  },
+  "calendar": {
+    "displayMode": "name"
+  }
+}
