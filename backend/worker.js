@@ -1,3 +1,4 @@
+import {handleCMS} from "./cms.js";
 // GitHub is the authoritative store; encrypted admin data and public availability commit atomically.
 const STUDIOS=["filemon","baucis"];
 const json=(data,status=200)=>Response.json(data,{status,headers:{"Cache-Control":"no-store"}});
@@ -132,6 +133,7 @@ async function writeGit(env,revision,d){
 }
 async function handle(req,env){
   const path=new URL(req.url).pathname;
+  if(path==="/cms")return handleCMS(req,env,adminAllowed);
   if(path==="/calendar"&&req.method==="GET"){
     const r=await readGit(env);return r.data?json(await calendarView(r.data,env)):fail("Calendar not initialized",503);
   }
