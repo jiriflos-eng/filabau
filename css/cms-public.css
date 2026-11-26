@@ -1,0 +1,26 @@
+/* Editorial styling, scoped away from the booking calendar and its administration. */
+.content-page .cal-page { padding-top:calc(var(--nav) + 44px); }
+.content-page .page-head { max-width:none; margin:0 0 34px; padding:clamp(26px,5vw,54px); background:var(--white); border:1px solid rgba(18,58,70,.09); border-radius:24px; box-shadow:0 8px 32px rgba(18,58,70,.045); position:relative; overflow:hidden; }
+.content-page .page-head::before { content:""; position:absolute; top:0; left:0; width:76px; height:4px; background:var(--gold); }
+.content-page .page-head h1 { max-width:22ch; margin:8px 0 14px; color:var(--sea-deep); }
+.content-page .page-head .muted { max-width:62ch; margin-bottom:0; }
+.content-page .route { background:var(--white); border:1px solid rgba(18,58,70,.09); border-radius:20px; }
+.content-page .album-block { background:var(--white); border:1px solid rgba(18,58,70,.08); border-radius:22px; padding:clamp(18px,3vw,30px); margin-bottom:24px; }
+.content-page .album-block h2 { margin-top:0; color:var(--sea-deep); }
+.content-page .gitem { border-radius:13px; overflow:hidden; background:#f6f0e7; }
+.content-page .gitem img { border-radius:0; display:block; }
+.content-page .gitem figcaption { padding:10px 12px; color:var(--muted); font-size:.85rem; line-height:1.45; }
+.cms-home .cms-crossroads { padding:clamp(32px,5vw,62px) 0; background:var(--white); }
+.cms-crossroads-head { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:end; gap:8px 28px; margin-bottom:24px; }
+.cms-crossroads-head h2 { margin:0; font-size:clamp(1.7rem,4vw,2.65rem); color:var(--sea-deep); }
+.cms-crossroads-head p { margin:0; color:var(--muted); }
+.cms-crossroads-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.cms-crossroad { display:flex; align-items:center; gap:14px; min-height:78px; border:1px solid rgba(18,58,70,.12); border-radius:15px; padding:16px; background:#f8f3eb; color:var(--sea-deep); text-decoration:none; font-weight:650; transition:background .2s,transform .2s; }
+.cms-crossroad .h-ico { width:23px; height:23px; flex:none; color:var(--aqua); }
+.cms-crossroad-arrow { margin-left:auto; color:var(--muted); font-size:1.1rem; }
+.cms-crossroad:hover { transform:translateY(-2px); background:#efe5d3; }
+.cms-crossroad-book { background:var(--sea); color:#fff; border-color:var(--sea); }
+.cms-crossroad-book .h-ico,.cms-crossroad-book .cms-crossroad-arrow { color:var(--gold); }
+.cms-crossroad-book:hover { background:var(--sea-deep); }
+@media(max-width:760px){.cms-crossroads-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.content-page .page-head{margin-bottom:22px;}}
+@media(max-width:420px){.cms-crossroads-grid{grid-template-columns:1fr;}.cms-crossroad{min-height:60px;}}

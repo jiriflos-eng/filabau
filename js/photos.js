@@ -7,10 +7,13 @@ const ALBUM_META = {
   baucis: { icon: "i-sunset", title: "Studio Baucis", lead: "gal_baucis_lead" },
 };
 
-function normalizePhotos(files) {
-  return files.map((f) =>
-    typeof f === "string" ? { file: f, caption: "" } : { file: f.file, caption: f.caption || "" }
-  );
+function normalizePhotos(files,folder) {
+  return (Array.isArray(files)?files:[]).map(f=>{
+    const p=typeof f==="string"?{file:f}:f;
+    const path=p.path||("img/"+folder+"/"+p.file);
+    const caption=p.captions?.[getLang()] ?? p.caption ?? "";
+    return {src:path,caption:String(caption),hidden:p.hidden===true};
+  }).filter(p=>!p.hidden&&/^img\/(?:unas|pobliz|opodal|ruzne|filemon|baucis)\/[A-Za-z0-9_.-]+\.(?:jpe?g|png|webp|avif)$/i.test(p.src));
 }
 
 function lightbox(items, start) {
@@ -49,31 +52,27 @@ function lightbox(items, start) {
 
 function renderAlbum(el, key, files, folder) {
   const meta = ALBUM_META[key];
-  const photos = normalizePhotos(files);
-  const items = photos.map((p) => ({
-    src: `img/${folder || key}/${p.file}`,
-    caption: p.caption,
-  }));
-  const block = document.createElement("section");
-  block.className = "album-block";
-  block.dataset.album = key;
-  const icon = meta.icon ? `<svg class="h-ico" aria-hidden="true"><use href="#${meta.icon}"></use></svg>` : "";
-  const title = t(meta.title);
-  const lead = t(meta.lead);
-  block.innerHTML = `<h2 class="with-ico">${icon}${title}</h2><p class="muted" style="max-width:46rem">${lead}</p><div class="ggrid"></div>`;
-  const grid = block.querySelector(".ggrid");
-  items.forEach((item, idx) => {
-    const fig = document.createElement("figure");
-    fig.className = "gitem";
-    fig.innerHTML = `<img src="${item.src}" alt="${item.caption || meta.title}" loading="lazy">${item.caption ? `<figcaption>${item.caption}</figcaption>` : ""}`;
-    fig.addEventListener("click", () => lightbox(items, idx));
-    grid.append(fig);
+  const items = normalizePhotos(files,folder||key);
+  const block=document.createElement("section");block.className="album-block";block.dataset.album=key;
+  const heading=document.createElement("h2");heading.className="with-ico";
+  if(meta.icon){const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.setAttribute("class","h-ico");svg.setAttribute("aria-hidden","true");const use=document.createElementNS("http://www.w3.org/2000/svg","use");use.setAttribute("href","#"+meta.icon);svg.append(use);heading.append(svg);}
+  const title=document.createElement("span");title.dataset.albumTitle=meta.title;title.textContent=t(meta.title);heading.append(title);
+  const lead=document.createElement("p");lead.className="muted";lead.style.maxWidth="46rem";lead.dataset.albumLead=meta.lead;lead.textContent=t(meta.lead);
+  const grid=document.createElement("div");grid.className="ggrid";block.append(heading,lead,grid);
+  items.forEach((item,idx)=>{
+    const fig=document.createElement("figure");fig.className="gitem";
+    const img=document.createElement("img");img.src=item.src;img.alt=item.caption||t(meta.title);img.loading="lazy";fig.append(img);
+    if(item.caption){const caption=document.createElement("figcaption");caption.textContent=item.caption;fig.append(caption);}
+    fig.addEventListener("click",()=>lightbox(items,idx));grid.append(fig);
   });
   el.append(block);
 }
 
 async function mountGalleries(targetId, keys) {
-  const data = await fetch("data/photos.json").then((r) => r.json());
+  if(typeof cmsContentReady!=="undefined") await cmsContentReady;
+  const res=await fetch("data/photos.json",{cache:"no-store"});
+  if(!res.ok) throw Error("Galerii nelze načíst");
+  const data=await res.json();
   const el = document.getElementById(targetId);
   keys.forEach((k) => renderAlbum(el, k, data[k], k));
 }
