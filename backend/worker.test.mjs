@@ -5,13 +5,13 @@ import worker from "./worker.js";
 if(!globalThis.crypto)globalThis.crypto=webcrypto;
 const env={ALLOWED_ORIGIN:"https://jiriflos-eng.github.io",TURNSTILE_HOSTNAME:"jiriflos-eng.github.io",GITHUB_REPOSITORY:"test/filabau",GITHUB_BRANCH:"main",GITHUB_TOKEN:"mock",ADMIN_TOKEN:"a".repeat(48),BOOKING_DATA_KEY:"ab".repeat(32),TURNSTILE_SECRET:"mock"};
 const seed={updatedAt:"2026-01-01",minNights:5,season:{startMonth:4,startDay:30,endMonth:10,endDay:31},years:{},history:[],stays:[]};
-let stored=structuredClone(seed),sha="old-sha",writes=0,forceConflict=false,displayMode="status",configUnavailable=false;
+let stored=structuredClone(seed),sha="old-sha",writes=0,forceConflict=false,displayMode="status",configUnavailable=false,calendarRange={};
 const nativeFetch=globalThis.fetch;
 globalThis.fetch=async(url,opts={})=>{
   if(String(url).includes("siteverify"))return Response.json({success:true,hostname:env.TURNSTILE_HOSTNAME,action:"booking"});
   if(String(url).includes("/contents/data/config.json")){
     if(configUnavailable)return Response.json({error:"unavailable"},{status:503});
-    return Response.json({type:"file",encoding:"base64",content:Buffer.from(JSON.stringify({calendar:{displayMode}})).toString("base64")});
+    return Response.json({type:"file",encoding:"base64",content:Buffer.from(JSON.stringify({calendar:{displayMode,...calendarRange}})).toString("base64")});
   }
   assert.match(String(url),/api\.github\.com\/repos\/test\/filabau\/contents\/data\/bookings\.json/);
   if(opts.method==="PUT"){
@@ -55,6 +55,11 @@ test("GitHub-backed booking lifecycle, authenticated encryption and SHA conflict
   assert.ok(named.stays.some(s=>s.status==="pending"));assert.ok(!JSON.stringify(named).includes(p.email));assert.ok(!JSON.stringify(named).includes(p.name));
   const same=await (await call("/pending","POST",p)).json();assert.equal(same.calendar.displayMode,"name");
   assert.ok(stored.stays.every(s=>s.name===""));
+  calendarRange={seasonStart:"08-01",seasonEnd:"09-30",seasonsToShow:2,hidePastDays:true};
+  const ranged=await (await call("/calendar")).json();
+  assert.equal(ranged.season.startMonth,8);assert.ok(ranged.calendarWindows.every(w=>w.from.endsWith("08-01")||w.year===new Date().getUTCFullYear()));
+  assert.equal((await call("/pending","POST",{...p,requestId:"FB-test-outside-12345"})).status,400);
+  calendarRange={};
   displayMode="unexpected";assert.ok((await (await call("/calendar")).json()).stays.every(s=>s.name===""));
   displayMode="name";configUnavailable=true;
   assert.ok((await (await call("/calendar")).json()).stays.every(s=>s.name===""));

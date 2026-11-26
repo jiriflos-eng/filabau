@@ -94,3 +94,7 @@ Otevřete `redakce.html` (odkaz v administraci rezervací). Přihlášení použ
 ### Úprava cen ubytování
 
 V redakci vyberte Ceník a klikněte na číselnou částku příslušného měsíce. Cena se zadává v eurech za studio a noc, s nejvýše dvěma desetinnými místy, a platí pro všechny jazyky. Po použití v náhledu a publikaci se uloží do společného objektu `prices` v `data/content.json`. Rozpětí cen na úvodní stránce se automaticky odvodí z minima a maxima. Ceny klimatizace a transferů zatím zůstávají v textových popiscích. Tato změna nezasahuje do rezervačního systému.
+
+### Rozsah rezervačního kalendáře
+
+V `data/config.json` nastavte `calendar.seasonStart` a `calendar.seasonEnd` ve formátu MM-DD (např. "04-30" a "10-31", včetně obou dnů; stejný rozsah každý rok, pouze uvnitř jednoho kalendářního roku). `calendar.hidePastDays` (true/false) skryje uplynulé dny a celé uplynulé sezóny. `calendar.seasonsToShow` (1 až 3) určuje počet sezón v nabídce, nejvýše do konce druhého následujícího roku. Aktuální den se počítá podle času na Korfu (Europe/Athens). Neúplné týdny zachovávají správné dny týdne, dny mimo rozsah jsou prázdné. Změna ovlivní veřejný kalendář a validaci nových poptávek na serveru, neodstraňuje žádné existující rezervace ani neomezuje správce při jejich evidenci. Historická sezóna uložená v bookings.json zůstává jako výchozí při chybějících hodnotách. Neplatné nastavení nepřijímá nové poptávky. Změna sezóny nemění automaticky texty úvodní stránky ani ceny.

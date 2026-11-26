@@ -5,11 +5,11 @@ function loadBookingSettings(){
   if(!bookingSettingsPromise) bookingSettingsPromise=(async()=>{
     const res=await fetch("data/config.json",{cache:"no-store"});
     if(!res.ok)throw Error("Config HTTP "+res.status);
-    const raw=(await res.json()).bookingApi||{};
-    if(!raw.url)return bookingSettings={url:"",turnstileSiteKey:""};
+    const config=await res.json(),raw=config.bookingApi||{},calendar=config.calendar||{};
+    if(!raw.url)return bookingSettings={url:"",turnstileSiteKey:"",calendar};
     const u=new URL(raw.url);
     if(u.protocol!=="https:"||u.username||u.password||u.search||u.hash||!raw.turnstileSiteKey)throw Error("Invalid booking API configuration");
-    return bookingSettings={url:u.href.replace(/\/+$/,""),turnstileSiteKey:raw.turnstileSiteKey};
+    return bookingSettings={url:u.href.replace(/\/+$/,""),turnstileSiteKey:raw.turnstileSiteKey,calendar};
   })();
   return bookingSettingsPromise;
 }

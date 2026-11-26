@@ -45,9 +45,11 @@ function studioChoice(id) {
 }
 
 function paint() {
-  const years = [...new Set([...yearsOf(DATA), ...seasonYears()])].sort((a, b) => a - b);
+  const years = publicCalendarYears(DATA);
+  if(!years.includes(YEAR))YEAR=years[0]??seasonYear();
   const sel = document.getElementById("year");
   sel.innerHTML = years.map((y) => `<option ${y === YEAR ? "selected" : ""}>${y}</option>`).join("");
+  sel.disabled=years.length<2;
   renderGuestCalendar(document.getElementById("cal"), {
     data: DATA,
     year: YEAR,
@@ -320,7 +322,7 @@ async function submitCentralInquiry(channel,payload,identity) {
     const result=await bookingCall("/pending","POST",{requestId,channel,stays:payload.stays,name:payload.name,email:payload.email,phone:payload.phone,message:payload.message,token:captcha});
     if(!result.saved) throw Error("Unconfirmed save");
     snapshot.centralSaved=true;
-    DATA=ensureStays(result.calendar);
+    DATA=preparePublicCalendar(ensureStays(result.calendar));
     picks={baucis:[],filemon:[]};
     paint();
     if(channel==="whatsapp" && deliveryMode(channel)!=="direct"){
@@ -403,7 +405,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("name").focus({ preventScroll: true });
   });
   document.getElementById("year").addEventListener("change", (e) => {
-    if (deliveryPending) return;
+    if (deliveryPending || !publicCalendarYears(DATA).includes(Number(e.target.value))) return;
     YEAR = Number(e.target.value);
     picks = { baucis: [], filemon: [] };
     paint();

@@ -205,6 +205,7 @@ const I18N = {
     mail_email: "E-mail: {v}", mail_msg: "Zpráva: {v}",
     mail_subject: "Poptávka Filemon a Baucis",
     off_season: "Mimo sezónu",
+    calendar_no_dates: "V nastaveném období nejsou žádné dostupné dny.",
   },
   en: {
     lang: "Language", nav_home: "Home", nav_studios: "Studios", nav_prices: "Prices", nav_howto: "How to get here",
@@ -398,6 +399,7 @@ const I18N = {
     mail_email: "E-mail: {v}", mail_msg: "Message: {v}",
     mail_subject: "Enquiry Filemon and Baucis",
     off_season: "Off season",
+    calendar_no_dates: "No dates are available in the configured period.",
   },
   de: {
     lang: "Sprache", nav_home: "Start", nav_studios: "Studios", nav_prices: "Preise", nav_howto: "Anreise",
@@ -591,6 +593,7 @@ const I18N = {
     mail_email: "E-Mail: {v}", mail_msg: "Nachricht: {v}",
     mail_subject: "Anfrage Filemon und Baucis",
     off_season: "Außerhalb der Saison",
+    calendar_no_dates: "Im eingestellten Zeitraum sind keine Tage verfügbar.",
   },
   fr: {
     lang: "Langue", nav_home: "Accueil", nav_studios: "Studios", nav_prices: "Tarifs", nav_howto: "Accès",
@@ -784,6 +787,7 @@ const I18N = {
     mail_email: "E-mail : {v}", mail_msg: "Message : {v}",
     mail_subject: "Demande Filemon et Baucis",
     off_season: "Hors saison",
+    calendar_no_dates: "Aucune date disponible pour la période configurée.",
   },
   it: {
     lang: "Lingua", nav_home: "Home", nav_studios: "Studio", nav_prices: "Prezzi", nav_howto: "Come arrivare",
@@ -976,6 +980,7 @@ const I18N = {
     mail_email: "E-mail: {v}", mail_msg: "Messaggio: {v}",
     mail_subject: "Richiesta Filemon e Baucis",
     off_season: "Fuori stagione",
+    calendar_no_dates: "Nessuna data disponibile nel periodo impostato.",
   },
   es: {
     lang: "Idioma", nav_home: "Inicio", nav_studios: "Estudios", nav_prices: "Precios", nav_howto: "Cómo llegar",
@@ -1168,6 +1173,7 @@ const I18N = {
     mail_email: "E-mail: {v}", mail_msg: "Mensaje: {v}",
     mail_subject: "Consulta Filemon y Baucis",
     off_season: "Fuera de temporada",
+    calendar_no_dates: "No hay fechas disponibles en el período configurado.",
   },
   pl: {
     lang: "Język", nav_home: "Start", nav_studios: "Studia", nav_prices: "Cennik", nav_howto: "Dojazd",
@@ -1360,6 +1366,7 @@ const I18N = {
     mail_email: "E-mail: {v}", mail_msg: "Wiadomość: {v}",
     mail_subject: "Zapytanie Filemon i Baucis",
     off_season: "Poza sezonem",
+    calendar_no_dates: "Brak dni w skonfigurowanym okresie.",
   },
 };
 

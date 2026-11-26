@@ -1,11 +1,10 @@
 function todayIso() {
-  const n = new Date();
-  return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(n.getDate()).padStart(2, "0")}`;
+  return typeof bookingToday==="function"?bookingToday():iso(new Date());
 }
 
 function isPastMonth(year, monthIndex) {
-  const now = new Date();
-  return year < now.getFullYear() || (year === now.getFullYear() && monthIndex < now.getMonth());
+  const today=todayIso();
+  return `${year}-${String(monthIndex+1).padStart(2,"0")}`<today.slice(0,7);
 }
 
 function isPastDate(iso) {
@@ -316,14 +315,22 @@ function renderGuestCalendar(el, opts) {
   ];
   const monthNames = t("months").split("|");
   const dow = t("dow").split("|");
-  const startM = (data.season && data.season.startMonth) || 4;
-  const endM = (data.season && data.season.endMonth) || 10;
+  const window=publicCalendarWindow(data,year);
+  if(!window){el.innerHTML=`<p class="muted" role="status">${escapeCalendarHtml(t("calendar_no_dates"))}</p>`;return;}
+  const startM=Number(window.from.slice(5,7)),endM=Number(window.to.slice(5,7));
 
   el.innerHTML = Array.from({ length: endM - startM + 1 }, (_, i) => startM - 1 + i)
     .map((m) => {
       const cells = monthGrid(year, m);
       const weeks = [];
-      for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+      for (let i = 0; i < cells.length; i += 7) {
+        const week=cells.slice(i,i+7).map(d=>{
+          if(!d)return null;
+          const date=`${year}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+          return date>=window.from&&date<=window.to?d:null;
+        });
+        if(week.some(Boolean))weeks.push(week);
+      }
       const weekHtml = weeks
         .map((week, wi) => {
           const dates = week.map((d) =>

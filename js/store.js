@@ -73,9 +73,26 @@ function ensureStays(data) {
 async function loadBookings() {
   if (typeof loadBookingSettings === "function") {
     await loadBookingSettings();
-    if (centralBookings()) return ensureStays(await bookingCall("/calendar"));
+    if (centralBookings()) return preparePublicCalendar(ensureStays(await bookingCall("/calendar")));
   }
-  return loadPublishedBookings();
+  return preparePublicCalendar(await loadPublishedBookings());
+}
+
+// Only the public calendar uses this projection; administration retains all years and stays.
+function preparePublicCalendar(data){
+  if(typeof bookingCalendarSettings!=="function")return data;
+  const settings=data.calendarSettings||bookingCalendarSettings(typeof bookingSettings!=="undefined"?bookingSettings?.calendar||{}:{},data.season);
+  data.season=bookingEffectiveSeason(settings);
+  data.calendarWindows=bookingCalendarWindows(settings);
+  return data;
+}
+function publicCalendarYears(data){
+  return Array.isArray(data.calendarWindows)?data.calendarWindows.map(w=>w.year):[...new Set([...yearsOf(data),...seasonYears()])].sort((a,b)=>a-b);
+}
+function publicCalendarWindow(data,year){
+  if(Array.isArray(data.calendarWindows))return data.calendarWindows.find(w=>w.year===year)||null;
+  const settings=bookingCalendarSettings({},data.season);
+  return {year,from:year+"-"+settings.seasonStart,to:year+"-"+settings.seasonEnd};
 }
 
 async function loadPublishedBookings() {
@@ -352,5 +369,6 @@ function rangeFree(data, year, studio, start, end) {
   let b = end;
   if (a > b) [a, b] = [b, a];
   if (a === b || !stayDays(a, b).every((d) => inSeason(data, d))) return false;
+  if (Array.isArray(data.calendarWindows) && !bookingWindowAllows(data.calendarWindows,a,b)) return false;
   return !findOverlap(data, { studio, arrival: a, departure: b });
 }

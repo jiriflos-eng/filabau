@@ -1,3 +1,4 @@
+import {bookingToday,bookingCalendarSettings,bookingCalendarWindows,bookingEffectiveSeason,bookingWindowAllows} from "./calendar-range.js";
 import {handleCMS} from "./cms.js";
 // GitHub is the authoritative store; encrypted admin data and public availability commit atomically.
 const STUDIOS=["filemon","baucis"];
@@ -26,36 +27,40 @@ function publicGuestName(s){
 function publicData(d,displayMode="status"){
   return {updatedAt:d.updatedAt,minNights:d.minNights,season:d.season,years:Object.fromEntries(Object.keys(d.years).filter(y=>/^\d{4}$/.test(y)).map(y=>[y,{filemon:{},baucis:{}}])),stays:d.stays.map(s=>({id:s.id,studio:s.studio,arrival:s.arrival,departure:s.departure,status:s.status==="pending"?"pending":"confirmed",name:displayMode==="name"?publicGuestName(s):""}))};
 }
-async function calendarDisplayMode(env){
-  try{
-    const url=gitEndpoint(env).replace(/bookings\.json$/,"config.json")+"?ref="+encodeURIComponent(env.GITHUB_BRANCH);
-    const r=await fetch(url,{headers:{Authorization:"Bearer "+env.GITHUB_TOKEN,Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28","User-Agent":"filabau-bookings","Cache-Control":"no-cache"}});
-    if(!r.ok)return "status";
-    const file=await r.json();
-    if(file.type!=="file"||file.encoding!=="base64"||typeof file.content!=="string")return "status";
-    const config=JSON.parse(dec.decode(fromB64(file.content)));
-    return config.calendar?.displayMode==="name"?"name":"status";
-  }catch(_){return "status";}
+async function readCalendarConfig(env){
+  const url=gitEndpoint(env).replace(/bookings\.json$/,"config.json")+"?ref="+encodeURIComponent(env.GITHUB_BRANCH);
+  const r=await fetch(url,{headers:{Authorization:"Bearer "+env.GITHUB_TOKEN,Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28","User-Agent":"filabau-bookings","Cache-Control":"no-cache"}});
+  if(!r.ok)throw Error("Calendar config unavailable");
+  const file=await r.json();
+  if(file.type!=="file"||file.encoding!=="base64"||typeof file.content!=="string")throw Error("Invalid calendar config");
+  return JSON.parse(dec.decode(fromB64(file.content))).calendar||{};
 }
-async function calendarView(d,env){
-  const mode=await calendarDisplayMode(env);
-  return {...publicData(d,mode),displayMode:mode};
+async function calendarView(d,env,raw){
+  // If config is temporarily unavailable, keep the original seasonal limits
+  // and hide names; new bookings still require the live configuration.
+  if(raw===undefined){try{raw=await readCalendarConfig(env);}catch(_){raw={};}}
+  const mode=raw.displayMode==="name"?"name":"status";
+  const settings=bookingCalendarSettings(raw,d.season);
+  return {...publicData(d,mode),displayMode:mode,season:bookingEffectiveSeason(settings),calendarWindows:bookingCalendarWindows(settings),calendarSettings:settings};
 }
 function inSeason(s,season){
   const y=s.arrival.slice(0,4),md=(m,d)=>String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0");
   return s.arrival>=y+"-"+md(season.startMonth,season.startDay)&&s.departure<=y+"-"+md(season.endMonth,season.endDay);
 }
-function addPending(d,p){
+function addPending(d,p,calendarConfig={}){
   if(!p||!text(p.requestId,100)||!/^FB-[a-zA-Z0-9-]{10,95}$/.test(p.requestId)||!["email","whatsapp"].includes(p.channel)||!text(p.name,150)||!p.name.trim()||!text(p.email,254)||!/^\S+@\S+\.\S+$/.test(p.email)||!text(p.phone,60)||!p.phone.trim()||!text(p.message,5000)||!Array.isArray(p.stays)||p.stays.length<1||p.stays.length>2)return {error:"Invalid request",status:400};
   const existing=d.stays.filter(s=>s.requestId===p.requestId);
   if(existing.length){
     const same=existing.length===p.stays.length&&existing.every(s=>s.email===p.email.trim()&&s.phone===p.phone.trim()&&p.stays.some(x=>x&&x.studio===s.studio&&x.arrival===s.arrival&&x.departure===s.departure));
     return same?{existing:true}:{error:"Request ID conflict",status:409};
   }
-  const today=new Date().toISOString().slice(0,10),maxYear=Number(today.slice(0,4))+2,seen=new Set(),createdAt=new Date().toISOString();
+  const today=bookingToday(),seen=new Set(),createdAt=new Date().toISOString();
+  const settings=bookingCalendarSettings(calendarConfig,d.season);
+  const windows=bookingCalendarWindows(settings,today);
+  const season=bookingEffectiveSeason(settings);
   const next=[];
   for(const x of p.stays){
-    if(!x||!STUDIOS.includes(x.studio)||seen.has(x.studio)||!date(x.arrival)||!date(x.departure)||x.arrival<today||Number(x.departure.slice(0,4))>maxYear||nights(x.arrival,x.departure)<d.minNights||!inSeason(x,d.season))return {error:"Invalid dates",status:400};
+    if(!x||!STUDIOS.includes(x.studio)||seen.has(x.studio)||!date(x.arrival)||!date(x.departure)||!bookingWindowAllows(windows,x.arrival,x.departure,today)||nights(x.arrival,x.departure)<d.minNights||!inSeason(x,season))return {error:"Invalid dates",status:400};
     seen.add(x.studio);
     if(d.stays.some(s=>overlap(s,x)))return {error:"Dates no longer available",status:409};
     next.push({id:crypto.randomUUID(),studio:x.studio,arrival:x.arrival,departure:x.departure,name:p.name.trim(),email:p.email.trim(),phone:p.phone.trim(),message:p.message,channel:p.channel,requestId:p.requestId,status:"pending",createdAt});
@@ -156,11 +161,12 @@ async function handle(req,env){
     for(let attempt=0;attempt<4;attempt++){
       const r=await readGit(env);
       if(!r.data)return fail("Calendar not initialized",503);
-      const result=addPending(r.data,p);
+      const calendarConfig=await readCalendarConfig(env);
+      const result=addPending(r.data,p,calendarConfig);
       if(result.error)return fail(result.error,result.status);
-      if(result.existing)return json({saved:true,calendar:await calendarView(r.data,env)});
+      if(result.existing)return json({saved:true,calendar:await calendarView(r.data,env,calendarConfig)});
       const written=await writeGit(env,r.revision,r.data);
-      if(!written.conflict)return json({saved:true,calendar:await calendarView(written.data,env)});
+      if(!written.conflict)return json({saved:true,calendar:await calendarView(written.data,env,calendarConfig)});
     }
     return fail("Calendar changed repeatedly; retry",409);
   }

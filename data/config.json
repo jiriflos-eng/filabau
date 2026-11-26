@@ -18,6 +18,10 @@
     "turnstileSiteKey": "0x4AAAAAAGTwxIIOABzThDmO"
   },
   "calendar": {
-    "displayMode": "name"
+    "displayMode": "name",
+    "seasonStart": "04-30",
+    "seasonEnd": "10-31",
+    "hidePastDays": true,
+    "seasonsToShow": 2
   }
 }
