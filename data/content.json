@@ -114,7 +114,7 @@
     "photos_link": "Vybavení a všechna fota →",
     "prices_btn": "Ceník",
     "prices_h1": "Cena za studio pro dvě osoby.",
-    "prices_inc": "Cena zahrnuje ubytování bez stravy a bez dopravy na místo. Doprava je na stránce Jak k nám. Studia se odevzdávají uklizená.",
+    "prices_inc": "Cena zahrnuje ubytování bez stravy a bez dopravy na místo. Doprava je na stránce \"Jak k nám\". Přebíráte perfektně uklizeno - vracíte alespoň poklizeno. Děkujeme!",
     "prices_lead": "Platí i při obsazení jednou osobou. Částky jsou za noc.",
     "prices_pay": "Standardně se platí v hotovosti na místě v eurech. Výjimky po dohodě - platba na eurový účet v České spořitelně.",
     "season_btn": "Ověřit volný termín",
@@ -1169,11 +1169,11 @@
     "fact_price_value": "45–55 €"
   },
   "prices": {
-    "may": 45,
-    "jun": 50,
-    "jul": 55,
-    "aug": 55,
-    "sep": 50,
-    "oct": 45
+    "may": 50,
+    "jun": 55,
+    "jul": 60,
+    "aug": 60,
+    "sep": 55,
+    "oct": 50
   }
 }
